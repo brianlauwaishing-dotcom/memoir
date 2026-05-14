@@ -16,11 +16,11 @@
 
 | 群組 | UC 順序 | 對應主要 Epic |
 |---|---|---|
-| **G1 必做** | UC3 → UC2 → UC10 → UC6 | Epic A 景點故事、Epic B 主題瀏覽、Epic C 自動分類、Epic D 現場導航 |
-| **G2 主功能** | UC5 → UC4 → UC13 → UC8 → UC11 → UC12 | Epic E 路線推薦、Epic F 地圖式行程、Epic G 多語、Epic H 足跡記錄、Epic I 敘事生成、Epic J 分享 |
+| **G1 必做** | UC3 → UC2 → UC19/20/21 → UC6(基礎位置) | Epic A 景點故事、Epic B 主題瀏覽、Epic N Heritage Mission、Epic D 基礎位置 |
+| **G2 主功能** | UC5 → UC13 → UC8 → UC11 → UC12 → UC22 | Epic E 路線推薦、Epic G 多語、Epic H 足跡記錄、Epic I 敘事生成、Epic J 分享 |
 | **G3 維運** | UC16 → UC17 → UC18 | Epic L Admin CMS |
-| **未列(降級)** | UC7, UC9, UC17 | UC9 仍需最小版以支撐 UC10/UC11 |
-| **已砍除(2026-05-15)** | UC1, UC14, UC15 | Epic K 整段(費用預估)、機場 Kiosk、在地商家合作 — 依 refactor.md 不屬於核心體驗 |
+| **未列(降級)** | UC7, UC9 | UC9 仍需最小版以支撐 UC10/UC11 入口 |
+| **已砍除(2026-05-15)** | UC1, UC4, UC10, UC14, UC15 | Epic C 整段(自動分類)、Epic F 整段(地圖式行程)、Epic K 整段(費用預估)、機場 Kiosk、在地商家合作、PTX 整合 — 依 refactor.md 不屬於核心體驗 |
 
 ---
 
@@ -122,24 +122,29 @@ Sprint 0 (週 0, 0.5 週準備)
    ↓ 環境就緒 + 內容種子第一批
 Sprint 1 (週 1) ─ Epic A + B(壓縮)+ Epic N 起 ─ Demo: 看到景點故事 + Mission 三件套設計 ready
    ↓
-Sprint 2 (週 2) ─ Epic C + D(降級)+ Epic N 核心 ─ G1 完成 ─ Demo: 導航 + 分類 + Mission 拍照 + Memory Prompt
+Sprint 2 (週 2) ─ Epic D 基礎位置 + Epic N 核心 ─ G1 完成 ─ Demo: 抵達古蹟 → Mission → 拍照 → Memory Prompt
    ↓
-Sprint 3 (週 3) ─ Epic E + F + G ─ Demo: 規劃 + 多語
+Sprint 3 (週 3) ─ Epic E + G ─ Demo: 推薦清單 + 多語
    ↓
-Sprint 4 (週 4) ─ Epic H + I + J + K ─ G2 完成 ─ Demo: 敘事 + 分享
+Sprint 4 (週 4) ─ Epic H + I + J ─ G2 完成 ─ Demo: 敘事 + 策展分享
    ↓
-Sprint 5 (週 5) ─ Epic L + Epic N(Admin)+ 部署 ─ G3 完成 ─ Demo: Admin 上線 + K8s
+Sprint 5 (週 5) ─ Epic L + Epic N(Admin)─ G3 完成 ─ Demo: Admin 上線
    ↓
-Sprint 6 (週 6) ─ Polish + 整合 + B-2 / C-4 / L-5 補做 + Final Demo
+Sprint 6 (週 6) ─ Polish + 整合 + B-2 / L-5 補做 + Final Demo
 ```
 
 每個 Sprint 結束都必須能 demo;**沒 demo 不算結束**。
 
 > **2026-05-14 重排**:依 `references/refactor.md` 引入 Epic N(Heritage Mission),壓縮以下既有任務以釋出 capacity:
-> - B-2(tsvector)、C-4(分群圖表)、L-5(UGC tag 審核)延到 Sprint 6
-> - D-3(PTX 整合)直接降級為寫死 5 條(原本就有降級條款)
+> - B-2(tsvector)、L-5(UGC tag 審核)延到 Sprint 6
 > - A-1 內容種子 16 → 8(3 古蹟 + 5 非古蹟),A-3 從 Sprint 1 挪到 Sprint 2
-> - A-4 範圍縮為「非 Mission 景點頁」;D-4 併入 N-6 入口卡
+> - A-4 範圍縮為「非 Mission 景點頁」
+>
+> **2026-05-15 再次砍除**:更深入審視 refactor.md 純粹核心後,進一步砍除以下 14 張 issue:
+> - Epic C 整段(自動分類 5 張 #10-#14):回顧頁用時間軸即可
+> - Epic D 附屬(#16 OSM spike / #17 PTX / #18 導航 UI 設計併入 N-6)
+> - Epic F 整段(地圖式行程 3 張 #24/#26/#27):MVP 不做行程拖曳排序
+> - Epic M 末端(#60 K8s / #61 觀測性 / #62 離線包):demo 用 docker-compose 即可
 
 ---
 
@@ -170,28 +175,21 @@ Sprint 6 (週 6) ─ Polish + 整合 + B-2 / C-4 / L-5 補做 + Final Demo
 | B-3 | 設計:主題瀏覽頁 + 多主題複選 + 子標籤層次互動 | task | D1 | S1 |
 | B-4 | Android:`SpotListScreen` + Tag chip 多選 + 篩選列 | 5 | S3 | S1 |
 
-### Epic C — 自動分類已訪景點 (UC10 / FR-11)
+### Epic C — 自動分類已訪景點 (UC10 / FR-11) — **2026-05-15 整段砍除**
 
-> **2026-05-14 壓縮**:C-4 分群圖表延到 Sprint 6(釋出 S3 在 Sprint 2 的 5 點給 N-10/N-12;G1 demo 仍能 demo 分群結果,僅圖表延後)。
+> **整段砍除理由**:依 refactor.md 視角,回顧頁用「時間軸 + 已造訪清單」即可呈現旅程結構;分群視覺化(廟宇/商業/歷史)不屬於核心體驗(記憶保存 / 拍照引導 / 策展分享)。
+>
+> FR-11 在 requirements.md 中保留為次要功能,但 MVP 不實作。GitHub issue #10-#14 已關閉(not planned)。釋出 S4(Python)與 S3(Android)在 Sprint 2 的 capacity 給 Mission 核心。
 
-| ID | Story | 估點 | Owner | Sprint |
-|---|---|---|---|---|
-| C-1 | Python:Classification Engine 規則式版(依 `SpotCategory` enum 直接歸類) | 5 | S4 | S2 |
-| C-2 | 後端:`POST /footprints/classify` API + 6 筆 mock footprint seed | 3 | S2 | S2 |
-| C-3 | 設計:分群視覺化(地圖 cluster + 環圈統計圖雙視圖) | task | D1 | S2 |
-| C-4 | Android:足跡分群圖表(MPAndroidChart 或 Compose canvas) | 5 | S3 | **S6**(原 S2,壓縮延後) |
-| C-5 | (S5+) 升級:依 LLM embedding + cosine 分群,留待 Sprint 6 增強 | 8 | S4 | S6(若有空) |
+### Epic D — 現場導航 / 基礎位置 (UC6 / FR-07)
 
-### Epic D — 現場導航 (UC6 / FR-07)
-
-> **2026-05-14 壓縮**:D-3 直接降級為「寫死 5 條公車路線」(原本就有此降級條款),釋出 S1 在 Sprint 2 的 8 點;D-4 併入 N-6 入口卡設計(Mission 觸發即等同抵達後動作)。
+> **2026-05-15 精簡**:refactor.md 的 entry 是「抵達古蹟」而非「導航前往」。Epic D 範圍縮為「**基礎位置 + Geofence 必要能力**」,讓 N-2(Mission Trigger)能依託。
+>
+> 砍除:D-2 OSM spike(#16)、D-3 PTX 整合(#17)、D-4 導航 UI 設計(#18,已併入 N-6)。
 
 | ID | Story | 估點 | Owner | Sprint |
 |---|---|---|---|---|
 | D-1 | 後端:Navigation Service + `GET /navigation/route?from=&to=` | 5 | S1 | S2 |
-| D-2 | Spike:OSM + Leaflet/MapLibre 對台南路徑準確度驗證(8 條 demo 路線) | 3 | S1 | S2 |
-| D-3 | 後端:**寫死 5 條公車路線**(原 PTX/TDX 整合改 spike,真實串接延 Sprint 6) | 3 | S1 | S2 |
-| D-4 | (併入 N-6)設計:導航 UI 簡化版,進入古蹟即由 N-6 接手 | — | D1 | — |
 | D-5 | Android:`MapScreen` + Google Play Services Location + 同意 flow(NFR-14) | 5 | S3 | S2 |
 
 ### Epic E — 主題路線推薦 (UC5 / FR-03 / FR-22)
@@ -203,15 +201,11 @@ Sprint 6 (週 6) ─ Polish + 整合 + B-2 / C-4 / L-5 補做 + Final Demo
 | E-3 | 設計:路線推薦卡片(美食/建築/歷史 模板) | task | D1 | S3 |
 | E-4 | Android:`RouteCardScreen` + 套用至 Trip 流程 | 3 | S3 | S3 |
 
-### Epic F — 地圖式行程規劃 (UC4 / FR-04)
+### Epic F — 地圖式行程規劃 (UC4 / FR-04) — **2026-05-15 整段砍除**
 
-> **2026-05-15 砍除**:F-2(estimateCost / estimatePace)隨 Epic K 一起砍,不再做費用 / 節奏估算。
-
-| ID | Story | 估點 | Owner | Sprint |
-|---|---|---|---|---|
-| F-1 | 後端:Trip & Itinerary Service(`createTrip` / `addSpot` / `reorder`) | 8 | S1+S2 | S3 |
-| F-3 | 設計:地圖式行程 UI — **不同 tag 顏色路徑** + 拖曳排序 + 時間軸並陳 | task | D1 | S3 |
-| F-4 | Android:行程地圖頁 + 拖曳排序(Compose `Modifier.dragAndDrop`) | 8 | S3 | S3 |
+> **整段砍除理由**:refactor.md 流程是「抵達古蹟 → Mission」,不是「先規劃完整行程 → 走完」。MVP 由 Epic E(路線推薦清單)提供主頁入口,使用者點選後直接抵達,不需 Trip & Itinerary Service / 地圖式拖曳排序。
+>
+> UC4 / FR-04 在 requirements.md 中可標記為「未來」。GitHub issue #24/#26/#27 已關閉(not planned);F-2 隨 Epic K 一起砍。
 
 ### Epic G — 多語切換 (UC13 / FR-09 / NFR-01 / NFR-02)
 
@@ -285,7 +279,7 @@ Sprint 6 (週 6) ─ Polish + 整合 + B-2 / C-4 / L-5 補做 + Final Demo
 | N-12 | Android:`MemoryPromptBottomSheet` + 可見性切換(FR-26) | 3 | S3 | S2 |
 | N-13 | Admin 後台:Mission / PhotoSpot / MemoryPrompt 編輯子表單(承接 L-2) | 5 | S5 | S5 |
 
-> **N-11 Owner 註**:S3 在 Sprint 2 已負擔 D-5 + N-10 + N-12 = 13 點,N-11(8 點)由 S4 暫時支援(S4 原僅 C-1 5 點);若 S4 無 Android 經驗,Mid-Sprint Sync(週三)決定降級或延 Sprint 3。
+> **N-11 Owner 註**:S3 在 Sprint 2 已負擔 D-5 + N-10 + N-12 = 13 點,N-11(8 點)由 S4 暫時支援(Epic C 砍除後 S4 capacity 釋出);若 S4 無 Android 經驗,Mid-Sprint Sync(週三)決定降級或延 Sprint 3。
 
 ### Epic M — 平台 / 部署 / 觀測性(跨 sprint)
 
@@ -295,9 +289,9 @@ Sprint 6 (週 6) ─ Polish + 整合 + B-2 / C-4 / L-5 補做 + Final Demo
 | M-2 | OpenAPI 自動生成 + Swagger UI + Postman collection | 3 | S1 | S0–S1 |
 | M-3 | GitHub Actions:backend / android / admin / ai-services CI | 5 | S6(或 S1) | S0–S2 |
 | M-4 | Dockerfile × 4 服務(multi-stage)+ Docker Hub push | 5 | S6 | S4–S5 |
-| M-5 | K8s Kustomize `dev` overlay + 部署到自架 k3s | 8 | S6 | S5 |
-| M-6 | 觀測性 stack(Prometheus + Grafana + Loki + GlitchTip)Helm 安裝 | 5 | S6 | S5 |
-| M-7 | 離線 demo 包(Ollama 本地版 + 預載資料) | 3 | S4 + S6 | S6 |
+| ~~M-5~~ | ~~K8s Kustomize `dev` overlay~~ | — | — | **砍除(2026-05-15)** demo 用 docker-compose |
+| ~~M-6~~ | ~~觀測性 stack(Prometheus + Grafana + Loki + GlitchTip)~~ | — | — | **砍除(2026-05-15)** MVP 不需要 |
+| ~~M-7~~ | ~~離線 demo 包(Ollama 本地版 + 預載資料)~~ | — | — | **砍除(2026-05-15)** demo 環境有網路即可 |
 
 ---
 
@@ -343,7 +337,7 @@ Sprint 6 (週 6) ─ Polish + 整合 + B-2 / C-4 / L-5 補做 + Final Demo
 | S1 | 10 | B-1(5)+ **N-2(5)** |
 | S2 | 10 | A-2(5)+ **N-1(5)** |
 | S3 | 10 | A-5 + B-4 |
-| S4 | — | C-1 spike(為 Sprint 2 暖身) |
+| S4 | — | Mission Trigger / Geofence 技術 spike(為 Sprint 2 N-2 暖身) |
 | S5 | — | L-1 持續推進(沒到 sprint 但先做) |
 
 **Gate 1 Demo Script**:
@@ -358,65 +352,66 @@ Sprint 6 (週 6) ─ Polish + 整合 + B-2 / C-4 / L-5 補做 + Final Demo
 
 ---
 
-### Sprint 2 — Epic C + D(降級)+ Epic N 核心(週 2)— **G1 完成**
+### Sprint 2 — Epic D 基礎位置 + Epic N 核心(週 2)— **G1 完成**
 
-**Sprint Goal**:旅客可在地圖上導航到下一景點;**抵達古蹟自動觸發 Mission → 依 Suggested Shot 拍照 → Memory Prompt(選填)→ 進度更新跑通**;旅程結束開回顧頁看到分群結果。
+**Sprint Goal**:**抵達古蹟自動觸發 Mission → 依 Suggested Shot 拍照 → Memory Prompt(選填)→ 進度更新跑通**;旅程結束有最小回顧入口。
 
-**選入 Stories**:A-3(挪入)、C-1、C-2、C-3、D-1、D-2、**D-3 降級版**、D-5、**N-3、N-4、N-8、N-9、N-10、N-11、N-12、N-5 收尾**(C-4 延 S6;D-4 併入 N-6)
+**選入 Stories**:A-3(挪入)、D-1、D-5、**N-3、N-4、N-8、N-9、N-10、N-11、N-12、N-5 收尾**
+**已砍除**:Epic C 全部、D-2/D-3/D-4
 
 | 成員 | 點數 | Tickets |
 |---|---|---|
-| D1 | task | C-3 + **N-8 + N-9**(D-4 併入 N-6) |
+| D1 | task | **N-8 + N-9** |
 | D2 | task | **N-5 收尾**(3 × 3 三件套繁中 + 英文)+ Scenario Video 腳本 |
-| S1 | 5 | D-1(5) — D-3 降級寫死 5 條;D-2 spike 由 D-1 帶過 |
-| S2 | 12 | C-2(3)+ A-3(3)+ **N-3(3)+ N-4(3)** |
-| S3 | 13 | D-5(5)+ **N-10(5)+ N-12(3)** — C-4 延 S6 |
-| S4 | 13 | C-1(5)+ **N-11(8)暫支援** |
+| S1 | 5 | D-1(5) |
+| S2 | 9 | A-3(3)+ **N-3(3)+ N-4(3)** |
+| S3 | 13 | D-5(5)+ **N-10(5)+ N-12(3)** |
+| S4 | 8 | **N-11(8)** |
 | S5 | — | L-2 起稿 |
 
 **風險點**:
-- **N-11(Android CameraX + overlay)由 S4 暫接** — 若 S4 無 Android 經驗,Mid-Sprint 週三決定降級為「無 overlay 純拍照」或延 Sprint 3
+- **N-11(Android CameraX + overlay)由 S4 暫接** — 若 S4 無 Android 經驗,Mid-Sprint 週三決定降級為「無 overlay 純拍照」或延 Sprint 3。Epic C 砍除後 S4 capacity 釋出,可全力投入。
 - D-5 位置權限同意 flow 要嚴格符合 NFR-14,設計與工程要對齊(geofencing 由 N-10 接,D-5 只做基礎 location)
 - N-3 PhotoGuidance JSON schema 必須在週一 Planning 前確定,否則 N-5 內容組無法填
 
 **Gate 2 Demo Script**:
-1. 從 Sprint 1 的清單選赤崁樓 → 點「導航前往」
-2. 地圖顯示步行路線(OSM + Leaflet),含預估時間
-3. 抵達赤崁樓 → **App 自動 pop-up Heritage Mission 入口卡「您已抵達赤崁樓,共 3 個必拍記憶點」**
-4. 點入第一個 photo spot → 看到 Suggested Shot / Why Special / Memory Prompt 三件套
-5. 進入拍照模式 → 取景框 overlay + 構圖提示 → 拍一張
-6. 拍完 bottom sheet 跳 Memory Prompt → 填或跳過,Mission 進度更新為 1/3
-7. 假裝走完 → 切到「我的足跡」頁,看到分群結果(視覺化圖表延 S6)
-8. **G1 全部 4 個 UC + Mission 三件套主流程在同一台真機跑通**
+1. 抵達赤崁樓 geofence → **App 自動 pop-up Heritage Mission 入口卡「您已抵達赤崁樓,共 3 個必拍記憶點」**
+2. 點入第一個 photo spot → 看到 Suggested Shot / Why Special / Memory Prompt 三件套
+3. 進入拍照模式 → 取景框 overlay + 構圖提示 → 拍一張
+4. 拍完 bottom sheet 跳 Memory Prompt → 填或跳過,Mission 進度更新為 1/3
+5. 假裝走完 → 切到「我的足跡」頁,看到時間軸式呈現(分群視覺化已砍)
+6. **G1 核心 UC(UC3 / UC2 / UC6 / UC19 / UC20 / UC21)在同一台真機跑通**
 
 ---
 
-### Sprint 3 — Epic E + F + G(週 3)
+### Sprint 3 — Epic E + G(週 3)
 
-**Sprint Goal**:旅客可選雙主題自動推薦跨時期路線,在地圖上拖曳排序,中英隨切。
+**Sprint Goal**:旅客可選雙主題,主頁顯示推薦路線清單,中英隨切。
 
-**選入 Stories**:E-1、E-2、E-3、E-4、F-1、F-3、F-4、G-1、G-2、G-3、I-1(spike 提前)
+**選入 Stories**:E-1、E-2、E-3、E-4、G-1、G-2、G-3、G-4、I-1(spike 提前)
+**已砍除**:Epic F 全部(F-1/F-3/F-4)
 
 | 成員 | 點數 | Tickets |
 |---|---|---|
-| D1 | task | E-3 + F-3 |
+| D1 | task | E-3 |
 | D2 | task | G-2 + G-4(跨文化類比文案) |
-| S1 | 11 | F-1(共擔)+ G-1 |
+| S1 | 3 | G-1 |
 | S2 | 10 | E-1 + E-2 |
-| S3 | 11 | F-4 + E-4 |
+| S3 | 6 | G-3 + E-4 |
 | S4 | 5 | I-1(LLM spike,為 Sprint 4 暖身) |
 | S5 | — | L-2 推進 |
 | S6 | — | M-3 / M-4 補強 CI |
 
+> 本 sprint 因 Epic F 砍除而負載大降,可作為 Mission 內容(N-5 第二批 photo spots)補強或 polish Sprint 2 demo path 的緩衝期。
+
 **Mid-Sprint Sync(週三)強制議題**:
-- F-4 拖曳互動的 UX 細節:設計與 Android 對齊「排序動畫流暢度標準」
 - I-1 結果:Gemini 2.5 Flash 是否品質夠?或要切 2.5 Pro?(影響 Sprint 4 預算)
 
 **Gate 3 Demo Script**:
-1. 選「美食 + 建築」雙主題 → 系統推薦「台南古蹟 + 在地小吃」跨時期路線
-2. 在地圖上拖曳順序,**不同 tag 用不同顏色路徑**
-3. 切英文,整頁(含主題名 / 景點 / 故事)翻過去
-4. 確認行程 → 進入 Sprint 4 將串接的足跡 / 敘事入口
+1. 主頁顯示推薦路線清單(美食 + 建築跨時期等)
+2. 點入路線 → 看到所含景點(古蹟可走 Mission)
+3. 切英文,整頁文字翻過去
+4. 進入 Sprint 4 將串接的足跡 / 敘事入口
 
 ---
 
@@ -446,7 +441,7 @@ Sprint 6 (週 6) ─ Polish + 整合 + B-2 / C-4 / L-5 補做 + Final Demo
 
 **Gate 4 Demo Script**:
 1. 走完一日台南三景點 → 用 tag 記錄(無打字)+ 心情關鍵字
-2. 開「足跡地圖」(UC9 最小版)→ 看到分群 + 時間軸
+2. 開「足跡地圖」(UC9 最小版)→ 看到時間軸與已造訪 photo spots
 3. 點「生成旅程故事」→ loading 5–10 秒 → 明信片預覽
 4. 點分享 → 出現連結 + 圖片 + 地圖路線 三選項
 5. 選地圖路線 → 透過 Android Sharesheet 傳出去
@@ -456,9 +451,10 @@ Sprint 6 (週 6) ─ Polish + 整合 + B-2 / C-4 / L-5 補做 + Final Demo
 
 ### Sprint 5 — Epic L + Epic N(Admin)+ 部署 + 觀測性(週 5)— **G3 完成**
 
-**Sprint Goal**:後台可獨立操作景點 / 故事 / 翻譯審核 + **Mission / PhotoSpot / MemoryPrompt 編輯**;整套服務在 K8s `staging` 跑起來,Grafana 看得到 metrics。
+**Sprint Goal**:後台可獨立操作景點 / 故事 / 翻譯審核 + **Mission / PhotoSpot / MemoryPrompt 編輯**;服務透過 docker-compose 在單台 VM 上可獨立部署。
 
-**選入 Stories**:L-1 收尾、L-2、L-3、L-4、L-6、L-7、**N-13**、M-4、M-5、M-6、C-5(若有空升級分類)— L-5 延 S6
+**選入 Stories**:L-1 收尾、L-2、L-3、L-4、L-6、L-7、**N-13**、M-4 — L-5 延 S6
+**已砍除**:M-5(K8s)、M-6(觀測性)、C-5(LLM embedding 升級)
 
 | 成員 | 點數 | Tickets |
 |---|---|---|
@@ -467,39 +463,40 @@ Sprint 6 (週 6) ─ Polish + 整合 + B-2 / C-4 / L-5 補做 + Final Demo
 | S1 | 5 | L-6(Auth + Role) |
 | S2 | — | bug fix + 補測試 |
 | S3 | — | App 內 polish issue + 對接 admin 改的內容 |
-| S4 | 8 | C-5(LLM embedding 升級分類,選做)+ I 系列調 prompt |
+| S4 | — | I 系列調 prompt + Mission 內容 polish |
 | S5 | 20 | L-2、L-3、L-4(15 點)+ **N-13(5)** — L-5 延 S6 |
-| S6 | 18 | M-4、M-5、M-6(K8s + 觀測性) |
+| S6 | 5 | M-4(Dockerfile + docker-compose prod 設定) |
+
+> 因 K8s / 觀測性整段砍除,S6 capacity 大降;可作為 demo 排練、文件、bug 緩衝。
 
 **Gate 5 Demo Script**:
 1. Admin CMS 登入(JWT)→ 新增「神農街」景點 + 三語故事
 2. 點「送審」→ 翻譯審核佇列出現 → 通過
 3. **App 立刻看得到**(NFR-16 解耦驗證)
-4. 切到 Grafana → 看到剛剛兩個 API 請求的 latency 與 200 status
-5. **G3 全部 3 個 UC 完成,可獨立跑**
+4. **G3 全部 3 個 UC 完成,可獨立跑**
 
 ---
 
 ### Sprint 6 — Polish + 整合 + 壓縮補做 + Final Demo(週 6)— **緩衝週**
 
-**Sprint Goal**:期末 demo 一鏡到底跑完;備用離線版可跑;簡報 / 海報 / Scenario Video 全部上線;**壓縮延後的 B-2 / C-4 / L-5 補做完成**。
+**Sprint Goal**:期末 demo 一鏡到底跑完;簡報 / 海報 / Scenario Video 全部上線;**壓縮延後的 B-2 / L-5 補做完成**。
 
-**選入 Stories**:M-7(離線包)、**B-2(tsvector)**、**C-4(分群圖表)**、**L-5(UGC tag 審核)**、bug fix、UI polish、Scenario Video 收尾、Demo 排練
+**選入 Stories**:**B-2(tsvector)**、**L-5(UGC tag 審核)**、bug fix、UI polish、Scenario Video 收尾、Demo 排練
+**已砍除**:C-4(分群圖表)、M-7(離線包)
 
 | 成員 | 任務 |
 |---|---|
 | D1 | 期末簡報視覺 + Demo storyboard + 海報 |
 | D2 | 使用者測試 round 2 + 修最後 5–10 個 UX 議題 + Scenario Video 剪接 |
-| S1 | E2E 測試:UC2 → UC3 → UC4 → UC6 → UC8 → UC10 → UC11 → UC12 一鏡到底 |
-| S2 | bug fix 衝刺;效能調校(NFR-03 首屏 ≤ 2s 抽查) |
+| S1 | E2E 測試:UC2 → UC3 → UC19/20/21 → UC8 → UC11 → UC12 → UC22 一鏡到底 |
+| S2 | bug fix 衝刺;效能調校(NFR-03 首屏 ≤ 2s 抽查);B-2 tsvector 補做 |
 | S3 | App 最後一輪 polish + Play Store internal track 上架(可選) |
-| S4 | M-7 離線 demo 包(Ollama + 預載 8 條路徑 / 16 景點) |
-| S5 | Admin 補洞 + UGC tag 審核 demo |
-| S6 | `prod` overlay 部署一輪;DB 備份腳本驗證 |
+| S4 | Mission 內容質量檢查 + LLM prompt 收尾 |
+| S5 | L-5(UGC tag 審核)+ Admin 補洞 |
+| S6 | docker-compose prod 部署演練;DB 備份腳本驗證 |
 
 **Final Gate**:
-- [ ] 期末 demo 走完整流程不卡
-- [ ] 備用離線版可跑(現場萬一斷網)
+- [ ] 期末 demo 走完整流程不卡(Mission path 為主)
 - [ ] Scenario Video 上線
 - [ ] README / 部署文件 / .env.example 收齊
 
@@ -554,9 +551,9 @@ Backlog → To Do → In Progress → In Review → Done
 | R1 | Gemini API 免費額度撐不住 demo 反覆測試 | M | H | 開發期用 Ollama 本地;demo 才打 Gemini;Narrative 結果快取 Redis |
 | R2 | OSM 對台南覆蓋不完整 / 路徑奇怪 | M | M | 預先把 demo 8 條路徑手動驗證;真不行 fallback Google Maps free tier |
 | R3 | 三語翻譯校對來不及(NFR-02) | H | M | 先英文,簡中可在 Sprint 6 補;不要為三語延 demo |
-| R4 | UC10 規則式分類品質差 | L | M | 先規則式 demo,Sprint 5/6 升級 LLM embedding(C-5) |
+| R4 | Mission 內容覆蓋不足(3 古蹟 × 3 spots 不夠豐富) | M | M | Sprint 3 N-5 收尾 + Sprint 6 polish 補強;每個 photo spot 三件套人工校對 |
 | R5 | 設計組 vs 系統組節奏脫鉤 | H | H | 每週五 demo gate 強制整合;**整合不過下週不開新工** |
-| R6 | F-4 拖曳互動技術 spike 失敗 | M | M | fallback:長按 + 上下移動箭頭(非拖曳)demo |
+| R6 | N-11 CameraX overlay 技術 spike 失敗 | M | H | fallback:N-8 設計簡化為「無 overlay,純拍照 + 文字提示」;Mid-Sprint Sync 決定 |
 | R7 | S6 缺席(4 人版)導致 K8s 部署延後 | M | H | 4 人版改用 docker-compose 在單台 VM 上 demo,放棄 K8s |
 | R8 | Sprint 4 同時 3 Epic 過載 | M | H | SM 週三必須砍 ticket;J-2(出圖)/ J-3、J-4(策展版型只先 POSTCARD)為砍刀候選 |
 | R9 | Android 模擬器在 Demo 時掛 | L | H | 帶 2 台實體 Android(API 30+)備援 |
@@ -595,7 +592,27 @@ Backlog → To Do → In Progress → In Review → Done
 
 ---
 
-## 11. 壓縮版 — 4 週可砍方案
+## 11. 未來 Roadmap(不在 MVP)
+
+> 以下為 2026-05-15 砍除 / 後延的需求,在 MVP 階段不開 sprint issue,但在 requirements.md 中仍有對應 FR / UC 編號保留作 traceability。
+> 期末驗收後若繼續推進,可依此清單重啟。
+
+| 項目 | 對應 FR/UC | 砍除/後延原因 | 重啟條件 |
+|---|---|---|---|
+| **AI 個人化推薦** | FR-19 | 使用者明確希望「主頁有 AI 依興趣 / 已造訪推薦」,但 MVP 用 Epic E 「系統預設主題路線」即可滿足 demo;AI 個人化需要訓練資料與評估,成本高 | 累積 ≥ 1000 使用者足跡後重啟 |
+| **景點自動分類視覺化** | FR-11 / UC10 / Epic C | 回顧頁 MVP 用時間軸即可,分群圖表不在 refactor 核心 | 使用者反饋強烈希望分群視覺化時重啟 |
+| **地圖式行程拖曳排序** | FR-04 / UC4 / Epic F | refactor 流程是「抵達古蹟 → Mission」,不需先規劃整條行程 | 進階使用者需要多日行程規劃時重啟 |
+| **費用 / 節奏估算** | FR-15 / FR-16 / UC14 / UC15 / Epic K | 跟核心體驗無關 | 與商業合作(Epic 商家)綁定時重啟 |
+| **機場 Kiosk 入口** | FR-01 / FR-20 / UC1 | 新 Persona 不從機場啟動 | 與機場 / 觀光局合作時重啟 |
+| **在地商家合作接點** | FR-23 | 跟 refactor 核心無關 | 商業化階段重啟 |
+| **PTX/TDX 公車整合** | FR-07(精緻版) | 寫死 5 條已夠 demo | 多城市擴張時重啟 |
+| **K8s + 觀測性 stack** | NFR-11 / Epic M-5/M-6 | demo 用 docker-compose 即可 | 上線後 traffic 增長時重啟 |
+| **離線 demo 包** | NFR-12 部分 | demo 環境通常有網路 | demo 前評估網路風險高時重啟 |
+| **跨景點脈絡關聯(UC7)** | FR-06 / UC7 / UC17 | architecture.md §8 仍列為差異化 service,但 MVP 不主動實作 | Mission 內容豐富後重啟 |
+
+---
+
+## 12. 壓縮版 — 4 週可砍方案
 
 若期程從 6 週壓到 4 週(預備週不算),以下範圍砍掉:
 
@@ -604,8 +621,8 @@ Backlog → To Do → In Progress → In Review → Done
 | Epic L 整個降為「**只用 Swagger UI 給後台同學人工編輯**」 | 失去 Admin 視覺,但內容仍可改 |
 | J-2 簡化為靜態圖卡 | 失去動態合成的精緻分享圖 |
 | 策展版型只實作 POSTCARD | 失去 TIMELINE / STORYBOOK 兩套版型 |
-| C-5 不做 | UC10 永遠是規則式分類 |
-| M-5 / M-6 不做 K8s,改 docker-compose 單機 demo | 失去觀測性 stack |
+| B-2 tsvector 完全不做(SQL LIKE) | 8 個景點不影響 |
+| L-5 UGC tag 審核完全不做 | UGC tag 在 Sprint 6 才會累積,4 週版本還不會有 |
 | Sprint 6 緩衝週砍掉 | 沒有修 bug 的時間,風險高 |
 
 對應 Sprint 重排:
@@ -621,7 +638,7 @@ Sprint 4 = Final Demo + 修 bug,G3 維持 Swagger UI
 
 ---
 
-## 12. Retrospective 模板
+## 13. Retrospective 模板
 
 每個 Sprint Review 後 30 分鐘:
 
@@ -635,11 +652,14 @@ Sprint 4 = Final Demo + 修 bug,G3 維持 Swagger UI
 
 ---
 
-## 13. 變更紀錄
+## 14. 變更紀錄
 
 | 日期 | 修訂 | 作者 |
 |---|---|---|
 | 2026-04-27 | 初版,六個 Sprint 安排 | Claude + 專案組 |
+| 2026-05-14 | 引入 Epic N(Heritage Mission),重排 Sprint 1/2/5;壓縮 B-2/C-4/L-5/D-3/A-1/A-4/D-4 | Claude + 專案組 |
+| 2026-05-14 | 砍除 A/B/C 群:Kiosk(UC1/FR-01/FR-20)、費用節奏(Epic K, F-2)、在地商家(FR-23) | Claude + 專案組 |
+| 2026-05-15 | 依 refactor.md 核心二次審視,再砍 14 張:Epic C 全砍、Epic F 全砍、D-2/D-3/D-4、M-5/M-6/M-7;新增 §11 未來 Roadmap | Claude + 專案組 |
 
 ---
 

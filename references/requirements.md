@@ -15,6 +15,14 @@
 - **抵達古蹟即觸發的 Heritage Exploration Mission**:以「Suggested Shot / Why Special / Memory Prompt」三件套引導拍攝與意義建構
 - 旅程後的足跡回顧、敘事生成,以及策展式分享版型
 
+> **MVP 範圍說明(2026-05-15)**:本文件保留完整需求 traceability,但**以下需求在 MVP 不實作**,實作範圍以 `schedule.md` §11 未來 Roadmap 為準:
+> - UC4 / FR-04(地圖式行程規劃,Epic F 已砍)
+> - UC10 / FR-11(自動分類,Epic C 已砍)
+> - FR-19(AI 個人化推薦,記為未來)
+> - UC7 / FR-06(跨景點脈絡,架構保留但 MVP 不主動實作)
+>
+> 對應 GitHub issue 已 close(not planned)。
+
 ### 1.1 Target Persona — 深度記錄型外國旅客
 
 > Persona 為原「外國旅客」母集中的**主要 segment**,而非取代;Casual 旅客仍是次要使用者。多語仍為第一優先(NFR-01、NFR-02)。

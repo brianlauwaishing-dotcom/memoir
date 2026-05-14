@@ -4,6 +4,8 @@
 > 主要 Persona:深度記錄型外國旅客(requirements.md §1.1)
 > 來源:`requirements.md`(FR-02 ~ FR-27 缺 FR-01/15/16/20/23、UC2 ~ UC22 缺 UC1/14/15、NFR-01 ~ NFR-20)
 > 目的:概覽本專案會用到的 service 類型與彼此關係,作為實作前的技術藍圖。
+>
+> **MVP 不實作的 service(2026-05-15)**:Classification Engine(Epic C 砍)、Trip & Itinerary Service(Epic F 砍)、Merchant Partner Service(已砍)、Payment(已砍)。本文件保留完整架構描述以利未來擴展,實作範圍以 `schedule.md` §11 未來 Roadmap 為準。
 
 為避免單張圖過於擁擠,以下拆成 **6 張小圖**:
 1. 高階總覽
