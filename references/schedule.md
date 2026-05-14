@@ -418,26 +418,27 @@ Sprint 6 (週 6) ─ Polish + 整合 + B-2 / L-5 補做 + Final Demo
 ### Sprint 4 — Epic H + I + J(週 4)— **G2 完成**
 
 > 本 sprint 最重也最高風險:LLM 第一次上 runtime + 同時做三個 Epic。
-> **2026-05-15**:Epic K 與 F-2 已砍除,釋出 S1/S2/S3 capacity 給 H/I/J,過載風險顯著下降。
+> **2026-05-15 重排**:盤點實際點數後發現 S2/S3 嚴重超載(原寫 8/11 其實是 18/16),將 H-2 與 J-4 推 Sprint 6、J-1 Owner 從 S2 移到 S1 共擔,使容量正常化。
 
 **Sprint Goal**:走完一日台南 → 開回顧頁 → 點「生成旅程故事」→ 拿到明信片敘事 → 分享連結出去。
 
-**選入 Stories**:H-1、H-2、H-3、H-4、H-5、I-2、I-3、I-4、I-5、J-1、J-2、J-3、J-4
+**選入 Stories**:H-1、H-3、H-4、H-5、I-2、I-3、I-4、I-5、J-1、J-2、J-3、M-4
+**推 Sprint 6**:H-2(UGC tag 後端,搭 L-5 一起做)、J-4(Android Sharesheet)
 
 | 成員 | 點數 | Tickets |
 |---|---|---|
 | D1 | task | H-3 + I-4 + J-3 |
 | D2 | task | **使用者測試 round 1** + 跨文化文案收尾 |
-| S1 | 3 | I-3 + 共擔 review |
-| S2 | 8 | H-1 + H-2 + J-1 + J-2 |
-| S3 | 11 | H-4 + H-5 + I-5 + J-4 |
+| S1 | 8 | I-3(3)+ **J-1(5)從 S2 移入** |
+| S2 | 10 | H-1(5)+ J-2(5) |
+| S3 | 13 | H-4(5)+ H-5(3)+ I-5(5) |
 | S4 | 8 | I-2(主軸) |
 | S5 | — | L-2 + L-3 推進 |
-| S6 | — | M-4 Dockerfile 完成 |
+| S6 | 5 | M-4 Dockerfile 完成 |
 
 **並行流量警告**:
-- 過往 S2/S3 超載風險已消;但 J-2 / J-3 仍需注意策展版型擴展(refactor 後升級為三套版型)
-- 砍法備援:J-2 出圖簡化(只出靜態 1 張不要動態合成)、J-3 / J-4 只先實作 POSTCARD 版型
+- J-2 / J-3 仍需注意策展版型擴展(refactor 後升級為三套版型);砍法備援:J-2 出圖簡化(只出靜態 1 張不要動態合成)、J-3 只先實作 POSTCARD 版型
+- S3 13 點已逼近上限,若卡 H-5(UC9 最小版足跡地圖),可考慮在 N-10 MissionEntryScreen 加 Tab 兼任入口
 
 **Gate 4 Demo Script**:
 1. 走完一日台南三景點 → 用 tag 記錄(無打字)+ 心情關鍵字
@@ -453,8 +454,9 @@ Sprint 6 (週 6) ─ Polish + 整合 + B-2 / L-5 補做 + Final Demo
 
 **Sprint Goal**:後台可獨立操作景點 / 故事 / 翻譯審核 + **Mission / PhotoSpot / MemoryPrompt 編輯**;服務透過 docker-compose 在單台 VM 上可獨立部署。
 
-**選入 Stories**:L-1 收尾、L-2、L-3、L-4、L-6、L-7、**N-13**、M-4 — L-5 延 S6
+**選入 Stories**:L-1、L-2、L-3、L-4、L-6、L-7 — L-5 / N-13 / M-4 延 S6
 **已砍除**:M-5(K8s)、M-6(觀測性)、C-5(LLM embedding 升級)
+**2026-05-15 重排**:N-13 從 Sprint 5 推到 Sprint 6(承接 L-2,L-2 在 S5 開始即可,N-13 在 S6 收尾);L-1 框架不只 scaffolding,Sprint 5 計入完整 5 點。
 
 | 成員 | 點數 | Tickets |
 |---|---|---|
@@ -464,10 +466,10 @@ Sprint 6 (週 6) ─ Polish + 整合 + B-2 / L-5 補做 + Final Demo
 | S2 | — | bug fix + 補測試 |
 | S3 | — | App 內 polish issue + 對接 admin 改的內容 |
 | S4 | — | I 系列調 prompt + Mission 內容 polish |
-| S5 | 20 | L-2、L-3、L-4(15 點)+ **N-13(5)** — L-5 延 S6 |
-| S6 | 5 | M-4(Dockerfile + docker-compose prod 設定) |
+| S5 | 20 | L-1(5)+ L-2(5)+ L-3(5)+ L-4(5)— L-5 / N-13 延 S6 |
+| S6 | — | (M-4 / M-5 / M-6 已分別移出此 sprint;見 Sprint 6) |
 
-> 因 K8s / 觀測性整段砍除,S6 capacity 大降;可作為 demo 排練、文件、bug 緩衝。
+> 因 K8s / 觀測性整段砍除,S6 在 Sprint 5 無工作;主要負載落在 S5。
 
 **Gate 5 Demo Script**:
 1. Admin CMS 登入(JWT)→ 新增「神農街」景點 + 三語故事
@@ -477,23 +479,23 @@ Sprint 6 (週 6) ─ Polish + 整合 + B-2 / L-5 補做 + Final Demo
 
 ---
 
-### Sprint 6 — Polish + 整合 + 壓縮補做 + Final Demo(週 6)— **緩衝週**
+### Sprint 6 — Polish + 整合 + 補做 + Final Demo(週 6)— **緩衝週**
 
-**Sprint Goal**:期末 demo 一鏡到底跑完;簡報 / 海報 / Scenario Video 全部上線;**壓縮延後的 B-2 / L-5 補做完成**。
+**Sprint Goal**:期末 demo 一鏡到底跑完;簡報 / 海報 / Scenario Video 全部上線;**Sprint 4/5 延後的 H-2 / J-4 / N-13 補做完成**。
 
-**選入 Stories**:**B-2(tsvector)**、**L-5(UGC tag 審核)**、bug fix、UI polish、Scenario Video 收尾、Demo 排練
+**選入 Stories**:**B-2(tsvector)**、**H-2(UGC tag 提交)**、**J-4(Android Sharesheet)**、**N-13(Admin Mission 編輯)**、**L-5(UGC tag 審核)**、**M-4(Dockerfile)**、bug fix、UI polish、Scenario Video 收尾、Demo 排練
 **已砍除**:C-4(分群圖表)、M-7(離線包)
 
-| 成員 | 任務 |
-|---|---|
-| D1 | 期末簡報視覺 + Demo storyboard + 海報 |
-| D2 | 使用者測試 round 2 + 修最後 5–10 個 UX 議題 + Scenario Video 剪接 |
-| S1 | E2E 測試:UC2 → UC3 → UC19/20/21 → UC8 → UC11 → UC12 → UC22 一鏡到底 |
-| S2 | bug fix 衝刺;效能調校(NFR-03 首屏 ≤ 2s 抽查);B-2 tsvector 補做 |
-| S3 | App 最後一輪 polish + Play Store internal track 上架(可選) |
-| S4 | Mission 內容質量檢查 + LLM prompt 收尾 |
-| S5 | L-5(UGC tag 審核)+ Admin 補洞 |
-| S6 | docker-compose prod 部署演練;DB 備份腳本驗證 |
+| 成員 | 點數 | Tickets |
+|---|---|---|
+| D1 | task | 期末簡報視覺 + Demo storyboard + 海報 |
+| D2 | task | 使用者測試 round 2 + 修最後 5–10 個 UX 議題 + Scenario Video 剪接 |
+| S1 | 3 | B-2(tsvector)+ E2E 測試 |
+| S2 | 3 | **H-2**(UGC tag 提交,搭 L-5)+ bug fix 衝刺;效能調校(NFR-03 首屏 ≤ 2s 抽查)|
+| S3 | 3 | **J-4**(Android Sharesheet)+ App 最後一輪 polish |
+| S4 | — | Mission 內容質量檢查 + LLM prompt 收尾 |
+| S5 | 8 | **N-13**(5)+ **L-5**(3)+ Admin 補洞 |
+| S6 | 5 | **M-4**(Dockerfile + docker-compose prod 設定)+ DB 備份腳本驗證 |
 
 **Final Gate**:
 - [ ] 期末 demo 走完整流程不卡(Mission path 為主)
@@ -660,6 +662,7 @@ Sprint 4 = Final Demo + 修 bug,G3 維持 Swagger UI
 | 2026-05-14 | 引入 Epic N(Heritage Mission),重排 Sprint 1/2/5;壓縮 B-2/C-4/L-5/D-3/A-1/A-4/D-4 | Claude + 專案組 |
 | 2026-05-14 | 砍除 A/B/C 群:Kiosk(UC1/FR-01/FR-20)、費用節奏(Epic K, F-2)、在地商家(FR-23) | Claude + 專案組 |
 | 2026-05-15 | 依 refactor.md 核心二次審視,再砍 14 張:Epic C 全砍、Epic F 全砍、D-2/D-3/D-4、M-5/M-6/M-7;新增 §11 未來 Roadmap | Claude + 專案組 |
+| 2026-05-15 | Project board 對齊修正:#19 D-5 點數 8→5、#74 N-11 Owner S3→S4;Sprint 4 容量計算錯誤修正(S2/S3 實際 18/16),把 H-2 / J-4 推 Sprint 6、J-1 移 S1;Sprint 5 N-13 推 Sprint 6 解 S5 25 點超載 | Claude + 專案組 |
 
 ---
 
