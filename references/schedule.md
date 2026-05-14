@@ -119,20 +119,26 @@
 ```
 Sprint 0 (週 0, 0.5 週準備)
    ↓ 環境就緒 + 內容種子第一批
-Sprint 1 (週 1) ─ Epic A + B 起 ─ Demo: 看到景點故事
+Sprint 1 (週 1) ─ Epic A + B(壓縮)+ Epic N 起 ─ Demo: 看到景點故事 + Mission 三件套設計 ready
    ↓
-Sprint 2 (週 2) ─ Epic C + D ─ G1 完成 ─ Demo: 導航 + 分類
+Sprint 2 (週 2) ─ Epic C + D(降級)+ Epic N 核心 ─ G1 完成 ─ Demo: 導航 + 分類 + Mission 拍照 + Memory Prompt
    ↓
 Sprint 3 (週 3) ─ Epic E + F + G ─ Demo: 規劃 + 多語
    ↓
 Sprint 4 (週 4) ─ Epic H + I + J + K ─ G2 完成 ─ Demo: 敘事 + 分享
    ↓
-Sprint 5 (週 5) ─ Epic L + 部署 ─ G3 完成 ─ Demo: Admin 上線 + K8s
+Sprint 5 (週 5) ─ Epic L + Epic N(Admin)+ 部署 ─ G3 完成 ─ Demo: Admin 上線 + K8s
    ↓
-Sprint 6 (週 6) ─ Polish + 整合 + Final Demo
+Sprint 6 (週 6) ─ Polish + 整合 + B-2 / C-4 / L-5 補做 + Final Demo
 ```
 
 每個 Sprint 結束都必須能 demo;**沒 demo 不算結束**。
+
+> **2026-05-14 重排**:依 `references/refactor.md` 引入 Epic N(Heritage Mission),壓縮以下既有任務以釋出 capacity:
+> - B-2(tsvector)、C-4(分群圖表)、L-5(UGC tag 審核)延到 Sprint 6
+> - D-3(PTX 整合)直接降級為寫死 5 條(原本就有降級條款)
+> - A-1 內容種子 16 → 8(3 古蹟 + 5 非古蹟),A-3 從 Sprint 1 挪到 Sprint 2
+> - A-4 範圍縮為「非 Mission 景點頁」;D-4 併入 N-6 入口卡
 
 ---
 
@@ -142,42 +148,50 @@ Sprint 6 (週 6) ─ Polish + 整合 + Final Demo
 
 ### Epic A — 景點文化故事 (UC3 / FR-05)
 
+> **2026-05-14 壓縮**:A-1 16 → 8 個(3 古蹟由 N-5 接手三件套);A-3 挪到 Sprint 2;A-4 範圍縮為「非 Mission 景點頁」(Mission 內景點由 N-7 接手)。
+
 | ID | Story | 估點 | Owner | Sprint |
 |---|---|---|---|---|
-| A-1 | **內容種子**:台南 16 個景點故事(時代/宗教/功能 三段式) × 繁中 + 英文 | task | D2 | S0–S1 |
+| A-1 | **內容種子**:台南 **8 個**景點故事(3 古蹟 + 5 非古蹟)× 繁中 + 英文 | task | D2 | S0–S1 |
 | A-2 | 後端:`Spot`/`Story` schema(Flyway V1)+ `GET /spots/{id}` API | 5 | S2 | S1 |
-| A-3 | 後端:多語版本 `Translation` 表 + `Accept-Language` 路由 | 3 | S2 | S1 |
-| A-4 | 設計:景點故事頁 high-fi(故事化排版 + 圖像規範 + 多語切換) | task | D1 | S1 |
-| A-5 | Android:`SpotDetailScreen`(Compose)+ 多圖載入(Coil) | 5 | S3 | S1 |
+| A-3 | 後端:多語版本 `Translation` 表 + `Accept-Language` 路由 | 3 | S2 | **S2**(原 S1,挪後) |
+| A-4 | 設計:**非 Mission 景點**故事頁 high-fi(故事化排版 + 多語切換) | task | D1 | S1 |
+| A-5 | Android:`SpotDetailScreen`(Compose,非 Mission 景點用)+ 多圖載入(Coil) | 5 | S3 | S1 |
 
 ### Epic B — 主題化景點瀏覽 (UC2 / FR-03 / FR-03a)
+
+> **2026-05-14 壓縮**:B-2 全文檢索延到 Sprint 6(對 demo 不關鍵,釋出 S1 在 Sprint 1 的 3 點給 N-2)。
 
 | ID | Story | 估點 | Owner | Sprint |
 |---|---|---|---|---|
 | B-1 | 後端:`Tag`/`SubTag` 階層 schema + 多選查詢 API | 5 | S1 | S1 |
-| B-2 | 後端:Postgres `tsvector` 全文檢索(暫不引 ES) | 3 | S1 | S1 |
+| B-2 | 後端:Postgres `tsvector` 全文檢索(暫不引 ES) | 3 | S1 | **S6**(原 S1,壓縮延後) |
 | B-3 | 設計:主題瀏覽頁 + 多主題複選 + 子標籤層次互動 | task | D1 | S1 |
 | B-4 | Android:`SpotListScreen` + Tag chip 多選 + 篩選列 | 5 | S3 | S1 |
 
 ### Epic C — 自動分類已訪景點 (UC10 / FR-11)
+
+> **2026-05-14 壓縮**:C-4 分群圖表延到 Sprint 6(釋出 S3 在 Sprint 2 的 5 點給 N-10/N-12;G1 demo 仍能 demo 分群結果,僅圖表延後)。
 
 | ID | Story | 估點 | Owner | Sprint |
 |---|---|---|---|---|
 | C-1 | Python:Classification Engine 規則式版(依 `SpotCategory` enum 直接歸類) | 5 | S4 | S2 |
 | C-2 | 後端:`POST /footprints/classify` API + 6 筆 mock footprint seed | 3 | S2 | S2 |
 | C-3 | 設計:分群視覺化(地圖 cluster + 環圈統計圖雙視圖) | task | D1 | S2 |
-| C-4 | Android:足跡分群圖表(MPAndroidChart 或 Compose canvas) | 5 | S3 | S2 |
+| C-4 | Android:足跡分群圖表(MPAndroidChart 或 Compose canvas) | 5 | S3 | **S6**(原 S2,壓縮延後) |
 | C-5 | (S5+) 升級:依 LLM embedding + cosine 分群,留待 Sprint 6 增強 | 8 | S4 | S6(若有空) |
 
 ### Epic D — 現場導航 (UC6 / FR-07)
+
+> **2026-05-14 壓縮**:D-3 直接降級為「寫死 5 條公車路線」(原本就有此降級條款),釋出 S1 在 Sprint 2 的 8 點;D-4 併入 N-6 入口卡設計(Mission 觸發即等同抵達後動作)。
 
 | ID | Story | 估點 | Owner | Sprint |
 |---|---|---|---|---|
 | D-1 | 後端:Navigation Service + `GET /navigation/route?from=&to=` | 5 | S1 | S2 |
 | D-2 | Spike:OSM + Leaflet/MapLibre 對台南路徑準確度驗證(8 條 demo 路線) | 3 | S1 | S2 |
-| D-3 | 後端:整合台灣 PTX/TDX 公車與山路備援 | 8 | S1 | S2 |
-| D-4 | 設計:導航 UI(目前位置 → 下一景點 + 移動中故事卡 placeholder) | task | D1 | S2 |
-| D-5 | Android:`MapScreen` + Google Play Services Location + 同意 flow(NFR-14) | 8 | S3 | S2 |
+| D-3 | 後端:**寫死 5 條公車路線**(原 PTX/TDX 整合改 spike,真實串接延 Sprint 6) | 3 | S1 | S2 |
+| D-4 | (併入 N-6)設計:導航 UI 簡化版,進入古蹟即由 N-6 接手 | — | D1 | — |
+| D-5 | Android:`MapScreen` + Google Play Services Location + 同意 flow(NFR-14) | 5 | S3 | S2 |
 
 ### Epic E — 主題路線推薦 (UC5 / FR-03 / FR-22)
 
@@ -247,15 +261,39 @@ Sprint 6 (週 6) ─ Polish + 整合 + Final Demo
 
 ### Epic L — Admin CMS(維運)(UC16 / UC17 / UC18 / FR-18)
 
+> **2026-05-14 壓縮**:L-5 UGC tag 審核延到 Sprint 6,釋出 S5 在 Sprint 5 的 3 點給 N-13(Admin Mission 編輯)。
+
 | ID | Story | 估點 | Owner | Sprint |
 |---|---|---|---|---|
 | L-1 | Admin 框架:Vite + React + TypeScript + react-admin / Refine 起骨架 | 5 | S5 | S5 |
 | L-2 | 後台:景點 / 故事編輯頁(UC16)+ TipTap 富文本 | 5 | S5 | S5 |
 | L-3 | 後台:跨景點脈絡關聯編輯(UC17)+ 視覺化關聯圖 | 5 | S5 | S5 |
 | L-4 | 後台:翻譯審核佇列(UC18)+ 通過 / 退回 + diff 對照 | 5 | S5 | S5 |
-| L-5 | 後台:UGC tag 審核(承接 H-2) | 3 | S5 | S5 |
+| L-5 | 後台:UGC tag 審核(承接 H-2) | 3 | S5 | **S6**(原 S5,壓縮延後) |
 | L-6 | 後端:Auth + Role(admin / guide)JWT + 權限 guard | 5 | S1 | S5 |
 | L-7 | 設計:Admin CMS 視覺(以 react-admin 預設為底改 brand) | task | D2 | S5 |
+
+### Epic N — Heritage Mission(UC19-21 / FR-05, FR-08, FR-24, FR-25, FR-26)
+
+> **2026-05-14 新增**:依 `references/refactor.md` 重構引入,Mission 為 G1 級新核心體驗。Sprint 1 起設計與後端 schema 平行;Sprint 2 完成最小可 demo(觸發 → 拍照 → Memory Prompt 跑通)。
+
+| ID | Story | 估點 | Owner | Sprint |
+|---|---|---|---|---|
+| N-1 | 後端:`Mission` / `PhotoSpot` / `MemoryPrompt` schema(Flyway V2)+ `GET /missions/{spotId}` | 5 | S2 | S1 |
+| N-2 | 後端:Mission Trigger Service + Geofence 進入觸發(FR-08, UC19) | 5 | S1 | S1 |
+| N-3 | 後端:Photo Guidance Service + Suggested Shot 資料模型(FR-24, UC20) | 3 | S2 | S2 |
+| N-4 | 後端:`MemoryAnswer` schema + CRUD + 可見性(FR-26, UC21) | 3 | S2 | S2 |
+| N-5 | 內容:台南 3 古蹟 × 3 photo spot 三件套種子(赤崁樓 / 安平古堡 / 孔廟)× 繁中 + 英文 | task | D2 | S1–S2 |
+| N-6 | 設計:Mission 入口卡 + photo spot 清單 UI(進度視覺化 FR-25) | task | D1 | S1 |
+| N-7 | 設計:Story Line 三件套畫面(Suggested Shot / Why Special / Memory Prompt) | task | D1 | S1 |
+| N-8 | 設計:取景框 overlay + 構圖提示 UI(FR-24) | task | D1 | S2 |
+| N-9 | 設計:Memory Prompt 答題介面(現場 + 回顧補填)(FR-26) | task | D1 | S2 |
+| N-10 | Android:`MissionEntryScreen` + 進度條 + geofence 監聽 | 5 | S3 | S2 |
+| N-11 | Android:`PhotoSpotScreen` + CameraX + 取景框 overlay(FR-24) | 8 | **S4**(暫支援)| S2 |
+| N-12 | Android:`MemoryPromptBottomSheet` + 可見性切換(FR-26) | 3 | S3 | S2 |
+| N-13 | Admin 後台:Mission / PhotoSpot / MemoryPrompt 編輯子表單(承接 L-2) | 5 | S5 | S5 |
+
+> **N-11 Owner 註**:S3 在 Sprint 2 已負擔 D-5 + N-10 + N-12 = 13 點,N-11(8 點)由 S4 暫時支援(S4 原僅 C-1 5 點);若 S4 無 Android 經驗,Mid-Sprint Sync(週三)決定降級或延 Sprint 3。
 
 ### Epic M — 平台 / 部署 / 觀測性(跨 sprint)
 
@@ -298,20 +336,20 @@ Sprint 6 (週 6) ─ Polish + 整合 + Final Demo
 
 ---
 
-### Sprint 1 — Epic A + B(週 1)
+### Sprint 1 — Epic A + B(壓縮)+ Epic N 起(週 1)
 
-**Sprint Goal**:旅客打開 App,選歷史 / 美食主題,看到台南景點清單,點開可看完整故事(中英)。
+**Sprint Goal**:旅客打開 App,選歷史 / 美食主題,看到台南景點清單,點開可看完整故事(中英);**並且 Mission 三件套與入口卡設計 ready、N-1 schema migrate 過**。
 
-**選入 Stories**:A-2、A-3、A-4、A-5、B-1、B-2、B-3、B-4、A-1(D2 持續做到 16 個景點)
+**選入 Stories**:A-1(壓縮為 8 個)、A-2、A-4、A-5、B-1、B-3、B-4、**N-1、N-2、N-6、N-7、N-5 起稿**(B-2 延 S6;A-3 挪 S2)
 
 **容量配置**(以 5 人系統組為例):
 
 | 成員 | 點數 | Tickets |
 |---|---|---|
-| D1 | task | A-4 + B-3 |
-| D2 | task | A-1(內容種子完成第一批 16 個) |
-| S1 | 8 | B-1 + B-2 |
-| S2 | 8 | A-2 + A-3 |
+| D1 | task | A-4 + B-3 + **N-6 + N-7** |
+| D2 | task | A-1(壓縮為 8 個)+ **N-5 起稿(3 古蹟 × 3 photo spot)** |
+| S1 | 10 | B-1(5)+ **N-2(5)** |
+| S2 | 10 | A-2(5)+ **N-1(5)** |
 | S3 | 10 | A-5 + B-4 |
 | S4 | — | C-1 spike(為 Sprint 2 暖身) |
 | S5 | — | L-1 持續推進(沒到 sprint 但先做) |
@@ -320,38 +358,44 @@ Sprint 6 (週 6) ─ Polish + 整合 + Final Demo
 1. 打開 App,首頁顯示「歷史 / 美食 / 建築 / 宗教」四個主題
 2. 選「歷史 + 建築」,顯示赤崁樓、安平古堡、孔廟…等清單
 3. 點赤崁樓 → 看到時代 / 宗教 / 功能 三段式故事 + 多語切換按鈕
-4. 切英文 → 整頁文字翻譯(至少 16 個景點有英文版)
+4. 切英文 → 整頁文字翻譯(**8 個景點**有英文版)
+5. **設計組過 Figma**:Mission 入口卡(N-6)+ Story Line 三件套(N-7)三狀態 ready
+6. **後端過 API**:`POST /missions/trigger` + `GET /missions/{spotId}` 在 Swagger 可呼叫(空回應也行)
 
-**Retro 觸發點**:若 D1 設計交付落後超過 2 天,Sprint 2 必須調整。
+**Retro 觸發點**:若 D1 設計交付落後超過 2 天,Sprint 2 必須調整(N-8 / N-9 可延 Mid-Sprint)。
 
 ---
 
-### Sprint 2 — Epic C + D(週 2)— **G1 完成**
+### Sprint 2 — Epic C + D(降級)+ Epic N 核心(週 2)— **G1 完成**
 
-**Sprint Goal**:旅客可在地圖上導航到下一景點;旅程結束開回顧頁看到分群圖。
+**Sprint Goal**:旅客可在地圖上導航到下一景點;**抵達古蹟自動觸發 Mission → 依 Suggested Shot 拍照 → Memory Prompt(選填)→ 進度更新跑通**;旅程結束開回顧頁看到分群結果。
 
-**選入 Stories**:C-1、C-2、C-3、C-4、D-1、D-2、D-3、D-4、D-5
+**選入 Stories**:A-3(挪入)、C-1、C-2、C-3、D-1、D-2、**D-3 降級版**、D-5、**N-3、N-4、N-8、N-9、N-10、N-11、N-12、N-5 收尾**(C-4 延 S6;D-4 併入 N-6)
 
 | 成員 | 點數 | Tickets |
 |---|---|---|
-| D1 | task | C-3 + D-4 |
-| D2 | task | A-1 收尾 + 開始撰寫 Scenario Video 腳本 |
-| S1 | 13 | D-1 + D-2 + D-3(Navigation + PTX 整合,本 sprint 最重) |
-| S2 | 3 | C-2 |
-| S3 | 13 | D-5 + C-4 |
-| S4 | 5 | C-1 |
+| D1 | task | C-3 + **N-8 + N-9**(D-4 併入 N-6) |
+| D2 | task | **N-5 收尾**(3 × 3 三件套繁中 + 英文)+ Scenario Video 腳本 |
+| S1 | 5 | D-1(5) — D-3 降級寫死 5 條;D-2 spike 由 D-1 帶過 |
+| S2 | 12 | C-2(3)+ A-3(3)+ **N-3(3)+ N-4(3)** |
+| S3 | 13 | D-5(5)+ **N-10(5)+ N-12(3)** — C-4 延 S6 |
+| S4 | 13 | C-1(5)+ **N-11(8)暫支援** |
 | S5 | — | L-2 起稿 |
 
 **風險點**:
-- D-3(PTX 整合)為 spike-heavy,**S1 若卡住超過 2 天,降級為「公車路線寫死 demo 用 5 條」**,真實串接延到 Sprint 6
-- D-5 位置權限同意 flow 要嚴格符合 NFR-14,設計與工程要對齊
+- **N-11(Android CameraX + overlay)由 S4 暫接** — 若 S4 無 Android 經驗,Mid-Sprint 週三決定降級為「無 overlay 純拍照」或延 Sprint 3
+- D-5 位置權限同意 flow 要嚴格符合 NFR-14,設計與工程要對齊(geofencing 由 N-10 接,D-5 只做基礎 location)
+- N-3 PhotoGuidance JSON schema 必須在週一 Planning 前確定,否則 N-5 內容組無法填
 
 **Gate 2 Demo Script**:
 1. 從 Sprint 1 的清單選赤崁樓 → 點「導航前往」
 2. 地圖顯示步行路線(OSM + Leaflet),含預估時間
-3. 假裝走完 → 切到「我的足跡」頁
-4. 看到 6 筆 mock footprint 自動分群成「廟宇 / 商業 / 歷史」+ 環圈圖
-5. **G1 全部 4 個 UC 在同一台真機跑通**
+3. 抵達赤崁樓 → **App 自動 pop-up Heritage Mission 入口卡「您已抵達赤崁樓,共 3 個必拍記憶點」**
+4. 點入第一個 photo spot → 看到 Suggested Shot / Why Special / Memory Prompt 三件套
+5. 進入拍照模式 → 取景框 overlay + 構圖提示 → 拍一張
+6. 拍完 bottom sheet 跳 Memory Prompt → 填或跳過,Mission 進度更新為 1/3
+7. 假裝走完 → 切到「我的足跡」頁,看到分群結果(視覺化圖表延 S6)
+8. **G1 全部 4 個 UC + Mission 三件套主流程在同一台真機跑通**
 
 ---
 
@@ -418,11 +462,11 @@ Sprint 6 (週 6) ─ Polish + 整合 + Final Demo
 
 ---
 
-### Sprint 5 — Epic L + 部署 + 觀測性(週 5)— **G3 完成**
+### Sprint 5 — Epic L + Epic N(Admin)+ 部署 + 觀測性(週 5)— **G3 完成**
 
-**Sprint Goal**:後台可獨立操作景點 / 故事 / 翻譯審核;整套服務在 K8s `staging` 跑起來,Grafana 看得到 metrics。
+**Sprint Goal**:後台可獨立操作景點 / 故事 / 翻譯審核 + **Mission / PhotoSpot / MemoryPrompt 編輯**;整套服務在 K8s `staging` 跑起來,Grafana 看得到 metrics。
 
-**選入 Stories**:L-1 收尾、L-2、L-3、L-4、L-5、L-6、L-7、M-4、M-5、M-6、C-5(若有空升級分類)
+**選入 Stories**:L-1 收尾、L-2、L-3、L-4、L-6、L-7、**N-13**、M-4、M-5、M-6、C-5(若有空升級分類)— L-5 延 S6
 
 | 成員 | 點數 | Tickets |
 |---|---|---|
@@ -432,7 +476,7 @@ Sprint 6 (週 6) ─ Polish + 整合 + Final Demo
 | S2 | — | bug fix + 補測試 |
 | S3 | — | App 內 polish issue + 對接 admin 改的內容 |
 | S4 | 8 | C-5(LLM embedding 升級分類,選做)+ I 系列調 prompt |
-| S5 | 18 | L-2、L-3、L-4、L-5(本 sprint 主軸) |
+| S5 | 20 | L-2、L-3、L-4(15 點)+ **N-13(5)** — L-5 延 S6 |
 | S6 | 18 | M-4、M-5、M-6(K8s + 觀測性) |
 
 **Gate 5 Demo Script**:
@@ -444,11 +488,11 @@ Sprint 6 (週 6) ─ Polish + 整合 + Final Demo
 
 ---
 
-### Sprint 6 — Polish + 整合 + Final Demo(週 6)— **緩衝週**
+### Sprint 6 — Polish + 整合 + 壓縮補做 + Final Demo(週 6)— **緩衝週**
 
-**Sprint Goal**:期末 demo 一鏡到底跑完;備用離線版可跑;簡報 / 海報 / Scenario Video 全部上線。
+**Sprint Goal**:期末 demo 一鏡到底跑完;備用離線版可跑;簡報 / 海報 / Scenario Video 全部上線;**壓縮延後的 B-2 / C-4 / L-5 補做完成**。
 
-**選入 Stories**:M-7(離線包)、bug fix、UI polish、Scenario Video 收尾、Demo 排練
+**選入 Stories**:M-7(離線包)、**B-2(tsvector)**、**C-4(分群圖表)**、**L-5(UGC tag 審核)**、bug fix、UI polish、Scenario Video 收尾、Demo 排練
 
 | 成員 | 任務 |
 |---|---|
