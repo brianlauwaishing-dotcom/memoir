@@ -21,10 +21,17 @@
 
 - **專案名稱**:外國旅客在台灣初期探索文化的體驗設計(MCIS Project)
 - **專案性質**:**期末專案 / 學術用途** — 非營運產品
-- **核心目標**:重新設計「文化被理解的方式」— 解決資訊存在卻無法被連結與理解的問題。
-- **MVP 範圍**:**先以台南為單一城市試點**(NFR-18),驗證後再擴張全台。
+- **核心目標**:重新設計「文化被理解的方式」— 解決資訊存在卻無法被連結與理解的問題;**並讓深度記錄型旅客能以省力的方式產出具意義的高品質分享內容**。
+- **主要 Persona**:**深度記錄型外國旅客**(refactor.md 定義)— 為原「外國旅客」母集中的主要 segment,四大特徵:
+  1. **記憶保存深層需求** — 認為照片只是片段,故事才是真正的記憶
+  2. **省力高質感悖論** — 想分享精緻內容但不願花長時間製作
+  3. **尋求意義而非打卡** — 旅程要有反思與連結
+  4. **策展式自我表達** — 透過旅程展現品味與生活風格
+- **核心體驗**:**Heritage Exploration Mission** — 抵達古蹟自動觸發任務,以「**Suggested Shot / Why Special / Memory Prompt**」三件套引導拍攝、建構意義、留下個人化記憶;旅程結束時自動生成策展式分享版型。
+- **MVP 範圍**:**先以台南為單一城市試點**(NFR-18),主題以**歷史文化古蹟**為核心,驗證後再擴張全台。
 - **參考文件**(務必先讀):
-  - `references/requirements.md` — 完整需求規格(UC1–UC18, FR-01~FR-23, NFR-01~NFR-20)
+  - `references/refactor.md` — Persona 與核心體驗定義(本次重構基礎)
+  - `references/requirements.md` — 完整需求規格(UC1–UC22, FR-01~FR-27, NFR-01~NFR-20)
   - `references/diagram.md` — Activity / Domain Class / System Sequence Diagram
   - `references/architecture.md` — 系統架構圖 + service 用途速查
 
@@ -123,12 +130,14 @@ mcis_project/
 │   │   └── com/mcis/
 │   │       ├── auth/           # Auth Service
 │   │       ├── user/           # User & Preference
-│   │       ├── content/        # 景點/故事/脈絡
+│   │       ├── content/        # 景點/故事/脈絡 + Mission/PhotoSpot/MemoryPrompt
 │   │       ├── route/          # Route Planning
 │   │       ├── trip/           # Trip & Itinerary
 │   │       ├── nav/            # Navigation
-│   │       ├── footprint/      # 足跡 / UGC
-│   │       ├── share/          # 分享
+│   │       ├── mission/        # Mission Trigger (geofence + 進度追蹤) — FR-08, FR-25
+│   │       ├── photoguide/     # Photo Guidance (構圖提示 / 取景框) — FR-24
+│   │       ├── footprint/      # 足跡 / UGC / MemoryAnswer — FR-10, FR-26
+│   │       ├── share/          # 分享 + 策展版型 — FR-14, FR-27
 │   │       ├── i18n/           # 多語
 │   │       └── common/         # 共用 (config, error, util)
 │   ├── src/main/resources/
@@ -137,8 +146,9 @@ mcis_project/
 │   │   └── db/migration/        # Flyway migration scripts (V1__init.sql, ...)
 │   └── src/test/kotlin/
 ├── ai-services/                # Python LLM / 分類 / 敘事
-│   ├── narrative/              # FR-13 敘事生成
+│   ├── narrative/              # FR-13 敘事生成(吃 MemoryAnswer + Mission 進度)
 │   ├── classification/         # FR-11 自動分群
+│   ├── curation/               # FR-27 策展版型渲染(明信片/時間軸/故事書)
 │   ├── i18n_assist/            # NFR-02 跨文化類比
 │   └── pyproject.toml
 ├── android/                    # 原生 Android(Kotlin + Jetpack Compose)

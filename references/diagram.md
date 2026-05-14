@@ -1,7 +1,8 @@
 # 系統設計圖 (Diagrams)
 
 > 專案:外國旅客在台灣初期探索文化的體驗設計
-> 來源:`requirements.md`
+> 主要 Persona:深度記錄型外國旅客(requirements.md §1.1)
+> 來源:`requirements.md`(FR-01 ~ FR-27、UC1 ~ UC22)
 > 內容:Activity Diagram、Domain Class Diagram、System Sequence Diagram (SSD)
 
 ---
@@ -69,63 +70,74 @@ flowchart TD
 
 ---
 
-### 1.3 現場探索與導覽 (On-site Exploration)
+### 1.3 現場探索與 Heritage Mission (On-site Exploration)
 
-對應 UC3、UC6、UC7、UC8,以及 FR-05、FR-06、FR-07、FR-08、FR-10。
+對應 UC3、UC6、UC7、UC8、UC19、UC20、UC21,以及 FR-05、FR-06、FR-07、FR-08、FR-10、FR-24、FR-25、FR-26。
 
 ```mermaid
 flowchart TD
     Start([啟程前往景點]) --> E1[App 取得目前位置]
     E1 --> E2[計算導航至下一景點]
     E2 --> E3{移動中經過<br/>其他文化景點?}
-    E3 -- 是 --> E4[推送移動中故事卡<br/>例如『此處為赤崁樓』]
-    E3 -- 否 --> E5[抵達景點]
+    E3 -- 是 --> E4[推送輕量情境卡<br/>例如『此處為赤崁樓』]
+    E3 -- 否 --> E5{進入古蹟<br/>地理範圍?}
     E4 --> E5
-    E5 --> E6[顯示景點故事化內容<br/>時代 / 宗教 / 功能]
-    E6 --> E7{是否查看脈絡關聯?}
-    E7 -- 是 --> E8[顯示與前後景點的差異與連結]
-    E7 -- 否 --> E9[繼續瀏覽景點]
-    E8 --> E9
-    E9 --> E10{是否記錄足跡?}
-    E10 -- 是 --> E11[以 tag 快速記錄感受]
-    E11 --> E12{需要補充照片?}
-    E12 -- 是 --> E13[拍照並附加]
-    E12 -- 否 --> E14[儲存足跡]
-    E13 --> E14
-    E10 -- 否 --> E15{行程結束?}
-    E14 --> E15
+    E5 -- 否 --> E2
+    E5 -- 是 --> M1[Mission Trigger:<br/>推送 Heritage Mission 入口]
+    M1 --> M2[顯示 Mission 結構:<br/>X 個必拍 photo spot,進度 Y/X]
+    M2 --> M3{選擇 photo spot}
+    M3 --> M4[顯示 Story Line 三件套:<br/>Suggested Shot / Why Special /<br/>Memory Prompt]
+    M4 --> M5[顯示取景框 overlay<br/>+ 構圖提示]
+    M5 --> M6{拍照?}
+    M6 -- 是 --> M7[拍攝並附掛至 photo spot]
+    M6 -- 否(略過) --> M11
+    M7 --> M8{填寫 Memory Prompt?<br/>(選填,鼓勵)}
+    M8 -- 填 --> M9[儲存 MemoryAnswer]
+    M8 -- 跳過 --> M10[僅儲存照片 + 標籤]
+    M9 --> M11[更新 Mission 進度]
+    M10 --> M11
+    M11 --> E7{是否查看脈絡關聯<br/>(與前後景點)?}
+    E7 -- 是 --> E8[顯示時代 / 宗教 / 功能差異]
+    E7 -- 否 --> M12{所有 photo spot 完成?}
+    E8 --> M12
+    M12 -- 否,繼續 --> M3
+    M12 -- 部分/全部完成 --> E15{行程結束?}
     E15 -- 否 --> E2
     E15 -- 是 --> End([進入回顧階段])
 ```
 
+> 重點:Mission 不強制完成所有 photo spot,只完成 1/3 仍可登記為「造訪過」並進入下個景點(對應 FR-25 + Persona「省力」需求);Memory Prompt 全程選填,但填寫後可被 FR-13 敘事生成優先引用。
+
 ---
 
-### 1.4 旅程回顧與分享 (Review & Share)
+### 1.4 旅程回顧與策展分享 (Review & Curate)
 
-對應 UC9、UC10、UC11、UC12,以及 FR-11、FR-12、FR-13、FR-14。
+對應 UC9、UC10、UC11、UC12、UC22,以及 FR-11、FR-12、FR-13、FR-14、FR-26、FR-27。
 
 ```mermaid
 flowchart TD
     Start([開啟『足跡地圖』]) --> R1{是否已有足跡資料?}
     R1 -- 否 --> R2[顯示替代內容<br/>精選他人足跡 / 官方路線]
     R2 --> End1([結束回顧])
-    R1 -- 是 --> R3[載入已訪景點 + tag + 感受]
+    R1 -- 是 --> R3[載入已訪景點 + 標籤 + 照片 +<br/>MemoryAnswer + Mission 進度]
     R3 --> R4[呼叫分類引擎自動分群<br/>廟宇 / 商業 / 歷史]
-    R4 --> R5[在地圖呈現足跡 + 時間軸]
-    R5 --> R6{是否補充感受 / 照片?}
-    R6 -- 是 --> R7[編輯該景點足跡]
+    R4 --> R5[在地圖呈現足跡 + 時間軸 +<br/>Mission 完成度]
+    R5 --> R6{補填 Memory Prompt<br/>或補充照片?}
+    R6 -- 是 --> R7[編輯該 photo spot<br/>足跡 / MemoryAnswer]
     R7 --> R5
     R6 -- 否 --> R8{是否生成旅程敘事?}
     R8 -- 否 --> R9[僅查看分類視覺化]
     R9 --> End2([結束])
-    R8 -- 是 --> R10[呼叫敘事生成服務<br/>足跡 + 文化脈絡 + 個人標註]
+    R8 -- 是 --> R10[呼叫敘事生成服務<br/>足跡 + 文化脈絡 +<br/>MemoryAnswer + Mission 進度]
     R10 --> R11[顯示明信片式敘事預覽]
     R11 --> R12{是否分享?}
     R12 -- 否 --> End3([僅保存敘事])
-    R12 -- 是 --> R13[選擇分享形式<br/>連結 / 圖片 / 地圖路線]
-    R13 --> R14[經使用者確認與匿名化]
-    R14 --> R15[發佈到社群或傳給朋友]
-    R15 --> End4([完成分享])
+    R12 -- 是 --> R13[選擇策展版型<br/>明信片 / 時間軸 / 故事書]
+    R13 --> R14[勾選保留哪些 photo /<br/>MemoryAnswer 對外公開]
+    R14 --> R15[選擇輸出格式<br/>9:16 / 1:1 / 連結 / 地圖路線]
+    R15 --> R16[經使用者確認與匿名化]
+    R16 --> R17[發佈到社群或傳給朋友]
+    R17 --> End4([完成分享])
 ```
 
 ---
@@ -265,6 +277,48 @@ classDiagram
         +tagSpot()
     }
 
+    class Mission {
+        +String missionId
+        +String title
+        +Integer requiredPhotoSpots
+        +Boolean partialCompletionAllowed
+        +trigger(spotId, userLoc)
+        +progress(userId)
+    }
+
+    class PhotoSpot {
+        +String photoSpotId
+        +String name
+        +GeoPoint location
+        +String suggestedShot
+        +String whySpecial
+        +Integer orderInMission
+        +getGuidance()
+    }
+
+    class MemoryPrompt {
+        +String promptId
+        +String question
+        +String style
+        +Boolean optional
+    }
+
+    class MemoryAnswer {
+        +String answerId
+        +String body
+        +Visibility visibility
+        +Date answeredAt
+        +edit()
+        +setVisibility()
+    }
+
+    class MissionProgress {
+        +String progressId
+        +Integer completed
+        +Integer total
+        +Date lastUpdated
+    }
+
     class StoryCard {
         +String cardId
         +String triggerType
@@ -348,8 +402,19 @@ classDiagram
     StoryCard "*" -- "1" Spot : about
     StoryCard "*" -- "*" Route : appearsOn
 
+    Spot "1" -- "0..*" Mission : hosts
+    Mission "1" *-- "*" PhotoSpot : contains
+    PhotoSpot "1" -- "0..1" MemoryPrompt : asks
+    User "1" -- "*" MissionProgress : tracks
+    MissionProgress "*" -- "1" Mission : of
+    User "1" -- "*" MemoryAnswer : writes
+    MemoryAnswer "*" -- "1" MemoryPrompt : respondsTo
+    MemoryAnswer "*" -- "0..1" FootprintEntry : attachedTo
+    PhotoSpot "1" -- "*" FootprintEntry : capturedAt
+
     Trip "1" -- "0..*" Narrative : reviewedAs
     Narrative "*" --> "*" FootprintEntry : aggregates
+    Narrative "*" --> "*" MemoryAnswer : quotes
     Narrative "1" -- "*" ShareArtifact : exportedAs
 
     Route "*" -- "*" MerchantPartner : includes
@@ -364,13 +429,15 @@ classDiagram
 ```
 
 > 列舉值說明
-> - `Persona`: DEEP_CULTURAL_EXPLORER / CASUAL_TRAVELER (依行為而非國籍)
+> - `Persona`: DEEP_DOCUMENTER (主要 — 深度記錄型) / CASUAL_TRAVELER (依行為而非國籍)
 > - `TagType`: THEME (歷史/美食/建築/宗教) / SUBTHEME (小吃/甜點/熱門…)
 > - `SpotCategory`: TEMPLE / HISTORICAL / COMMERCIAL / FOOD / ARCHITECTURE
 > - `RouteType`: SAME_THEME / CROSS_ERA / CROSS_CATEGORY
 > - `TransportMode`: WALK / BUS / TRAIN / MOUNTAIN_ROAD / SHUTTLE
 > - `NarrativeStyle`: POSTCARD / TIMELINE / STORYBOOK
-> - `ShareFormat`: LINK / IMAGE / SOCIAL_POST / MAP_ROUTE
+> - `ShareFormat`: LINK / IMAGE_9_16 / IMAGE_1_1 / SOCIAL_POST / MAP_ROUTE
+> - `MemoryPromptStyle`: REFLECTIVE (如「若你生於那時代…」) / SENSORY (氣味/聲音記憶) / COMPARATIVE (與家鄉對比)
+> - `Visibility`: PRIVATE / SHARED_WITH_NARRATIVE / PUBLIC
 
 ---
 
@@ -428,9 +495,9 @@ sequenceDiagram
 
 ---
 
-### 3.3 SSD-3:現場景點故事與脈絡查詢
+### 3.3 SSD-3:Heritage Mission 觸發與 Story Line 三件套
 
-對應 UC3、UC6、UC7、UC8;FR-05、FR-06、FR-08、FR-10。
+對應 UC3、UC6、UC7、UC8、UC19、UC20、UC21;FR-05、FR-06、FR-08、FR-10、FR-24、FR-25、FR-26。
 
 ```mermaid
 sequenceDiagram
@@ -438,8 +505,20 @@ sequenceDiagram
     actor T as 外國旅客
     participant S as :System
 
-    T->>S: arriveAtSpot(spotId)
-    S-->>T: showSpotStory(story, era, religion, function)
+    T->>S: enterGeofence(spotId, userLoc)
+    S-->>T: triggerMission(missionId, photoSpotCount, progress)
+    T->>S: openPhotoSpot(photoSpotId)
+    S-->>T: showStoryLine(suggestedShot, whySpecial, memoryPrompt)
+    S-->>T: showShotOverlay(framing, composition)
+    T->>S: capturePhoto(photoSpotId, photo)
+    S-->>T: photoAttached
+    alt 填寫 Memory Prompt(選填,鼓勵)
+        T->>S: answerMemoryPrompt(promptId, body, visibility)
+        S-->>T: memoryAnswerSaved
+    else 跳過
+        S-->>T: continueWithoutAnswer
+    end
+    S-->>T: updateMissionProgress(completed, total)
     opt 查看與下一景點脈絡
         T->>S: requestContext(spotId, nextSpotId)
         S-->>T: showCulturalDifferences(timeline, theme)
@@ -451,11 +530,13 @@ sequenceDiagram
     S-->>T: footprintSaved
 ```
 
+> Mission 不要求完整完成所有 photo spot — 即使 1/3 也視為造訪;但 FR-13 敘事生成會把已填寫的 MemoryAnswer 與 Mission 進度作為個人化素材的優先來源。
+
 ---
 
-### 3.4 SSD-4:旅程回顧與敘事生成
+### 3.4 SSD-4:旅程回顧、敘事生成與策展分享
 
-對應 UC9、UC10、UC11、UC12;FR-11、FR-12、FR-13、FR-14。
+對應 UC9、UC10、UC11、UC12、UC22;FR-11、FR-12、FR-13、FR-14、FR-26、FR-27。
 
 ```mermaid
 sequenceDiagram
@@ -465,16 +546,22 @@ sequenceDiagram
 
     T->>S: openFootprintMap()
     alt 已累積足跡
-        S-->>T: showClusteredFootprints(temple, commerce, history)
+        S-->>T: showClusteredFootprints(temple, commerce, history, missionProgress)
     else 尚無足跡(新用戶)
         S-->>T: showCuratedFootprintsFromOthers()
     end
-    opt 補充感受 / 照片
+    opt 補填 Memory Prompt / 補充照片
         T->>S: editFootprint(entryId, mood, photos[])
-        S-->>T: footprintUpdated
+        T->>S: answerOrEditMemoryAnswer(promptId, body, visibility)
+        S-->>T: footprintAndAnswerUpdated
     end
     T->>S: generateNarrative(tripId)
+    Note over S: 引用 MemoryAnswer + Mission 進度 +<br/>足跡 + 文化脈絡
     S-->>T: narrativePreview(postcardStyle)
+    T->>S: chooseCurationTemplate(style: POSTCARD | TIMELINE | STORYBOOK)
+    S-->>T: templatePreviewWithSelectableContent
+    T->>S: selectVisibleItems(photoIds[], memoryAnswerIds[])
+    T->>S: chooseOutputFormat(IMAGE_9_16 | IMAGE_1_1 | LINK | MAP_ROUTE)
     T->>S: shareNarrative(format, audience)
     S-->>T: shareConfirmedWithPrivacyCheck
 ```
@@ -539,13 +626,13 @@ sequenceDiagram
 |---|---|---|
 | Activity 1.1 機場啟動 | UC1, UC2, UC13 | FR-01, FR-02, FR-09, FR-20 |
 | Activity 1.2 行程規劃 | UC4, UC5, UC14, UC15 | FR-03, FR-03a, FR-04, FR-15, FR-16, FR-19, FR-22, FR-23 |
-| Activity 1.3 現場探索 | UC3, UC6, UC7, UC8 | FR-05, FR-06, FR-07, FR-08, FR-10 |
-| Activity 1.4 回顧與分享 | UC9, UC10, UC11, UC12 | FR-11, FR-12, FR-13, FR-14 |
+| Activity 1.3 現場探索與 Mission | UC3, UC6, UC7, UC8, UC19, UC20, UC21 | FR-05, FR-06, FR-07, FR-08, FR-10, FR-24, FR-25, FR-26 |
+| Activity 1.4 回顧與策展分享 | UC9, UC10, UC11, UC12, UC22 | FR-11, FR-12, FR-13, FR-14, FR-26, FR-27 |
 | Activity 1.5 內容維運 | UC16, UC17, UC18 | FR-18, FR-21, NFR-02 |
-| Domain Class Diagram | 全部 | FR-02 ~ FR-23(資料模型支撐) |
+| Domain Class Diagram | 全部 | FR-02 ~ FR-27(資料模型支撐) |
 | SSD-1 機場啟動 | UC1, UC2, UC13 | FR-01, FR-02, NFR-06 |
 | SSD-2 行程規劃 | UC4, UC14, UC15 | FR-03, FR-04, FR-15, FR-16 |
-| SSD-3 現場故事 | UC3, UC6, UC7, UC8 | FR-05, FR-06, FR-08, FR-10 |
-| SSD-4 回顧敘事 | UC9, UC10, UC11, UC12 | FR-11, FR-12, FR-13, FR-14 |
+| SSD-3 Mission 觸發與三件套 | UC3, UC6, UC7, UC8, UC19, UC20, UC21 | FR-05, FR-06, FR-08, FR-10, FR-24, FR-25, FR-26 |
+| SSD-4 回顧敘事與策展 | UC9, UC10, UC11, UC12, UC22 | FR-11, FR-12, FR-13, FR-14, FR-26, FR-27 |
 | SSD-5 內容維運 | UC16, UC17, UC18 | FR-18, NFR-01, NFR-02 |
 | SSD-6 UGC 標籤 | (UC8 延伸) | FR-21 |

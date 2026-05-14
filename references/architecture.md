@@ -1,7 +1,8 @@
 # 系統架構圖 (System Architecture)
 
 > 專案:外國旅客在台灣初期探索文化的體驗設計
-> 來源:`requirements.md`(FR-01 ~ FR-23、NFR-01 ~ NFR-20)
+> 主要 Persona:深度記錄型外國旅客(requirements.md §1.1)
+> 來源:`requirements.md`(FR-01 ~ FR-27、UC1 ~ UC22、NFR-01 ~ NFR-20)
 > 目的:概覽本專案會用到的 service 類型與彼此關係,作為實作前的技術藍圖。
 
 為避免單張圖過於擁擠,以下拆成 **6 張小圖**:
@@ -94,31 +95,36 @@ flowchart TB
 
 ### 3.2 現場探索 Domain (On-site Exploration)
 
-對應 UC3、UC6、UC7、UC8。
+對應 UC3、UC6、UC7、UC8、UC19、UC20、UC21。
 
 ```mermaid
 flowchart TB
     APIGW["API Gateway / BFF"]
 
     subgraph G2["現場探索 Domain"]
-        ContentSvc["Content Service<br/>景點 / 故事 / 脈絡<br/>FR-05, FR-06"]
+        ContentSvc["Content Service<br/>景點 / 故事 / 脈絡 /<br/>Mission / PhotoSpot /<br/>MemoryPrompt<br/>FR-05, FR-06, FR-25"]
         NavSvc["Navigation Service<br/>實際交通限制<br/>(山路 / 公車 / 換車)<br/>FR-07"]
-        StoryCardSvc["Story Card Push<br/>移動中情境推送<br/>FR-08"]
-        FootprintSvc["Footprint Service<br/>標籤式足跡 + UGC<br/>FR-10, FR-21"]
+        MissionSvc["Mission Trigger Service<br/>Geofence 抵達觸發 +<br/>移動中情境推送 +<br/>進度追蹤<br/>FR-08, FR-25, UC19"]
+        PhotoGuideSvc["Photo Guidance Service<br/>取景框 / 構圖提示<br/>FR-24, UC20"]
+        FootprintSvc["Footprint Service<br/>標籤足跡 + UGC +<br/>MemoryAnswer 答案管理<br/>FR-10, FR-21, FR-26"]
     end
 
     APIGW --> ContentSvc
     APIGW --> NavSvc
-    APIGW --> StoryCardSvc
+    APIGW --> MissionSvc
+    APIGW --> PhotoGuideSvc
     APIGW --> FootprintSvc
 
-    StoryCardSvc -.uses.-> ContentSvc
+    MissionSvc -.uses.-> ContentSvc
+    PhotoGuideSvc -.uses.-> ContentSvc
     NavSvc -.uses.-> ContentSvc
+    MissionSvc -.uses.-> FootprintSvc
+    FootprintSvc -.feeds.-> MissionSvc
 ```
 
 ### 3.3 回顧分享 Domain (Review & Share)
 
-對應 UC9、UC10、UC11、UC12。
+對應 UC9、UC10、UC11、UC12、UC22。
 
 ```mermaid
 flowchart TB
@@ -126,8 +132,8 @@ flowchart TB
 
     subgraph G3["回顧分享 Domain"]
         ClassifySvc["Classification Engine<br/>景點自動分群<br/>FR-11"]
-        NarrativeSvc["Narrative Generation<br/>(LLM 驅動)<br/>FR-13"]
-        ShareSvc["Share Service<br/>連結 / 圖片 / 路線<br/>FR-14, NFR-15"]
+        NarrativeSvc["Narrative Generation<br/>(LLM 驅動)<br/>足跡 + MemoryAnswer +<br/>Mission 進度<br/>FR-13"]
+        ShareSvc["Share / Curation Service<br/>策展版型 + 多格式輸出<br/>9:16 / 1:1 / 連結 / 路線<br/>FR-14, FR-27, NFR-15"]
         ReviewSvc["Review / Rating Service<br/>FR-17"]
     end
 
@@ -137,6 +143,7 @@ flowchart TB
     APIGW --> ReviewSvc
 
     ClassifySvc -.feeds.-> NarrativeSvc
+    NarrativeSvc -.feeds.-> ShareSvc
 ```
 
 ### 3.4 內容維運 Domain (Content Operations)
@@ -175,29 +182,30 @@ flowchart LR
         ReviewSvc["Review Service"]
         ContentSvc["Content Service"]
         RouteSvc["Route Service"]
-        StoryCardSvc["Story Card Push"]
+        MissionSvc["Mission Trigger"]
     end
 
     subgraph DataStore["資料存放"]
-        RDB[("Relational DB<br/>PostgreSQL<br/>使用者 / 行程 / 足跡 / 評價<br/>NFR-12, NFR-13")]
-        ContentDB[("Content DB<br/>景點 / 故事 / 脈絡<br/>NFR-16, NFR-17")]
-        Cache[("Redis Cache<br/>故事卡 / 弱網離線<br/>NFR-05")]
-        ObjStore[("Object Storage<br/>S3 / GCS<br/>照片 / 圖像<br/>NFR-08, NFR-10")]
+        RDB[("Relational DB<br/>PostgreSQL<br/>使用者 / 行程 / 足跡 /<br/>MemoryAnswer / Mission 進度<br/>NFR-12, NFR-13")]
+        ContentDB[("Content DB<br/>景點 / 故事 / 脈絡 /<br/>Mission / PhotoSpot /<br/>MemoryPrompt<br/>NFR-16, NFR-17")]
+        Cache[("Redis Cache<br/>Mission 預載 / 故事卡 /<br/>弱網離線<br/>NFR-05")]
+        ObjStore[("Object Storage<br/>S3 / GCS<br/>照片 / 圖像 / 策展輸出<br/>NFR-08, NFR-10")]
         Search[("Search Index<br/>景點 / 標籤檢索<br/>FR-03a")]
-        Analytics[("Analytics / Logs<br/>行為與推薦訓練<br/>FR-19")]
+        Analytics[("Analytics / Logs<br/>行為 / Mission 完成率<br/>FR-19")]
     end
 
     UserSvc --> RDB
     TripSvc --> RDB
     FootprintSvc --> RDB
     ReviewSvc --> RDB
+    MissionSvc --> RDB
 
     ContentSvc --> ContentDB
     RouteSvc --> ContentDB
     ContentSvc --> Search
     RouteSvc --> Search
 
-    StoryCardSvc --> Cache
+    MissionSvc --> Cache
     ContentSvc --> Cache
 
     FootprintSvc --> ObjStore
@@ -206,6 +214,7 @@ flowchart LR
     UserSvc -.write.-> Analytics
     TripSvc -.write.-> Analytics
     FootprintSvc -.write.-> Analytics
+    MissionSvc -.write.-> Analytics
 ```
 
 ---
@@ -222,8 +231,8 @@ flowchart LR
         I18nSvc["i18n Service"]
         ContentSvc["Content Service"]
         NarrativeSvc["Narrative Generation"]
-        StoryCardSvc["Story Card Push"]
-        ShareSvc["Share Service"]
+        MissionSvc["Mission Trigger Service"]
+        ShareSvc["Share / Curation Service"]
     end
 
     subgraph External["外部服務"]
@@ -237,14 +246,17 @@ flowchart LR
 
     NavSvc --> MapAPI
     TripSvc --> MapAPI
+    MissionSvc --> MapAPI
     I18nSvc --> TransAPI
     ContentSvc --> TransAPI
     NarrativeSvc --> LLM
     I18nSvc --> LLM
-    StoryCardSvc --> PushSvc
+    MissionSvc --> PushSvc
     ShareSvc --> SocialAPI
     TripSvc --> Payment
 ```
+
+> MissionSvc 依賴 MapAPI 計算 geofence(進入古蹟範圍判斷),並透過 PushSvc 觸發 Heritage Mission 入口通知。
 
 ---
 
@@ -266,7 +278,8 @@ flowchart LR
     subgraph Explore["探索"]
         Content["Content Service"]
         Nav["Navigation"]
-        Card["Story Card Push"]
+        Mission["Mission Trigger"]
+        Photo["Photo Guidance"]
         FP["Footprint"]
     end
 
@@ -283,9 +296,13 @@ flowchart LR
     GW --> Route --> Trip --> Map
     GW --> Content
     GW --> Nav --> Map
-    GW --> Card
+    GW --> Mission --> Map
+    Mission --> Content
+    GW --> Photo --> Content
     GW --> FP
+    Mission --> FP
     GW --> Cls --> Nar --> LLM
+    FP --> Nar
     Nar --> Share
 ```
 
@@ -302,15 +319,16 @@ flowchart LR
 | | CDN | 多語靜態資源 | NFR-03, NFR-08 |
 | **App** | Auth Service | 登入 + Kiosk 匿名 token | NFR-13, NFR-14 |
 | | User & Preference | 語言、興趣、個人化 | FR-02, FR-19 |
-| | Content Service | 景點 / 故事 / 脈絡 | FR-05, FR-06, FR-18 |
+| | Content Service | 景點 / 故事 / 脈絡 / Mission / PhotoSpot / MemoryPrompt | FR-05, FR-06, FR-18 |
 | | Route Planning | 主題 / 跨時期路線 | FR-03, FR-03a, FR-22 |
 | | Trip & Itinerary | 地圖式行程、費用、節奏 | FR-04, FR-15, FR-16 |
 | | Navigation Service | 實際交通限制處理 | FR-07 |
-| | Footprint Service | 標籤式足跡 + UGC | FR-10, FR-21 |
+| | Footprint Service | 標籤足跡 + UGC + MemoryAnswer | FR-10, FR-21, FR-26 |
 | | Classification Engine | 景點自動分群 | FR-11 |
-| | Narrative Generation | LLM 旅程敘事 | FR-13 |
-| | Story Card Push | 移動中情境推送 | FR-08 |
-| | Share Service | 多形式分享 | FR-14, NFR-15 |
+| | Narrative Generation | LLM 旅程敘事(吃 MemoryAnswer + Mission 進度) | FR-13 |
+| | Mission Trigger Service | Geofence 抵達觸發 + 移動中推送 + 進度追蹤 | FR-08, FR-25 |
+| | Photo Guidance Service | 取景框 / 構圖提示 | FR-24 |
+| | Share / Curation Service | 多形式分享 + 策展版型(明信片/時間軸/故事書) | FR-14, FR-27, NFR-15 |
 | | i18n / Localization | 多語 + 跨文化類比 | FR-09, NFR-01, NFR-02 |
 | | Merchant Partner | 在地商家合作 | FR-23 |
 | | Review / Rating | 景點評分 | FR-17 |
@@ -329,15 +347,16 @@ flowchart LR
 
 ---
 
-## 8. 三個關鍵差異化 service
+## 8. 四個關鍵差異化 service
 
-從整體架構中,以下三個是「跟既有工具(Google Maps / 去去)區隔」的核心,實作優先級最高。
+從整體架構中,以下四個是「跟既有工具(Google Maps / 去去 / 一般打卡 App)區隔」的核心,實作優先級最高。
 
 | Service | 為何關鍵 | 依賴 |
 |---|---|---|
-| **Narrative Generation + LLM** | 不是把 footprint 串成清單,而是依文化脈絡「重新敘述」這趟旅程(FR-13) | LLM Provider、Footprint、Content Service |
+| **Mission Trigger + Photo Guidance** | refactor.md 的核心體驗 — 抵達古蹟自動觸發 Heritage Mission、依 Suggested Shot 引導拍攝、Memory Prompt 收集反思,完成「省力高質感分享」與「尋求意義」兩大 Persona 需求(FR-05, FR-08, FR-24, FR-25, UC19-21) | Map API geofence、Push Notification、Content Service |
+| **Narrative Generation + LLM** | 不是把 footprint 串成清單,而是依文化脈絡 + MemoryAnswer + Mission 進度「重新敘述」這趟旅程,讓使用者的個人聲音被放大(FR-13) | LLM Provider、Footprint、Content Service |
+| **Share / Curation Service** | 不是單一分享按鈕,而是多版型(明信片/時間軸/故事書)+ 多格式輸出,對應 Persona「策展式自我表達」(FR-14, FR-27) | Narrative Generation、Object Storage、Social API |
 | **Navigation + Map API** | 不是 Google Maps 點對點,而要結合台灣 PTX / TDX 處理山路、公車、換車(FR-07) | Google Maps、PTX / TDX |
-| **Story Card Push** | 經過(非目的地)景點時也能被動推送故事卡(FR-08) | Push Notification、Redis、Content Service |
 
 ---
 
