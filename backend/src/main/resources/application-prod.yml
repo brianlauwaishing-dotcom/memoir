@@ -1,0 +1,14 @@
+spring:
+  jpa:
+    show-sql: false
+  docker:
+    compose:
+      enabled: false
+
+server:
+  error:
+    include-message: never
+
+logging:
+  level:
+    com.memoir: INFO
