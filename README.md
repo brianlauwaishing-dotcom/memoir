@@ -1,4 +1,4 @@
-# threadwalk
+# memoir
 
 > **外國旅客在台灣初期探索文化的體驗設計**(MCIS Project)— 期末專案
 > 重新設計「文化被理解的方式」:解決資訊存在卻無法被連結與理解的問題。
@@ -35,7 +35,7 @@
 ### §4 進行中的工作
 
 - **GitHub Project**:[MCIS Sprint Board](https://github.com/users/killin0415/projects/1) — 看本週承諾、卡點、進度
-- **Issues**:[killin0415/threadwalk/issues](https://github.com/killin0415/threadwalk/issues) — 62 張 backlog ticket(對應 `schedule.md` §5)
+- **Issues**:[killin0415/memoir/issues](https://github.com/killin0415/memoir/issues) — 62 張 backlog ticket(對應 `schedule.md` §5)
 
 ---
 
@@ -85,7 +85,7 @@ cd android && ./gradlew installDebug
 ## 📁 專案結構(預期)
 
 ```
-threadwalk/
+memoir/
 ├── backend/          # Kotlin Spring Boot
 ├── ai-services/      # Python LLM / 分類 / 敘事
 ├── android/          # 原生 Android (Kotlin + Compose)
@@ -124,6 +124,6 @@ threadwalk/
 
 ## 🔗 相關連結
 
-- **Repo**:https://github.com/killin0415/threadwalk
+- **Repo**:https://github.com/killin0415/memoir
 - **Project Board**:https://github.com/users/killin0415/projects/1
-- **Issues**:https://github.com/killin0415/threadwalk/issues
+- **Issues**:https://github.com/killin0415/memoir/issues

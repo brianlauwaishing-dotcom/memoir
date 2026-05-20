@@ -6,7 +6,7 @@ type: reference
 
 **Project**:`https://github.com/users/killin0415/projects/1` (`MCIS Sprint Board`,private,user-level Project v2)
 
-**Issues**:`killin0415/threadwalk` #1–#62,順序對應 `references/schedule.md` §5 的 ticket id(A-1..A-5, B-1..B-4, ..., M-1..M-7)。
+**Issues**:`killin0415/memoir` #1–#62,順序對應 `references/schedule.md` §5 的 ticket id(A-1..A-5, B-1..B-4, ..., M-1..M-7)。
 
 **Project 自訂欄位**(查詢 / 設定時用):
 - `Status`(預設 single-select)— 目前只有 Todo / In Progress / Done(GitHub 預設,沒改)
