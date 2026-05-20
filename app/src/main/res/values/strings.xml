@@ -1,0 +1,74 @@
+<resources>
+    <string name="app_name">threadwalk</string>
+    <string name="welcome_subtitle">WELCOME TO TAIWAN</string>
+    <string name="welcome_headline">Your Story\nBegins Here</string>
+    <string name="welcome_description">Discover the soul of Taiwan through stories, not just places. Let us guide your cultural journey.</string>
+    <string name="begin_tour_button">Begin your tour</string>
+    <string name="arrow_right_content_description">Arrow right icon</string>
+    <string name="language_selection_subtitle">Personalize</string>
+    <string name="language_selection_headline">How should we talk?</string>
+    <string name="language_selection_description">Choose your language</string>
+    <string name="language_english">English</string>
+    <string name="language_chinese">中文</string>
+    <string name="next_button">Next</string>
+    <string name="start_exploring_button">Start exploring</string>
+    <string name="culture_interest_subtitle">Personalize</string>
+    <string name="culture_interest_headline">What excites you?</string>
+    <string name="culture_temples">Temples &amp; Folk Beliefs</string>
+    <string name="culture_old_streets">Old Streets &amp; Local Life</string>
+    <string name="culture_architecture">Historic Architecture</string>
+    <string name="culture_trade">Trade &amp; Harbor Culture</string>
+    <string name="culture_colonial">Japanese Colonial Heritage</string>
+    <string name="culture_crafts">Traditional Crafts</string>
+    <string name="skip_button">skip</string>
+    <string name="skip_button_zh">跳過</string>
+
+    <!-- Welcome Screen Chinese -->
+    <string name="welcome_subtitle_zh">歡迎來到台灣</string>
+    <string name="welcome_headline_zh">您的故事\n從這裡開始</string>
+    <string name="welcome_description_zh">透過故事，而不僅是景點，發現台灣的靈魂。讓我們引導您的文化之旅。</string>
+    <string name="begin_tour_button_zh">開始您的旅程</string>
+
+    <!-- Language Selection Chinese -->
+    <string name="language_selection_subtitle_zh">個人化</string>
+    <string name="language_selection_headline_zh">我們該如何溝通？</string>
+    <string name="language_selection_description_zh">選擇您的語言</string>
+    <string name="next_button_zh">下一步</string>
+
+    <!-- Culture Interest Chinese -->
+    <string name="culture_interest_subtitle_zh">個人化</string>
+    <string name="culture_interest_headline_zh">什麼讓您興奮？</string>
+    <string name="start_exploring_button_zh">開始探索</string>
+
+    <string name="discover_subtitle">DISCOVER</string>
+    <string name="discover_headline">Cultural Routes</string>
+    <string name="discover_search_placeholder">Search routes...</string>
+    <string name="discover_category_all">All</string>
+    <string name="discover_more">more</string>
+    <string name="discover_nav_home">Home</string>
+    <string name="discover_nav_saved">Saved</string>
+    <string name="discover_nav_memories">Memories</string>
+
+    <!-- Discover Screen Chinese -->
+    <string name="discover_subtitle_zh">探索</string>
+    <string name="discover_headline_zh">文化路徑</string>
+    <string name="discover_search_placeholder_zh">搜尋路徑...</string>
+    <string name="discover_category_all_zh">全部</string>
+    <string name="discover_category_temples_zh">寺廟與民俗</string>
+    <string name="discover_category_old_streets_zh">老街與生活</string>
+    <string name="discover_category_trade_zh">商貿與港口</string>
+    <string name="discover_category_crafts_zh">傳統工藝</string>
+    <string name="discover_category_colonial_zh">日治遺產</string>
+    <string name="discover_category_architecture_zh">古蹟建築</string>
+    <string name="discover_more_zh">更多</string>
+    <string name="discover_nav_home_zh">首頁</string>
+    <string name="discover_nav_saved_zh">已收藏</string>
+    <string name="discover_nav_memories_zh">回憶</string>
+
+    <!-- Route Data Chinese -->
+    <string name="route_sea_protection_zh">從海洋守護到城市信仰</string>
+    <string name="route_sounds_of_temple_zh">府城寺廟之聲</string>
+    <string name="route_faith_hidden_zh">隱身巷弄的信仰</string>
+    <string name="route_layers_of_colonial_architecture_zh">日治建築的層次</string>
+    <string name="route_brick_arches_and_time_zh">磚牆、拱門與時光</string>
+</resources>
