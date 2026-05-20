@@ -1,4 +1,4 @@
-package com.example.memoir
+package com.mcis.memoir
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp

@@ -1,10 +1,10 @@
-package com.example.memoir.ui.theme
+package com.mcis.memoir.ui.theme
 
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.runtime.*
-import com.example.memoir.R
+import com.mcis.memoir.R
 
 /**
  * Custom font families used throughout the application.

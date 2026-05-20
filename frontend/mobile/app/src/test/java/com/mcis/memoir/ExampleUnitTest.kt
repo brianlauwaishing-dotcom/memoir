@@ -1,4 +1,4 @@
-package com.example.memoir
+package com.mcis.memoir
 
 import org.junit.Test
 

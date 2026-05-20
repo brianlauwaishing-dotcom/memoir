@@ -1,4 +1,4 @@
-package com.example.memoir
+package com.mcis.memoir
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,11 +39,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.memoir.ui.components.UntitledIcon
-import com.example.memoir.ui.icons.*
-import com.example.memoir.ui.theme.AppTheme
-import com.example.memoir.ui.theme.inter
-import com.example.memoir.ui.theme.judson
+import com.mcis.memoir.ui.components.UntitledIcon
+import com.mcis.memoir.ui.icons.*
+import com.mcis.memoir.ui.theme.AppTheme
+import com.mcis.memoir.ui.theme.inter
+import com.mcis.memoir.ui.theme.judson
 
 /**
  * Discover screen displaying cultural routes and categories.

@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.memoir"
+    namespace = "com.mcis.memoir"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -12,7 +12,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.threadwalk"
+        applicationId = "com.mcis.memoir"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
