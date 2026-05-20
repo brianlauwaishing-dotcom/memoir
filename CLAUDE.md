@@ -129,7 +129,7 @@ mcis_project/
 │   │   └── com/mcis/
 │   │       ├── auth/           # Auth Service
 │   │       ├── user/           # User & Preference
-│   │       ├── content/        # 景點/故事/脈絡 + Mission/PhotoSpot/MemoryPrompt
+│   │       ├── content/        # 景點/故事/脈絡(含多語翻譯與審核 workflow)+ Mission/PhotoSpot/MemoryPrompt
 │   │       ├── route/          # Route Planning
 │   │       ├── trip/           # Trip & Itinerary
 │   │       ├── nav/            # Navigation
@@ -137,7 +137,6 @@ mcis_project/
 │   │       ├── photoguide/     # Photo Guidance (構圖提示 / 取景框) — FR-24
 │   │       ├── footprint/      # 足跡 / UGC / MemoryAnswer — FR-10, FR-26
 │   │       ├── share/          # 分享 + 策展版型 — FR-14, FR-27
-│   │       ├── i18n/           # 多語
 │   │       └── common/         # 共用 (config, error, util)
 │   ├── src/main/resources/
 │   │   ├── application.yml
