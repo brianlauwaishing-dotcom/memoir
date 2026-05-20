@@ -1,4 +1,4 @@
-package com.example.memoir.ui.theme
+package com.mcis.memoir.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

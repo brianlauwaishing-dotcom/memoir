@@ -1,4 +1,4 @@
-package com.example.memoir
+package com.mcis.memoir
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,9 +26,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.memoir.ui.theme.AppTheme
-import com.example.memoir.ui.theme.inter
-import com.example.memoir.ui.theme.judson
+import com.mcis.memoir.ui.theme.AppTheme
+import com.mcis.memoir.ui.theme.inter
+import com.mcis.memoir.ui.theme.judson
 
 /**
  * Welcome screen that displays the introduction to Taiwan cultural journey app.

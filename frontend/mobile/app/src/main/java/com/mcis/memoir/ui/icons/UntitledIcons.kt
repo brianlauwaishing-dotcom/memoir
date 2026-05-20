@@ -1,4 +1,4 @@
-package com.example.memoir.ui.icons
+package com.mcis.memoir.ui.icons
 
 object UntitledIcons
 

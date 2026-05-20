@@ -1,4 +1,4 @@
-package com.example.memoir
+package com.mcis.memoir
 
 import android.os.Bundle
 //import androidx.activity.enableEdgeToEdge
@@ -8,7 +8,7 @@ import android.os.Bundle
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.example.memoir.ui.theme.AppTheme
+import com.mcis.memoir.ui.theme.AppTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.fillMaxSize

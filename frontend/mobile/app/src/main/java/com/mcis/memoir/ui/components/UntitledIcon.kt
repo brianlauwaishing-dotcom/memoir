@@ -1,4 +1,4 @@
-package com.example.memoir.ui.components
+package com.mcis.memoir.ui.components
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
