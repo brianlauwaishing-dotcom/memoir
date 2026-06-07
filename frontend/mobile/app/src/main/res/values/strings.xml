@@ -46,44 +46,44 @@
     <string name="language_selection_headline_zh">我們該如何溝通？</string>
     <string name="language_selection_description_zh">選擇您的語言</string>
 
-    <!-- Culture Interest -->
+    <!-- Culture Interest (Restored Original Texts) -->
     <string name="culture_interest_subtitle">Personalize</string>
-    <string name="culture_interest_headline">What excites you?</string>
-    <string name="culture_temples">Temples &amp; Folk Beliefs</string>
-    <string name="culture_old_streets">Old Streets &amp; Local Life</string>
-    <string name="culture_architecture">Historic Architecture</string>
-    <string name="culture_trade">Trade &amp; Harbor Culture</string>
-    <string name="culture_colonial">Japanese Colonial Heritage</string>
-    <string name="culture_crafts">Traditional Crafts</string>
-    <string name="skip_button">skip</string>
-    <string name="start_exploring_button">Start exploring</string>
     <string name="culture_interest_subtitle_zh">個人化</string>
+    <string name="culture_interest_headline">What excites you?</string>
     <string name="culture_interest_headline_zh">什麼讓您興奮？</string>
+    <string name="culture_temples">Temples &amp; Folk Beliefs</string>
+    <string name="culture_temples_zh">宗教信仰</string>
+    <string name="culture_old_streets">Old Streets &amp; Local Life</string>
+    <string name="culture_old_streets_zh">老街與生活</string>
+    <string name="culture_architecture">Historic Architecture</string>
+    <string name="culture_architecture_zh">歷史建築</string>
+    <string name="culture_trade">Trade &amp; Harbor Culture</string>
+    <string name="culture_trade_zh">商業與港口文化</string>
+    <string name="culture_colonial">Japanese Colonial Heritage</string>
+    <string name="culture_colonial_zh">日治文化</string>
+    <string name="culture_crafts">Traditional Crafts</string>
+    <string name="culture_crafts_zh">傳統工藝</string>
+    <string name="skip_button">skip</string>
     <string name="skip_button_zh">跳過</string>
+    <string name="start_exploring_button">Start exploring</string>
     <string name="start_exploring_button_zh">開始探索</string>
 
     <!-- Home Screen -->
     <string name="home_subtitle">DISCOVER</string>
-    <string name="home_headline">Cultural Routes</string>
-    <string name="home_search_placeholder">Search routes...</string>
-    <string name="home_category_all">All</string>
-    <string name="home_more">more</string>
-    <string name="home_nav_home">Home</string>
-    <string name="home_nav_saved">Saved</string>
-    <string name="home_nav_memories">Memories</string>
     <string name="home_subtitle_zh">探索</string>
+    <string name="home_headline">Cultural Routes</string>
     <string name="home_headline_zh">文化路徑</string>
+    <string name="home_search_placeholder">Search routes...</string>
     <string name="home_search_placeholder_zh">搜尋路徑...</string>
+    <string name="home_category_all">All</string>
     <string name="home_category_all_zh">全部</string>
-    <string name="home_category_temples_zh">宗教信仰</string>
-    <string name="home_category_old_streets_zh">老街與生活</string>
-    <string name="home_category_trade_zh">商業與港口文化</string>
-    <string name="home_category_crafts_zh">傳統工藝</string>
-    <string name="home_category_colonial_zh">日治文化</string>
-    <string name="home_category_architecture_zh">歷史建築</string>
+    <string name="home_more">more</string>
     <string name="home_more_zh">更多</string>
+    <string name="home_nav_home">Home</string>
     <string name="home_nav_home_zh">首頁</string>
-    <string name="home_nav_saved_zh">收藏</string>
+    <string name="home_nav_saved">Saved</string>
+    <string name="home_nav_saved_zh">已收藏</string>
+    <string name="home_nav_memories">Memories</string>
     <string name="home_nav_memories_zh">回憶</string>
 
     <!-- Saved (Travel Plan) Screen -->
@@ -98,7 +98,7 @@
     <string name="memories_completed">Completed</string>
     <string name="memories_completed_zh">已完成</string>
     <string name="memories_create_button">Create Memory</string>
-    <string name="memories_create_button_zh">新增回顧</string>
+    <string name="memories_create_button_zh">建立回憶</string>
     <string name="memories_continue_editing">Continue Editing</string>
     <string name="memories_continue_editing_zh">繼續編輯</string>
     <string name="memories_updated_on">Updated on %1$s</string>

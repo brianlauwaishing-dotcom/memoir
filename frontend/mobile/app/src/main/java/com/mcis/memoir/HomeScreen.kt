@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -51,7 +52,7 @@ import com.mcis.memoir.ui.theme.AppTheme
 import com.mcis.memoir.ui.theme.inter
 import com.mcis.memoir.ui.theme.judson
 
-data class CategoryItem(val id: String, val label: String)
+data class CategoryItem(val id: String, val labelRes: Int)
 
 /**
  * Home screen displaying cultural routes and categories.
@@ -69,6 +70,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     val isChinese = selectedLanguage == "zh"
+    val context = LocalContext.current
 
     // Mimic process of getting data from backend
     val routes = remember { MockData.routes }
@@ -81,16 +83,16 @@ fun HomeScreen(
         mutableStateOf(if (initialInterests.isEmpty()) setOf("all") else initialInterests) 
     }
 
-    // Category list definition
-    val categoryList = remember(isChinese) {
+    // Category list definition using string resources
+    val categoryList = remember {
         listOf(
-            CategoryItem("all", if (isChinese) "全部" else "All"),
-            CategoryItem("temples", if (isChinese) "寺廟與民俗" else "Temples & Folk Beliefs"),
-            CategoryItem("old_streets", if (isChinese) "老街與生活" else "Old Streets & Life"),
-            CategoryItem("architecture", if (isChinese) "古蹟建築" else "Historic Architecture"),
-            CategoryItem("trade", if (isChinese) "商貿與港口" else "Trade & Port"),
-            CategoryItem("colonial", if (isChinese) "日治遺產" else "Colonial Heritage"),
-            CategoryItem("crafts", if (isChinese) "傳統工藝" else "Traditional Crafts")
+            CategoryItem("all", R.string.home_category_all),
+            CategoryItem("temples", R.string.culture_temples),
+            CategoryItem("old_streets", R.string.culture_old_streets),
+            CategoryItem("architecture", R.string.culture_architecture),
+            CategoryItem("trade", R.string.culture_trade),
+            CategoryItem("colonial", R.string.culture_colonial),
+            CategoryItem("crafts", R.string.culture_crafts)
         )
     }
 
@@ -100,8 +102,22 @@ fun HomeScreen(
             true
         } else {
             selectedCategoryIds.any { id ->
-                val categoryLabel = categoryList.find { it.id == id }?.label
-                val routeLabel = if (isChinese) route.categoryZh else route.categoryEn
+                val categoryResId = when(id) {
+                    "temples" -> R.string.culture_temples
+                    "old_streets" -> R.string.culture_old_streets
+                    "architecture" -> R.string.culture_architecture
+                    "trade" -> R.string.culture_trade
+                    "colonial" -> R.string.culture_colonial
+                    "crafts" -> R.string.culture_crafts
+                    else -> 0
+                }
+                if (categoryResId == 0) return@any false
+                
+                // RESTORED: Get original English string for backend-matching comparison
+                // Since MockData.kt categoryEn uses these original labels, we compare against English
+                val categoryLabel = context.getString(categoryResId)
+                val routeLabel = route.categoryEn
+                
                 categoryLabel == routeLabel
             }
         }
@@ -171,7 +187,17 @@ fun HomeScreen(
             ) {
                 items(categoryList) { category ->
                     CategoryChip(
-                        label = category.label,
+                        label = if (category.id == "all") {
+                            if (isChinese) stringResource(R.string.home_category_all_zh) else stringResource(R.string.home_category_all)
+                        } else {
+                            if (isChinese) {
+                                val resName = context.resources.getResourceEntryName(category.labelRes)
+                                val zhResId = context.resources.getIdentifier("${resName}_zh", "string", context.packageName)
+                                if (zhResId != 0) stringResource(zhResId) else stringResource(category.labelRes)
+                            } else {
+                                stringResource(category.labelRes)
+                            }
+                        },
                         isSelected = selectedCategoryIds.contains(category.id),
                         onClick = { 
                             if (category.id == "all") {

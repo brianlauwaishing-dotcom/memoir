@@ -339,7 +339,13 @@ fun MyAppNavigation() {
                         spotId = key.spotId,
                         artifactId = key.artifactId,
                         onBackClick = {
-                            backStack.removeLastOrNull()
+                            // Ensure we go back to SpotIntro, not just previous screen
+                            while (backStack.lastOrNull() != SpotIntroDestination(key.spotId) && backStack.size > 1) {
+                                backStack.removeLastOrNull()
+                            }
+                            if (backStack.isEmpty()) {
+                                backStack.add(SpotIntroDestination(key.spotId))
+                            }
                         },
                         onInfoClick = { spotId ->
                             backStack.add(SpotDetailDestination(spotId))
@@ -358,7 +364,13 @@ fun MyAppNavigation() {
                         spotId = key.spotId,
                         artifactId = key.artifactId,
                         onBackClick = {
-                            backStack.removeLastOrNull()
+                            // Ensure we go back to SpotIntro, not just previous screen
+                            while (backStack.lastOrNull() != SpotIntroDestination(key.spotId) && backStack.size > 1) {
+                                backStack.removeLastOrNull()
+                            }
+                            if (backStack.isEmpty()) {
+                                backStack.add(SpotIntroDestination(key.spotId))
+                            }
                         },
                         onInfoClick = { spotId ->
                             backStack.add(SpotDetailDestination(spotId))
