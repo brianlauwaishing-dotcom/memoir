@@ -1,17 +1,52 @@
 <resources>
     <string name="app_name">Memoir</string>
+    
+    <!-- Shared / General -->
+    <string name="next_button">Next</string>
+    <string name="next_button_zh">下一步</string>
+    <string name="save_button">Save</string>
+    <string name="save_button_zh">儲存</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="cancel_button_zh">取消</string>
+    <string name="delete_button">Delete</string>
+    <string name="delete_button_zh">刪除</string>
+    <string name="back_button">Back</string>
+    <string name="back_button_zh">返回</string>
+
+    <!-- Discovery & Artifacts -->
+    <string name="discovery_mode">Discovery Mode</string>
+    <string name="discovery_mode_zh">探索模式</string>
+    <string name="discovery_found">Found</string>
+    <string name="discovery_found_zh">已找到</string>
+    <string name="discovery_look_closer">Look Closer</string>
+    <string name="discovery_look_closer_zh">仔細看</string>
+    <string name="discovery_you_discovered">You Discovered</string>
+    <string name="discovery_you_discovered_zh">您發現了</string>
+    <string name="more_button">More</string>
+    <string name="more_button_zh">更多</string>
+
+    <!-- Welcome Screen -->
     <string name="welcome_subtitle">WELCOME TO TAIWAN</string>
     <string name="welcome_headline">Your Story\nBegins Here</string>
     <string name="welcome_description">Discover the soul of Taiwan through stories, not just places. Let us guide your cultural journey.</string>
     <string name="begin_tour_button">Begin your tour</string>
     <string name="arrow_right_content_description">Arrow right icon</string>
+    <string name="welcome_subtitle_zh">歡迎來到台灣</string>
+    <string name="welcome_headline_zh">您的故事\n從這裡開始</string>
+    <string name="welcome_description_zh">透過故事，而不僅是景點，發現台灣的靈魂。讓我們引導您的文化之旅。</string>
+    <string name="begin_tour_button_zh">開始您的旅程</string>
+
+    <!-- Language Selection -->
     <string name="language_selection_subtitle">Personalize</string>
     <string name="language_selection_headline">How should we talk?</string>
     <string name="language_selection_description">Choose your language</string>
     <string name="language_english">English</string>
     <string name="language_chinese">中文</string>
-    <string name="next_button">Next</string>
-    <string name="start_exploring_button">Start exploring</string>
+    <string name="language_selection_subtitle_zh">個人化</string>
+    <string name="language_selection_headline_zh">我們該如何溝通？</string>
+    <string name="language_selection_description_zh">選擇您的語言</string>
+
+    <!-- Culture Interest -->
     <string name="culture_interest_subtitle">Personalize</string>
     <string name="culture_interest_headline">What excites you?</string>
     <string name="culture_temples">Temples &amp; Folk Beliefs</string>
@@ -21,51 +56,149 @@
     <string name="culture_colonial">Japanese Colonial Heritage</string>
     <string name="culture_crafts">Traditional Crafts</string>
     <string name="skip_button">skip</string>
-    <string name="skip_button_zh">跳過</string>
-
-    <!-- Welcome Screen Chinese -->
-    <string name="welcome_subtitle_zh">歡迎來到台灣</string>
-    <string name="welcome_headline_zh">您的故事\n從這裡開始</string>
-    <string name="welcome_description_zh">透過故事，而不僅是景點，發現台灣的靈魂。讓我們引導您的文化之旅。</string>
-    <string name="begin_tour_button_zh">開始您的旅程</string>
-
-    <!-- Language Selection Chinese -->
-    <string name="language_selection_subtitle_zh">個人化</string>
-    <string name="language_selection_headline_zh">我們該如何溝通？</string>
-    <string name="language_selection_description_zh">選擇您的語言</string>
-    <string name="next_button_zh">下一步</string>
-
-    <!-- Culture Interest Chinese -->
+    <string name="start_exploring_button">Start exploring</string>
     <string name="culture_interest_subtitle_zh">個人化</string>
     <string name="culture_interest_headline_zh">什麼讓您興奮？</string>
+    <string name="skip_button_zh">跳過</string>
     <string name="start_exploring_button_zh">開始探索</string>
 
-    <string name="discover_subtitle">DISCOVER</string>
-    <string name="discover_headline">Cultural Routes</string>
-    <string name="discover_search_placeholder">Search routes...</string>
-    <string name="discover_category_all">All</string>
-    <string name="discover_more">more</string>
-    <string name="discover_nav_home">Home</string>
-    <string name="discover_nav_saved">Saved</string>
-    <string name="discover_nav_memories">Memories</string>
+    <!-- Home Screen -->
+    <string name="home_subtitle">DISCOVER</string>
+    <string name="home_headline">Cultural Routes</string>
+    <string name="home_search_placeholder">Search routes...</string>
+    <string name="home_category_all">All</string>
+    <string name="home_more">more</string>
+    <string name="home_nav_home">Home</string>
+    <string name="home_nav_saved">Saved</string>
+    <string name="home_nav_memories">Memories</string>
+    <string name="home_subtitle_zh">探索</string>
+    <string name="home_headline_zh">文化路徑</string>
+    <string name="home_search_placeholder_zh">搜尋路徑...</string>
+    <string name="home_category_all_zh">全部</string>
+    <string name="home_category_temples_zh">寺廟與民俗</string>
+    <string name="home_category_old_streets_zh">老街與生活</string>
+    <string name="home_category_trade_zh">商貿與港口</string>
+    <string name="home_category_crafts_zh">傳統工藝</string>
+    <string name="home_category_colonial_zh">日治遺產</string>
+    <string name="home_category_architecture_zh">古蹟建築</string>
+    <string name="home_more_zh">更多</string>
+    <string name="home_nav_home_zh">首頁</string>
+    <string name="home_nav_saved_zh">已收藏</string>
+    <string name="home_nav_memories_zh">回憶</string>
 
-    <!-- Discover Screen Chinese -->
-    <string name="discover_subtitle_zh">探索</string>
-    <string name="discover_headline_zh">文化路徑</string>
-    <string name="discover_search_placeholder_zh">搜尋路徑...</string>
-    <string name="discover_category_all_zh">全部</string>
-    <string name="discover_category_temples_zh">寺廟與民俗</string>
-    <string name="discover_category_old_streets_zh">老街與生活</string>
-    <string name="discover_category_trade_zh">商貿與港口</string>
-    <string name="discover_category_crafts_zh">傳統工藝</string>
-    <string name="discover_category_colonial_zh">日治遺產</string>
-    <string name="discover_category_architecture_zh">古蹟建築</string>
-    <string name="discover_more_zh">更多</string>
-    <string name="discover_nav_home_zh">首頁</string>
-    <string name="discover_nav_saved_zh">已收藏</string>
-    <string name="discover_nav_memories_zh">回憶</string>
+    <!-- Saved (Travel Plan) Screen -->
+    <string name="saved_headline">My travel plan</string>
+    <string name="saved_headline_zh">我的旅遊計畫</string>
 
-    <!-- Route Data Chinese -->
+    <!-- Memories Screen -->
+    <string name="memories_headline">Memory</string>
+    <string name="memories_headline_zh">回憶</string>
+    <string name="memories_in_progress">In Progress</string>
+    <string name="memories_in_progress_zh">進行中</string>
+    <string name="memories_completed">Completed</string>
+    <string name="memories_completed_zh">已完成</string>
+    <string name="memories_create_button">Create Memory</string>
+    <string name="memories_create_button_zh">建立回憶</string>
+    <string name="memories_continue_editing">Continue Editing</string>
+    <string name="memories_continue_editing_zh">繼續編輯</string>
+    <string name="memories_updated_on">Updated on %1$s</string>
+    <string name="memories_updated_on_zh">更新於 %1$s</string>
+    <string name="memories_delete_confirm">Are you sure you want to delete this?</string>
+    <string name="memories_delete_confirm_zh">您確定要刪除嗎？</string>
+    <string name="memories_menu_edit">Edit Memory</string>
+    <string name="memories_menu_edit_zh">編輯回憶</string>
+    <string name="memories_menu_delete">Delete Memory</string>
+    <string name="memories_menu_delete_zh">刪除回憶</string>
+    <string name="memories_menu_duplicate">Duplicate Memory</string>
+    <string name="memories_menu_duplicate_zh">重複回憶</string>
+    <string name="memories_menu_share">Share Memory</string>
+    <string name="memories_menu_share_zh">分享回憶</string>
+
+    <!-- Spot Detail Screen -->
+    <string name="spot_detail_duration">DURATION</string>
+    <string name="spot_detail_duration_zh">停留時間</string>
+    <string name="spot_detail_why_matters">Why it matters</string>
+    <string name="spot_detail_why_matters_zh">為什麼重要</string>
+    <string name="spot_detail_historical_context">Historical context</string>
+    <string name="spot_detail_historical_context_zh">歷史背景</string>
+    <string name="spot_detail_architectural_features">Architectural features</string>
+    <string name="spot_detail_architectural_features_zh">建築特色</string>
+    <string name="spot_detail_modern_use">Modern use</string>
+    <string name="spot_detail_modern_use_zh">現代用途</string>
+    <string name="spot_detail_modern_use_preservation">Modern Use &amp; Preservation</string>
+    <string name="spot_detail_modern_use_preservation_zh">現代用途與保護</string>
+    <string name="spot_detail_map">Map</string>
+    <string name="spot_detail_map_zh">地圖</string>
+    <string name="spot_detail_how_do_you_feel">How are you feeling today?</string>
+    <string name="spot_detail_how_do_you_feel_zh">您今天感覺如何？</string>
+    <string name="spot_detail_how_make_feel">How does this place make you feel?</string>
+    <string name="spot_detail_how_make_feel_zh">這個地方讓你感覺如何？</string>
+    <string name="spot_detail_continue_exploring">Continue Exploring</string>
+    <string name="spot_detail_continue_exploring_zh">繼續探索</string>
+    <string name="spot_not_found">Spot not found</string>
+    <string name="spot_not_found_zh">找不到景點</string>
+
+    <!-- Spot Explore Screen -->
+    <string name="spot_explore_podcast">Podcast</string>
+    <string name="spot_explore_podcast_zh">播客</string>
+    <string name="spot_explore_photography_tips">Photography Tips :</string>
+    <string name="spot_explore_photography_tips_zh">攝影小撇步：</string>
+    <string name="spot_explore_take_photo">Take Photo</string>
+    <string name="spot_explore_take_photo_zh">拍照</string>
+    <string name="spot_explore_info_content_description">Info icon</string>
+    <string name="spot_explore_info_content_description_zh">資訊圖示</string>
+    <string name="spot_explore_share_content_description">Share icon</string>
+    <string name="spot_explore_share_content_description_zh">分享圖示</string>
+
+    <!-- Memory Flow (Template, Photos, Edit) -->
+    <string name="memory_flow_choose_template">Choose Template</string>
+    <string name="memory_flow_choose_template_zh">選擇模板</string>
+    <string name="memory_flow_import_photos">Import Photos</string>
+    <string name="memory_flow_import_photos_zh">匯入相片</string>
+    <string name="memory_flow_photos_selected">%1$d Photos Selected</string>
+    <string name="memory_flow_photos_selected_zh">已選擇 %1$d 張相片</string>
+    <string name="memory_flow_hold_to_reorder">Hold to Reorder</string>
+    <string name="memory_flow_hold_to_reorder_zh">長按以重新排序</string>
+    <string name="memory_flow_add_photos">Add Photos</string>
+    <string name="memory_flow_add_photos_zh">新增相片</string>
+    <string name="memory_flow_preview_edit">Preview &amp; Edit</string>
+    <string name="memory_flow_preview_edit_zh">預覽與編輯</string>
+    <string name="memory_flow_move">Move</string>
+    <string name="memory_flow_move_zh">移動</string>
+    <string name="memory_flow_filters">Filters</string>
+    <string name="memory_flow_filters_zh">濾鏡</string>
+    <string name="memory_flow_stickers">Stickers</string>
+    <string name="memory_flow_stickers_zh">貼紙</string>
+    <string name="memory_flow_fonts">Fonts</string>
+    <string name="memory_flow_fonts_zh">字體</string>
+    <string name="memory_flow_stamps">Stamps</string>
+    <string name="memory_flow_stamps_zh">印章</string>
+
+    <!-- Memory Reflection Screen -->
+    <string name="memory_reflection_headline">Travel Reflection</string>
+    <string name="memory_reflection_headline_zh">旅遊心得</string>
+    <string name="memory_reflection_my_reflection">My Reflection</string>
+    <string name="memory_reflection_my_reflection_zh">我的心得</string>
+    <string name="memory_reflection_polish_ai">Polish with AI</string>
+    <string name="memory_reflection_polish_ai_zh">AI 潤色</string>
+    <string name="memory_reflection_add_landmarks">Add to landmarks</string>
+    <string name="memory_reflection_add_landmarks_zh">加入地標</string>
+    <string name="memory_reflection_placeholder">Please enter your feelings about this trip.</string>
+    <string name="memory_reflection_placeholder_zh">請輸入您對這次旅行的感受。</string>
+    <string name="memory_reflection_regenerate">Regenerate</string>
+    <string name="memory_reflection_regenerate_zh">重新生成</string>
+    <string name="memory_reflection_copy">copy</string>
+    <string name="memory_reflection_copy_zh">複製</string>
+
+    <!-- Route Detail Screen -->
+    <string name="route_detail_your_journey">YOUR JOURNEY</string>
+    <string name="route_detail_your_journey_zh">您的旅程</string>
+    <string name="route_detail_save_place">Save Place</string>
+    <string name="route_detail_save_place_zh">收藏地點</string>
+    <string name="route_not_found">Route not found</string>
+    <string name="route_not_found_zh">找不到路徑</string>
+
+    <!-- Route Data Chinese (Legacy support) -->
     <string name="route_sea_protection_zh">從海洋守護到城市信仰</string>
     <string name="route_sounds_of_temple_zh">府城寺廟之聲</string>
     <string name="route_faith_hidden_zh">隱身巷弄的信仰</string>
