@@ -179,12 +179,12 @@ private fun InterestOptionsList(
             // But wait, the resource IDs are for EN. Let's map them to ZH if needed.
             val label = if (isChinese) {
                 when(interest.id) {
-                    "temples" -> stringResource(R.string.discover_category_temples_zh)
-                    "old_streets" -> stringResource(R.string.discover_category_old_streets_zh)
-                    "architecture" -> stringResource(R.string.discover_category_architecture_zh)
-                    "trade" -> stringResource(R.string.discover_category_trade_zh)
-                    "colonial" -> stringResource(R.string.discover_category_colonial_zh)
-                    "crafts" -> stringResource(R.string.discover_category_crafts_zh)
+                    "temples" -> stringResource(R.string.home_category_temples_zh)
+                    "old_streets" -> stringResource(R.string.home_category_old_streets_zh)
+                    "architecture" -> stringResource(R.string.home_category_architecture_zh)
+                    "trade" -> stringResource(R.string.home_category_trade_zh)
+                    "colonial" -> stringResource(R.string.home_category_colonial_zh)
+                    "crafts" -> stringResource(R.string.home_category_crafts_zh)
                     else -> stringResource(interest.nameResourceId)
                 }
             } else {
@@ -273,7 +273,8 @@ private fun SkipButton(
             painter = painterResource(R.drawable.arrow_right),
             contentDescription = stringResource(R.string.arrow_right_content_description),
             contentScale = ContentScale.Fit,
-            modifier = Modifier.size(14.dp, 15.dp)
+            modifier = Modifier.size(14.dp, 15.dp),
+            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color(0xFFA8A8A8))
         )
     }
 }

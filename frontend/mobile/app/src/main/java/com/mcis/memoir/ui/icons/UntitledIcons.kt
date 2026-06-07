@@ -2,5 +2,5 @@ package com.mcis.memoir.ui.icons
 
 object UntitledIcons
 
-// Explicitly import or reference the extension properties if needed, 
-// though Kotlin extension properties in the same package are usually visible.
+// Extension properties for the icons are defined in their respective files.
+// Ensure they are correctly imported when used.

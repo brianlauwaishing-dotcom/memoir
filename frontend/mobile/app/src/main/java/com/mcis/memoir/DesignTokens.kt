@@ -12,6 +12,7 @@ object DesignTokens {
     // region Color Tokens
     val colorWhite: Color = Color(0xFFFFFFFF)
     val colorFloralWhite: Color = Color(0xFFF8F4EB)
+    val colorWelcomeBackground: Color = Color(0xFFF8F4EB)
     val colorLanguageSelectionBackground: Color = Color(0xFFF7F3EA)
     val colorMaroon: Color = Color(0xFF901913)
     val colorBlack: Color = Color(0xFF000000)

@@ -36,9 +36,74 @@ data object LanguageSelectionDestination
 data object CultureInterestDestination
 
 /**
- * Navigation destination for the Discover screen.
+ * Navigation destination for the Home screen.
  */
-data object DiscoverDestination
+data object HomeDestination
+
+/**
+ * Navigation destination for the Saved screen.
+ */
+data object SavedDestination
+
+/**
+ * Navigation destination for the Memories screen.
+ */
+data object MemoriesDestination
+
+/**
+ * Navigation destination for the Memory Template screen.
+ */
+data object MemoryTemplateDestination
+
+/**
+ * Navigation destination for the Memory Photo Selection screen.
+ */
+data class MemoryPhotoSelectionDestination(val templateId: String)
+
+/**
+ * Navigation destination for the Memory Edit (Preview & Edit) screen.
+ */
+data class MemoryEditDestination(val templateId: String, val photoResIds: List<Int>)
+
+/**
+ * Navigation destination for the Memory Reflection screen.
+ */
+data object MemoryReflectionDestination
+
+/**
+ * Navigation destination for the Route Detail screen.
+ */
+data class RouteDetailDestination(val routeId: String)
+
+/**
+ * Navigation destination for the Spot Detail screen.
+ */
+data class SpotDetailDestination(val spotId: String)
+
+/**
+ * Navigation destination for the Spot Intro (Discovery Mode) screen.
+ */
+data class SpotIntroDestination(val spotId: String)
+
+/**
+ * Navigation destination for the Artifact Discovery (Look Closer) screen.
+ */
+data class ArtifactDiscoveryDestination(val spotId: String, val artifactId: Int)
+
+/**
+ * Navigation destination for the Artifact Detail screen.
+ */
+data class ArtifactDetailDestination(val spotId: String, val artifactId: Int)
+
+/**
+ * Navigation destination for the Camera Preview screen.
+ */
+data object CameraPreviewDestination
+
+/**
+ * Navigation destination for the Spot Explore (Continue Exploring) screen.
+ */
+data class SpotExploreDestination(val spotId: String)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
