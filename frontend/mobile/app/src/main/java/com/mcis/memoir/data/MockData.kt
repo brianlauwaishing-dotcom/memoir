@@ -7,9 +7,9 @@ object MockData {
         RouteData(
             id = "sounds_of_temple",
             titleEn = "Sounds of Temple Tainan",
-            titleZh = "府城寺廟之聲",
+            titleZh = "台南廟宇聲音路線",
             categoryEn = "Temples & Folk Beliefs",
-            categoryZh = "寺廟與民俗",
+            categoryZh = "宗教信仰",
             imageRes = R.drawable.sounds_of_temple,
             descriptionEn = "Faith that began at sea, moving inland with trade and governance.",
             descriptionZh = "信仰始於海洋，隨著貿易與治理向內陸延伸。",
@@ -21,51 +21,63 @@ object MockData {
         ),
         RouteData(
             id = "sea_protection",
-            titleEn = "Sea Protection to City Beliefs",
+            titleEn = "From Sea Protection to City Beliefs",
             titleZh = "從海洋守護到城市信仰",
             categoryEn = "Temples & Folk Beliefs",
-            categoryZh = "寺廟與民俗",
+            categoryZh = "宗教信仰",
             imageRes = R.drawable.sea_protection,
             descriptionEn = "Faith that began at sea, moving inland with trade and governance.",
             descriptionZh = "信仰始於海洋，隨著貿易與治理向內陸延伸。",
             journeyItems = listOf(
-                JourneyItem(1, "anping_kaitai", "Anping Kaitai Tianhou Temple", "安平開臺天后宮"),
+                JourneyItem(1, "anping_kaitai", "Anping Kaitai Tianhou Temple", "安平開台天后宮"),
                 JourneyItem(2, "wind_god", "Temple of the Wind God", "風神廟"),
-                JourneyItem(3, "grand_mazu", "Grand Mazu Temple", "大天后宮")
+                JourneyItem(3, "grand_wumiao", "Grand Wumiao Temple", "祀典武廟")
             )
         ),
         RouteData(
             id = "colonial_architecture",
             titleEn = "Layers of Colonial Architecture",
-            titleZh = "日治建築的層次",
+            titleZh = "殖民時代建築路線",
             categoryEn = "Historic Architecture",
-            categoryZh = "古蹟建築",
+            categoryZh = "歷史建築",
             imageRes = R.drawable.layers_of_colonial,
             descriptionEn = "Explore the blending of Western styles and local needs during the Japanese period.",
             descriptionZh = "探索日治時期西方風格與在地需求的融合。",
-            journeyItems = emptyList()
+            journeyItems = listOf(
+                JourneyItem(1, "anping_fort", "Anping Fort (Fort Zeelandia)", "安平古堡（熱蘭遮城）"),
+                JourneyItem(2, "chihkan_tower", "Chihkan Tower (Fort Provintia)", "赤崁樓（普羅民遮城）"),
+                JourneyItem(3, "tainan_prefecture_hall", "Tainan Prefecture Hall (National Museum of Taiwan Literature)", "臺南州廳（國立台灣文學館）")
+            )
         ),
         RouteData(
             id = "brick_arches",
             titleEn = "Brick, Arches, and Time",
-            titleZh = "磚牆、拱門與時光",
+            titleZh = "紅磚與拱廊路線",
             categoryEn = "Historic Architecture",
-            categoryZh = "古蹟建築",
+            categoryZh = "歷史建築",
             imageRes = R.drawable.brick_arches_and_time,
             descriptionEn = "A journey through the red brick structures that defined an era.",
             descriptionZh = "穿越定義了一個時代的紅磚建築之旅。",
-            journeyItems = emptyList()
+            journeyItems = listOf(
+                JourneyItem(1, "Ssennong_street", "Shennong Street", "神農街"),
+                JourneyItem(2, "snail_alley", "Snail Alley", "蝸牛巷"),
+                JourneyItem(3, "hayashi_department_store", "Hayashi Department Store", "林百貨")
+            )
         ),
         RouteData(
             id = "faith_hidden",
             titleEn = "Faith Hidden in Alleyways",
-            titleZh = "隱身巷弄的信仰",
+            titleZh = "巷弄中的信仰痕跡",
             categoryEn = "Temples & Folk Beliefs",
-            categoryZh = "寺廟與民俗",
+            categoryZh = "宗教信仰",
             imageRes = R.drawable.faith_hidden,
             descriptionEn = "Small shrines with big stories tucked away in Tainan's old lanes.",
             descriptionZh = "藏在台南老巷弄裡、擁有大故事的小神龕。",
-            journeyItems = emptyList()
+            journeyItems = listOf(
+                JourneyItem(1, "zonggong_temple", "Zonggong Temple", "總趕宮"),
+                JourneyItem(2, "kaiji_jade_emperor_temple", "Kaiji Jade Emperor Temple", "開基玉皇宮"),
+                JourneyItem(3, "kaiji_wumiao_temple", "Kaiji Wumiao Temple", "開基武廟")
+            )
         )
     )
 
@@ -75,16 +87,16 @@ object MockData {
             titleEn = "Grand Mazu Temple",
             titleZh = "大天后宮",
             imageRes = R.drawable.grand_mazu_temple,
-            durationEn = "30–45 mins",
-            durationZh = "30–45 分鐘",
-            whyItMattersEn = "The first officially built Mazu temple in Taiwan; bells and chanting create a distinctive soundscape, ideal for experiencing the auditory dimension of Tainan temple culture.",
-            whyItMattersZh = "台灣第一座官建媽祖廟；鐘聲與誦經聲營造出獨特的聲景，是體驗台南寺廟文化聽覺維度的理想場所。",
-            historicalContextEn = "In 1684, the Qing court converted the Zheng Kingdom's royal palace into this temple — signaling religious reconstruction after regime change.",
-            historicalContextZh = "1684年，清廷將鄭氏政權的寧靖王府改建為這座廟宇，標誌著政權更迭後的宗教重建。",
-            architecturalFeaturesEn = "Imperial-standard three-hall layout; main hall with five-bay width; double-eave hip-and-gable roof.",
-            architecturalFeaturesZh = "皇室標準的三進式佈局；五開間寬的主殿；重簷歇山頂。",
-            modernUseEn = "Now a national historic site and active faith center; annual Mazu birthday celebrations are large-scale events.",
-            modernUseZh = "現為國定古蹟且為活躍的信仰中心；每年的媽祖誕辰慶典是大型盛事。",
+            durationEn = "20–30 mins",
+            durationZh = "20–30 分鐘",
+            whyItMattersEn = "The first officially built Mazu temple in Taiwan; bells and chanting create a distinctive soundscape, ideal for experiencing the auditory dimension of Tainan temple culture. Its royal founding background gives it an unrivaled status among Taiwan's Mazu temples.",
+            whyItMattersZh = "全台首座官建媽祖廟，鐘磬誦經聲構成獨特聲景，是體驗台南廟宇文化聽覺層次的最佳場所。皇家規格的建廟背景使其在台灣媽祖廟中地位無可取代。",
+            historicalContextEn = "In 1684, the Qing court converted the Zheng Kingdom's royal palace into this temple — signaling religious reconstruction after regime change and a political gesture to pacify Taiwan's population, built to imperial standards.",
+            historicalContextZh = "1684 年清廷將明鄭寧靖王府改建為廟，象徵政權更迭後的信仰重建，也是清廷安撫台灣民心的政治舉措，建廟規格依皇家禮制。",
+            architecturalFeaturesEn = "Imperial-standard three-hall layout; main hall with five-bay width; double-eave hip-and-gable roof; precious Qing-dynasty plaques and paintings preserved inside; grand in scale.",
+            architecturalFeaturesZh = "皇家規格三殿式配置，正殿面寬五開間，屋頂為重簷歇山式，殿內存有珍貴的清代匾額與彩繪，規模宏偉。",
+            modernUseEn = "Now a national historic site and active faith center; annual Mazu birthday celebrations are large-scale events; the temple actively pursues cultural artifact research and display.",
+            modernUseZh = "現為國定古蹟，持續作為信仰中心，每年媽祖誕辰慶典規模盛大，廟宇亦積極進行文物研究與展示工作。",
             factsEn = listOf(
                 "Main deity: Mazu",
                 "Founded: 1684 (Qing Kangxi reign)",
@@ -125,9 +137,9 @@ object MockData {
                     imageRes = R.drawable.dragon_pillar, 
                     galleryImageRes = R.drawable.eg1,
                     questionEn = "How many dragons are on the pillars?", 
-                    questionZh = "柱子上有多少條龍？",
+                    questionZh = "龍柱上有幾條龍呢？",
                     moreInfoEn = "The coiling dragon pillar symbolizes protection and strength. In traditional belief, the dragon guards sacred spaces, carrying hopes for safety and harmony.",
-                    moreInfoZh = "盤龍柱象徵著保護與力量。在傳統信仰中，龍守護著神聖的空間，承載著對平安與和諧的希望。"
+                    moreInfoZh = "盤旋而上的龍柱，象徵守護與力量。龍在傳統信仰中能鎮守空間，也承載人們對平安與秩序的想像。"
                 ),
                 DiscoveryItem(
                     id = 2, 
@@ -135,10 +147,10 @@ object MockData {
                     labelZh = "憨番", 
                     imageRes = R.drawable.hanfan, 
                     galleryImageRes = R.drawable.eg2,
-                    questionEn = "What is the Hanfan carrying?", 
-                    questionZh = "憨番在搬什麼？",
-                    moreInfoEn = "Hanfan are specialized architectural elements often found supporting the corners of roofs or beams, symbolizing service and strength.",
-                    moreInfoZh = "憨番是常見於支撐屋頂角落或樑柱的特殊建築元素，象徵著服務與力量。"
+                    questionEn = "What is he doing?",
+                    questionZh = "他正在做什麼呢？",
+                    moreInfoEn = "The stone figures at the prayer hall depict foreign-looking guardians. They reflect historical encounters and imagination, revealing Taiwan’s early connections with the wider world.",
+                    moreInfoZh = "殿前的憨番雕像，帶有異域形象的守護者。這些角色源自歷史交流與想像，見證台灣與世界的早期連結。"
                 ),
                 DiscoveryItem(
                     id = 3, 
@@ -146,10 +158,10 @@ object MockData {
                     labelZh = "媽祖像", 
                     imageRes = R.drawable.mazu_statue, 
                     galleryImageRes = R.drawable.eg3,
-                    questionEn = "What color is the statue's face?", 
-                    questionZh = "雕像的面部是什麼顏色？",
-                    moreInfoEn = "The majestic Mazu statue is the heart of the temple. Her compassionate expression and detailed robes reflect the high craftsmanship of the era.",
-                    moreInfoZh = "莊嚴的媽祖像是寺廟的核心。她慈悲的表情和細緻的長袍反映了那個時代的高超工藝。"
+                    questionEn = "What is she?",
+                    questionZh = "你認識這位神明嗎？",
+                    moreInfoEn = "Standing at the center of the hall, Mazu is the heart of maritime faith. She is believed to protect sailors and travelers, as well as everyday life and safety.",
+                    moreInfoZh = "立於殿中的媽祖，是海上信仰的核心。人們相信她守護航海與旅途，也守護日常生活的平安。"
                 )
             )
         ),
