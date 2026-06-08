@@ -1,0 +1,67 @@
+{
+  "architecturalFeatures": {
+    "en": "Smaller Southern Fujian temple with relatively understated decoration; retains the unembellished character of early folk temples.",
+    "zh": "規模較小的閩南廟宇，建築裝飾較為樸實，保留了早期民間廟宇不過度雕琢的原始面貌。"
+  },
+  "artifacts": [],
+  "duration": {
+    "en": "10–15 分 / min",
+    "zh": "10–15 分 / min"
+  },
+  "facts": {
+    "en": [
+      "Main deity: Jade Emperor",
+      "Status: Local community temple",
+      "Note: One of Tainan's earliest Jade Emperor temples; preserves original, unadorned character"
+    ],
+    "zh": [
+      "主祀：玉皇大帝",
+      "廟宇等級：地方廟宇",
+      "特色：台南最早玉皇信仰廟宇之一，保存原始質樸風貌"
+    ]
+  },
+  "heroImage": "faith_hidden",
+  "historicalContext": {
+    "en": "Among Tainan's earliest Jade Emperor temples, predating Taiwan's First Heaven Temple; preserves the original character of Jade Emperor worship in Tainan.",
+    "zh": "為台南最早奉祀玉皇大帝的廟宇之一，建廟歷史悠久，在台灣首廟天壇興建之前即已存在，保存了台南玉皇信仰的原始面貌。"
+  },
+  "id": "kaiji_jade_emperor_temple",
+  "modernUse": {
+    "en": "Still serves as a community faith center maintained by local residents; a representative case of Tainan's alleyway temple culture preservation.",
+    "zh": "現仍作為社區信仰中心，由在地居民維護，是台南巷弄廟宇文化保存的代表案例。"
+  },
+  "photographyTips": [
+    {
+      "description": {
+        "en": "Simple facade beauty: Shoot the temple front straight-on with a standard lens; emphasize the clean, understated architectural lines.",
+        "zh": "廟宇正面簡樸之美：以標準鏡頭平視拍攝廟宇正面，強調建築樸實無華的線條美感。"
+      },
+      "id": 1,
+      "image": "faith_hidden"
+    },
+    {
+      "description": {
+        "en": "Temple in streetscape: Step back to include the surrounding old-city street; show how the temple is woven into the urban fabric.",
+        "zh": "老城區街景帶廟：退後至街道取景，將廟宇納入老城區街景中，呈現信仰融入城市紋理的場景。"
+      },
+      "id": 2,
+      "image": "brick_arches_and_time"
+    },
+    {
+      "description": {
+        "en": "Shrine offering details: Shoot the arrangement of offerings at the shrine; note the layered colors of fruit, flowers, and the incense burner.",
+        "zh": "神龕細節：拍攝廟內神龕供品擺設，注意水果、花卉與香爐的色彩搭配層次。"
+      },
+      "id": 3,
+      "image": "layers_of_colonial"
+    }
+  ],
+  "title": {
+    "en": "Kaiji Jade Emperor Temple",
+    "zh": "開基玉皇宮"
+  },
+  "whyItMatters": {
+    "en": "One of the earliest temples in Tainan dedicated to the Jade Emperor; woven into the daily life of old-city residents — important in status but modest in scale, embodying the multi-layered nature of Tainan's faith.",
+    "zh": "台南最早奉祀玉皇大帝的廟宇之一，融入老城區居民日常生活，地位重要但規模質樸，體現台南信仰多元層次。"
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "architecturalFeatures": {
+    "en": "Southern Fujian temple architecture with upswept swallow-tail ridges, colorful ceramic mosaics, three-bay main hall, and detailed door-god paintings.",
+    "zh": "閩南式廟宇建築，燕尾脊翹起、彩瓷剪黏裝飾，正殿三開間格局，門神彩繪精細。"
+  },
+  "artifacts": [
+    {
+      "description": {
+        "en": "Resembling a swallow in flight,the ridge rises gracefully above the temple roof.More than decoration,it reflects hopes for peace and prosperity.",
+        "zh": "向上飛揚的燕尾脊，像展翅的燕子停駐屋頂。不只是裝飾，也寄託著人們對平安與興盛的期盼。"
+      },
+      "id": 1,
+      "image": "eg1",
+      "title": {
+        "en": "Swallowtail Roof Ridge",
+        "zh": "燕尾脊"
+      }
+    },
+    {
+      "description": {
+        "en": "The rising incense smoke carries people's prayers and devotion.More than a ritual object,the incense burner holds generations of hopes and faith.",
+        "zh": "裊裊升起的香煙，連結著人們與神明的心意。來到天后宮，香爐不只是器物，更承載著一代代的祈願與信仰。"
+      },
+      "id": 2,
+      "image": "eg2",
+      "title": {
+        "en": "Incense Burner",
+        "zh": "香爐"
+      }
+    },
+    {
+      "description": {
+        "en": "Standing on either side of the temple entrance, the guardians watch over the sacred space.From the intricate armor patterns\nto the expressive brushwork,every detail reflects remarkable craftsmanship.",
+        "zh": "佇立在廟門兩側的門神，以威嚴神情守護著廟宇。從盔甲紋飾到細膩筆觸，每一處都展現傳統工藝的精湛技藝。"
+      },
+      "id": 3,
+      "image": "eg3",
+      "title": {
+        "en": "Door Guardian Paintings",
+        "zh": "門神彩繪"
+      }
+    }
+  ],
+  "duration": {
+    "en": "20–30 分 / min",
+    "zh": "20–30 分 / min"
+  },
+  "facts": {
+    "en": [
+      "Main deity: Mazu (Heavenly Empress)",
+      "Founded: Zheng Kingdom era (17th century)",
+      "Status: City-designated historic site"
+    ],
+    "zh": [
+      "主祀：天上聖母（媽祖）",
+      "創建年代：明鄭時期（17世紀）",
+      "廟宇等級：市定古蹟"
+    ]
+  },
+  "heroImage": "anping_kaitai_tianhou_temple",
+  "historicalContext": {
+    "en": "Established during the Dutch-Zheng era alongside port settlements. One of Tainan's earliest Mazu temples, witnessing Tainan's role as Taiwan's first major maritime trade hub.",
+    "zh": "建於荷鄭時期，與港口聚落同步發展，是台南最早的媽祖廟之一，見證台南作為台灣最早海洋貿易中心的歷史地位。"
+  },
+  "id": "anping_kaitai_tianhou_temple",
+  "modernUse": {
+    "en": "Still an active religious center holding regular temple festivals and processions; includes a cultural display area on Mazu worship history.",
+    "zh": "現仍為活躍的宗教信仰中心，定期舉辦廟會、遶境活動，並設有文物展示區介紹媽祖信仰歷史。"
+  },
+  "photographyTips": [
+    {
+      "description": {
+        "en": "Front panorama: Stand at the center of the courtyard, use wide angle to capture the symmetry of swallow-tail ridges — note the ceramic mosaic details on the roof.",
+        "zh": "正門全景：站在廟埕中央，以廣角捕捉燕尾脊對稱之美，注意屋脊上的剪黏裝飾細節。"
+      },
+      "id": 1,
+      "image": "sounds_of_temple"
+    },
+    {
+      "description": {
+        "en": "Incense burner close-up: Shoot from a low side angle; use rising smoke and the temple backdrop to create depth layers.",
+        "zh": "香爐特寫：從側面低角度拍攝大香爐，以裊裊香煙與廟宇背景形成景深層次。"
+      },
+      "id": 2,
+      "image": "sea_protection"
+    },
+    {
+      "description": {
+        "en": "Door-god paintings: Shoot close to the temple doors; focus on armor textures and the meticulous expression of the guardian deities.",
+        "zh": "門神彩繪：緊貼廟門拍攝左右門神，注意盔甲紋路與面部神情的工筆細節。"
+      },
+      "id": 3,
+      "image": "faith_hidden"
+    }
+  ],
+  "title": {
+    "en": "Anping Kaitai Tianhou Temple",
+    "zh": "安平開台天后宮"
+  },
+  "whyItMatters": {
+    "en": "The origin of Tainan's maritime faith, dedicated to Mazu as protector of seafarers. A key source of Taiwan's Mazu worship, witnessing centuries of fishermen and merchants praying before setting sail.",
+    "zh": "台南海港信仰的起源地，供奉媽祖庇護出海商旅。此廟是台灣媽祖信仰的重要源頭，見證數百年來漁民與商人出海前的祈安儀式，至今香火不斷。"
+  }
+}

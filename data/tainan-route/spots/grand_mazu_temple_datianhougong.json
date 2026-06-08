@@ -1,0 +1,106 @@
+{
+  "architecturalFeatures": {
+    "en": "Imperial-standard three-hall layout; main hall with five-bay width; double-eave hip-and-gable roof; precious Qing-dynasty plaques and paintings preserved inside; grand in scale.",
+    "zh": "皇家規格三殿式配置，正殿面寬五開間，屋頂為重簷歇山式，殿內存有珍貴的清代匾額與彩繪，規模宏偉。"
+  },
+  "artifacts": [
+    {
+      "description": {
+        "en": "The coiling dragon pillar symbolizes protection and strength.\nIn traditional belief, the dragon guards sacred spaces, carrying hopes for safety and harmony.",
+        "zh": "盤旋而上的龍柱，象徵守護與力量。\n龍在傳統信仰中能鎮守空間，也承載人們對平安與秩序的想像。"
+      },
+      "id": 1,
+      "image": "dragon_pillar",
+      "title": {
+        "en": "Dragon Pillar",
+        "zh": "龍柱"
+      }
+    },
+    {
+      "description": {
+        "en": "Standing at the center of the hall, Mazu is the heart of maritime faith.\nShe is believed to protect sailors and travelers, as well as everyday life and safety.",
+        "zh": "立於殿中的媽祖，是海上信仰的核心。\n人們相信她守護航海與旅途，也守護日常生活的平安。"
+      },
+      "id": 2,
+      "image": "eg2",
+      "title": {
+        "en": "Mazu Statue",
+        "zh": "媽祖像"
+      }
+    },
+    {
+      "description": {
+        "en": "The stone figures at the prayer hall depict foreign-looking guardians.\nThey reflect historical encounters and imagination, revealing Taiwan’s early connections with the wider world.",
+        "zh": "殿前的憨番雕像，帶有異域形象的守護者。\n這些角色源自歷史交流與想像，見證台灣與世界的早期連結。"
+      },
+      "id": 3,
+      "image": "eg3",
+      "title": {
+        "en": "Hanfan (Foreign Stone Figures)",
+        "zh": "拜殿憨番"
+      }
+    }
+  ],
+  "duration": {
+    "en": "20–30 分 / min",
+    "zh": "20–30 分 / min"
+  },
+  "facts": {
+    "en": [
+      "Main deity: Mazu",
+      "Founded: 1684 (Qing Kangxi reign)",
+      "Status: National historic site",
+      "Note: First officially built Mazu temple in Taiwan; formerly Zheng Kingdom royal palace"
+    ],
+    "zh": [
+      "主祀：天上聖母（媽祖）",
+      "創建年代：1684年（清康熙）",
+      "廟宇等級：國定古蹟",
+      "特色：全台首座官建媽祖廟，前身為明鄭王府"
+    ]
+  },
+  "heroImage": "grand_mazu_temple",
+  "historicalContext": {
+    "en": "In 1684, the Qing court converted the Zheng Kingdom's royal palace into this temple — signaling religious reconstruction after regime change and a political gesture to pacify Taiwan's population, built to imperial standards.",
+    "zh": "1684 年清廷將明鄭寧靖王府改建為廟，象徵政權更迭後的信仰重建，也是清廷安撫台灣民心的政治舉措，建廟規格依皇家禮制。"
+  },
+  "id": "grand_mazu_temple_datianhougong",
+  "modernUse": {
+    "en": "Now a national historic site and active faith center; annual Mazu birthday celebrations are large-scale events; the temple actively pursues cultural artifact research and display.",
+    "zh": "現為國定古蹟，持續作為信仰中心，每年媽祖誕辰慶典規模盛大，廟宇亦積極進行文物研究與展示工作。"
+  },
+  "photographyTips": [
+    {
+      "description": {
+        "en": "Five-bay main hall panorama: Shoot from the far end of the courtyard with a medium telephoto; capture the imperial grandeur of the double-eave roof.",
+        "zh": "五開間正殿全景：站在廟埕遠端用中焦鏡頭拍攝正殿全貌，捕捉重簷屋頂的皇家氣勢。"
+      },
+      "id": 1,
+      "image": "sounds_of_temple"
+    },
+    {
+      "description": {
+        "en": "Interior plaque display: Wide-angle upward shot of the plaque-filled ceiling interior; note the historical feel of calligraphy and decorative frames.",
+        "zh": "殿內匾額群：以廣角仰拍密布匾額的殿內天花空間，注意匾額字體與裝飾框的歷史感。"
+      },
+      "id": 2,
+      "image": "sea_protection"
+    },
+    {
+      "description": {
+        "en": "Incense activity: During peak offering hours, shoot worshippers holding incense sticks; use slow shutter to capture drifting smoke.",
+        "zh": "香火鼎盛特寫：在上香時段拍攝信眾手持線香祭拜的動態，以慢速快門捕捉煙霧流動。"
+      },
+      "id": 3,
+      "image": "faith_hidden"
+    }
+  ],
+  "title": {
+    "en": "Grand Mazu Temple (Datianhougong)",
+    "zh": "大天后宮"
+  },
+  "whyItMatters": {
+    "en": "The first officially built Mazu temple in Taiwan; bells and chanting create a distinctive soundscape, ideal for experiencing the auditory dimension of Tainan temple culture. Its royal founding background gives it an unrivaled status among Taiwan's Mazu temples.",
+    "zh": "全台首座官建媽祖廟，鐘磬誦經聲構成獨特聲景，是體驗台南廟宇文化聽覺層次的最佳場所。皇家規格的建廟背景使其在台灣媽祖廟中地位無可取代。"
+  }
+}

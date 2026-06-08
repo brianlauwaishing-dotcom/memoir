@@ -1,0 +1,69 @@
+{
+  "architecturalFeatures": {
+    "en": "Small official temple layout retaining the clean, dignified characteristics of Qing official temple architecture — minimal ornamentation conveying the solemnity of state ritual.",
+    "zh": "規模較小的官廟格局，保留清代官式廟宇簡潔莊重的建築特徵，不過度裝飾，體現官方祭祀的肅穆氣氛。"
+  },
+  "artifacts": [],
+  "duration": {
+    "en": "15–20 分 / min",
+    "zh": "15–20 分 / min"
+  },
+  "facts": {
+    "en": [
+      "Main deity: Wind God",
+      "Founded: Qing Qianlong era",
+      "Status: City-designated historic site",
+      "Note: Taiwan's only officially built Qing-era Wind God temple"
+    ],
+    "zh": [
+      "主祀：風神",
+      "創建年代：清乾隆年間",
+      "廟宇等級：市定古蹟",
+      "特色：台灣唯一清代官建風神廟"
+    ]
+  },
+  "heroImage": "sea_protection",
+  "historicalContext": {
+    "en": "Established during the Qianlong era (18th century) as an official site for prayers before navigating the Luermen waterway, reflecting Qing-dynasty concern for harbor trade safety.",
+    "zh": "乾隆年間（18世紀）設立，原為船隻進出鹿耳門水道前的官方祈安場所，反映清代對港口貿易安全的重視。"
+  },
+  "id": "temple_of_the_wind_god",
+  "modernUse": {
+    "en": "Now a city-designated historic site maintaining daily worship functions; serves as an important interpretive site for Tainan's harbor cultural history.",
+    "zh": "現為市定古蹟，維持日常祭祀功能，並作為台南港口文化史的重要詮釋場域。"
+  },
+  "photographyTips": [
+    {
+      "description": {
+        "en": "Temple facade: Shoot straight-on with symmetric framing to convey the dignified simplicity of official temple architecture.",
+        "zh": "廟宇立面：正面平視拍攝，以對稱構圖呈現官廟莊重簡樸的立面特徵。"
+      },
+      "id": 1,
+      "image": "sea_protection"
+    },
+    {
+      "description": {
+        "en": "View toward Luermen: Shoot from the temple entrance toward the harbor direction to evoke the historical sense of prayers before departure.",
+        "zh": "鹿耳門方向遠眺：站在廟前向港口方向拍攝，感受古代船隻出港前祈安的歷史空間感。"
+      },
+      "id": 2,
+      "image": "sounds_of_temple"
+    },
+    {
+      "description": {
+        "en": "Plaque close-up: Shoot upward at interior plaques; focus on Qing-era calligraphy style and the contrast of gold characters.",
+        "zh": "匾額特寫：仰角拍攝廟內匾額題字，注意清代書法風格與金字對比。"
+      },
+      "id": 3,
+      "image": "faith_hidden"
+    }
+  ],
+  "title": {
+    "en": "Temple of the Wind God",
+    "zh": "風神廟"
+  },
+  "whyItMatters": {
+    "en": "An official Qing-dynasty site linking religious ritual with port administration. One of the few surviving Wind God temples in Taiwan, symbolizing systematic official management of harbor activity.",
+    "zh": "清代官方祭祀風神之所，反映台南信仰與港口行政治理緊密結合的歷史。此廟是清代官方系統性管理港口的具體象徵，台灣現存少數以風神為主祀的廟宇。"
+  }
+}

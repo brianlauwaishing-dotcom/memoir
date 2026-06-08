@@ -1,0 +1,69 @@
+{
+  "architecturalFeatures": {
+    "en": "Southern Fujian temple layout with a wide forecourt and staircase; imposing Jade Emperor statue in the main hall; richly painted interior.",
+    "zh": "閩南式廟宇格局，廟前階梯與廟埕廣場寬敞，正殿供奉玉皇大帝神像高大莊嚴，殿內彩繪豐富。"
+  },
+  "artifacts": [],
+  "duration": {
+    "en": "15–20 分 / min",
+    "zh": "15–20 分 / min"
+  },
+  "facts": {
+    "en": [
+      "Main deity: Jade Emperor",
+      "Legendary origin: Zheng Kingdom era",
+      "Status: City-designated historic site",
+      "Note: Holds the title 'Taiwan's First Temple'; center of Jade Emperor worship"
+    ],
+    "zh": [
+      "主祀：玉皇大帝",
+      "傳說起源：明鄭時期",
+      "廟宇等級：市定古蹟",
+      "特色：「台灣首廟」稱號，玉皇大帝信仰中心"
+    ]
+  },
+  "heroImage": "sounds_of_temple",
+  "historicalContext": {
+    "en": "Said to originate from altar worship by Zheng Chenggong's troops; gradually formalized as a temple. Received the 'Taiwan's First Temple' designation during the Qing dynasty, carrying profound historical significance.",
+    "zh": "相傳鄭成功時期軍隊在此設壇祭天，後逐步發展為正式廟宇，清代獲得「台灣首廟」稱號，歷史意義深遠。"
+  },
+  "id": "taiwan_s_first_heaven_temple_tiantan",
+  "modernUse": {
+    "en": "Still an active faith center; incense offerings peak during major festivals like Lantern Festival and the Jade Emperor's birthday, drawing large crowds while preserving traditional ritual culture.",
+    "zh": "現仍為活躍信仰中心，元宵、天公生等重大節慶時香火最為鼎盛，吸引大批信眾與遊客，並保存傳統祭祀文化。"
+  },
+  "photographyTips": [
+    {
+      "description": {
+        "en": "Courtyard upward view: Shoot from the base of the front steps upward; emphasize the leading lines of stairs and the imposing vertical scale of the temple.",
+        "zh": "廟埕仰望：從廟前階梯底部仰角拍攝廟宇正面，強調階梯延伸感與廟宇高聳視覺效果。"
+      },
+      "id": 1,
+      "image": "sounds_of_temple"
+    },
+    {
+      "description": {
+        "en": "Jade Emperor statue: Use a telephoto lens from an appropriate distance; avoid an extreme upward angle to maintain a sense of reverence.",
+        "zh": "玉皇大帝神像：以長焦鏡頭從適當距離拍攝主神神像，避免仰角過大，保持神聖感。"
+      },
+      "id": 2,
+      "image": "sea_protection"
+    },
+    {
+      "description": {
+        "en": "Festival crowds: During major festivals, shoot a wide-angle panorama of the courtyard capturing the interplay of crowds and incense smoke.",
+        "zh": "節慶人潮：於節慶時拍攝信眾祭拜的廟埕全景，以廣角捕捉人潮與煙霧交織的熱鬧場景。"
+      },
+      "id": 3,
+      "image": "faith_hidden"
+    }
+  ],
+  "title": {
+    "en": "Taiwan's First Heaven Temple (Tiantan)",
+    "zh": "台灣首廟天壇"
+  },
+  "whyItMatters": {
+    "en": "Dedicated to the Jade Emperor; a vital local religious center with frequent temple festivals and thriving incense offerings, showcasing the liveliest side of Taiwanese folk religion. The title 'Taiwan's First Temple' reflects its revered status.",
+    "zh": "主祀玉皇大帝，為台南地方信仰重要中心，廟會活動頻繁，香火旺盛，呈現台灣民間信仰最熱鬧的一面。「台灣首廟」之名彰顯其在信仰體系中的崇高地位。"
+  }
+}

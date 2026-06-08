@@ -1,0 +1,69 @@
+{
+  "architecturalFeatures": {
+    "en": "Multi-courtyard Southern Fujian temple layout; exquisite ceramic mosaic roof craftsmanship, intricately carved main shrine, spacious forecourt, well-preserved building complex.",
+    "zh": "多進式閩南廟宇格局，屋頂剪黏工藝精湛，正殿神龕雕工細緻，廟埕寬闊，建築群保存完整。"
+  },
+  "artifacts": [],
+  "duration": {
+    "en": "20–30 分 / min",
+    "zh": "20–30 分 / min"
+  },
+  "facts": {
+    "en": [
+      "Main deity: Guan Sheng Dijun",
+      "Founded: Zheng Kingdom era (17th century)",
+      "Status: National historic site",
+      "Note: State-ritual temple adjacent to Datianhougong"
+    ],
+    "zh": [
+      "主祀：關聖帝君",
+      "創建年代：明鄭時期（17世紀）",
+      "廟宇等級：國定古蹟",
+      "特色：官祀廟宇，與大天后宮相連"
+    ]
+  },
+  "heroImage": "faith_hidden",
+  "historicalContext": {
+    "en": "Built during the Zheng Kingdom era and recognized by successive governments as an official ritual site. Major expansions in the Qing dynasty established it as the state-sanctioned center of Guan Di worship, witnessing Tainan's evolution from immigrant settlement to mature city.",
+    "zh": "建於明鄭時期，歷代官府列入祀典，清代進行大規模擴建，成為官方認可的關帝祭祀中心，見證台南從移民社會到成熟城市的演變。"
+  },
+  "id": "grand_wumiao_temple_sidian_wumiao",
+  "modernUse": {
+    "en": "Now a national historic site open for daily worship; regular Guan Di birthday celebrations held here. Together with the adjacent Datianhougong, forms Tainan's most important religious cultural visit route.",
+    "zh": "現為國定古蹟，每日開放參拜，定期舉辦關帝誕慶典，並與相鄰大天后宮共同構成台南最重要的宗教文化參訪路線。"
+  },
+  "photographyTips": [
+    {
+      "description": {
+        "en": "Forecourt upward shot: Shoot upward from a low angle at the main hall ridge; highlight the layered craftsmanship of swallow-tail ridges and ceramic mosaics.",
+        "zh": "廟埕仰角：站在廟埕前方以低角度仰拍主殿屋脊，突顯燕尾脊與剪黏工藝的精細層次。"
+      },
+      "id": 1,
+      "image": "faith_hidden"
+    },
+    {
+      "description": {
+        "en": "Shrine candlelight: Inside the main hall, capture candlelight reflecting on the shrine — convey solemnity (no flash permitted).",
+        "zh": "神龕光影：進入正殿拍攝燭光映照神龕的光影效果，感受莊嚴氛圍（注意禁止閃光）。"
+      },
+      "id": 2,
+      "image": "brick_arches_and_time"
+    },
+    {
+      "description": {
+        "en": "Temple corridors: Shoot the symmetric perspective lines of the side corridors; add a human figure to scale the space.",
+        "zh": "廟宇廊道：拍攝兩側廊道的對稱透視線條，以人物點景增添空間感。"
+      },
+      "id": 3,
+      "image": "layers_of_colonial"
+    }
+  ],
+  "title": {
+    "en": "Grand Wumiao Temple (Sidian Wumiao)",
+    "zh": "祀典武廟"
+  },
+  "whyItMatters": {
+    "en": "The most important martial temple in central Tainan, dedicated to Guan Sheng Dijun. As an official 'Sidian' (state-ritual) temple, it holds the highest religious status, paired with Datianhougong as Tainan's twin temple landmark.",
+    "zh": "台南城市中心最重要的武廟，主祀關聖帝君，為官方「祀典」廟宇，地位崇高。是台南信仰地景的絕對核心，與大天后宮並稱台南雙廟，每逢節慶人潮眾多。"
+  }
+}

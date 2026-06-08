@@ -1,0 +1,119 @@
+{
+  "routes": {
+    "faith_hidden_in_alleyways": {
+      "heroImage": "faith_hidden"
+    },
+    "from_sea_protection_to_city_beliefs": {
+      "heroImage": "sea_protection"
+    },
+    "sounds_of_temple_tainan": {
+      "heroImage": "sounds_of_temple"
+    }
+  },
+  "spots": {
+    "anping_kaitai_tianhou_temple": {
+      "artifactImages": [
+        "eg1",
+        "eg2",
+        "eg3"
+      ],
+      "heroImage": "anping_kaitai_tianhou_temple",
+      "photographyTipImages": [
+        "sounds_of_temple",
+        "sea_protection",
+        "faith_hidden"
+      ]
+    },
+    "grand_mazu_temple_datianhougong": {
+      "artifactImages": [
+        "dragon_pillar",
+        "eg2",
+        "eg3"
+      ],
+      "heroImage": "grand_mazu_temple",
+      "photographyTipImages": [
+        "sounds_of_temple",
+        "sea_protection",
+        "faith_hidden"
+      ]
+    },
+    "grand_wumiao_temple_sidian_wumiao": {
+      "artifactImages": [
+        "eg1",
+        "eg2",
+        "eg3"
+      ],
+      "heroImage": "faith_hidden",
+      "photographyTipImages": [
+        "faith_hidden",
+        "brick_arches_and_time",
+        "layers_of_colonial"
+      ]
+    },
+    "kaiji_jade_emperor_temple": {
+      "artifactImages": [
+        "eg1",
+        "eg2",
+        "eg3"
+      ],
+      "heroImage": "faith_hidden",
+      "photographyTipImages": [
+        "faith_hidden",
+        "brick_arches_and_time",
+        "layers_of_colonial"
+      ]
+    },
+    "kaiji_wumiao_temple": {
+      "artifactImages": [
+        "eg1",
+        "eg2",
+        "eg3"
+      ],
+      "heroImage": "faith_hidden",
+      "photographyTipImages": [
+        "faith_hidden",
+        "brick_arches_and_time",
+        "layers_of_colonial"
+      ]
+    },
+    "taiwan_s_first_heaven_temple_tiantan": {
+      "artifactImages": [
+        "eg1",
+        "eg2",
+        "eg3"
+      ],
+      "heroImage": "sounds_of_temple",
+      "photographyTipImages": [
+        "sounds_of_temple",
+        "sea_protection",
+        "faith_hidden"
+      ]
+    },
+    "temple_of_the_wind_god": {
+      "artifactImages": [
+        "eg1",
+        "eg2",
+        "eg3"
+      ],
+      "heroImage": "sea_protection",
+      "photographyTipImages": [
+        "sea_protection",
+        "sounds_of_temple",
+        "faith_hidden"
+      ]
+    },
+    "zonggong_temple": {
+      "artifactImages": [
+        "eg1",
+        "eg2",
+        "eg3"
+      ],
+      "heroImage": "faith_hidden",
+      "photographyTipImages": [
+        "faith_hidden",
+        "brick_arches_and_time",
+        "layers_of_colonial"
+      ]
+    }
+  }
+}

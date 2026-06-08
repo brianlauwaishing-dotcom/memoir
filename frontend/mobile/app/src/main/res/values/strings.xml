@@ -77,6 +77,12 @@
     <string name="home_search_placeholder_zh">搜尋路徑...</string>
     <string name="home_category_all">All</string>
     <string name="home_category_all_zh">全部</string>
+    <string name="home_category_temples_zh">廟宇與民間信仰</string>
+    <string name="home_category_old_streets_zh">老街與在地生活</string>
+    <string name="home_category_architecture_zh">歷史建築</string>
+    <string name="home_category_trade_zh">貿易與港口文化</string>
+    <string name="home_category_colonial_zh">日治時期遺產</string>
+    <string name="home_category_crafts_zh">傳統工藝</string>
     <string name="home_more">more</string>
     <string name="home_more_zh">更多</string>
     <string name="home_nav_home">Home</string>

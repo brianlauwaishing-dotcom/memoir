@@ -1,0 +1,45 @@
+{
+  "category": {
+    "en": "Temples & Folk Beliefs",
+    "zh": "廟宇信仰與宗教文化"
+  },
+  "description": {
+    "en": "The first officially built Mazu temple in Taiwan; bells and chanting create a distinctive soundscape, ideal for experiencing the auditory dimension of Tainan temple culture. Its royal founding background gives it an unrivaled status among Taiwan's Mazu temples.",
+    "zh": "全台首座官建媽祖廟，鐘磬誦經聲構成獨特聲景，是體驗台南廟宇文化聽覺層次的最佳場所。皇家規格的建廟背景使其在台灣媽祖廟中地位無可取代。"
+  },
+  "heroImage": "sounds_of_temple",
+  "id": "sounds_of_temple_tainan",
+  "journey": [
+    {
+      "order": 1,
+      "spotId": "grand_mazu_temple_datianhougong",
+      "title": {
+        "en": "Grand Mazu Temple (Datianhougong)",
+        "zh": "大天后宮"
+      }
+    },
+    {
+      "order": 2,
+      "spotId": "grand_wumiao_temple_sidian_wumiao",
+      "title": {
+        "en": "Grand Wumiao Temple (Sidian Wumiao)",
+        "zh": "祀典武廟"
+      }
+    },
+    {
+      "order": 3,
+      "spotId": "taiwan_s_first_heaven_temple_tiantan",
+      "title": {
+        "en": "Taiwan's First Heaven Temple (Tiantan)",
+        "zh": "台灣首廟天壇"
+      }
+    }
+  ],
+  "tags": [
+    "temples_folk_beliefs"
+  ],
+  "title": {
+    "en": "Sounds of Temple Tainan",
+    "zh": "台南廟宇聲音路線"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "category": {
+    "en": "Temples & Folk Beliefs",
+    "zh": "廟宇信仰與宗教文化"
+  },
+  "description": {
+    "en": "The origin of Tainan's maritime faith, dedicated to Mazu as protector of seafarers. A key source of Taiwan's Mazu worship, witnessing centuries of fishermen and merchants praying before setting sail.",
+    "zh": "台南海港信仰的起源地，供奉媽祖庇護出海商旅。此廟是台灣媽祖信仰的重要源頭，見證數百年來漁民與商人出海前的祈安儀式，至今香火不斷。"
+  },
+  "heroImage": "sea_protection",
+  "id": "from_sea_protection_to_city_beliefs",
+  "journey": [
+    {
+      "order": 1,
+      "spotId": "anping_kaitai_tianhou_temple",
+      "title": {
+        "en": "Anping Kaitai Tianhou Temple",
+        "zh": "安平開台天后宮"
+      }
+    },
+    {
+      "order": 2,
+      "spotId": "temple_of_the_wind_god",
+      "title": {
+        "en": "Temple of the Wind God",
+        "zh": "風神廟"
+      }
+    },
+    {
+      "order": 3,
+      "spotId": "grand_wumiao_temple_sidian_wumiao",
+      "title": {
+        "en": "Grand Wumiao Temple (Sidian Wumiao)",
+        "zh": "祀典武廟"
+      }
+    }
+  ],
+  "tags": [
+    "temples_folk_beliefs"
+  ],
+  "title": {
+    "en": "From Sea Protection to City Beliefs",
+    "zh": "從海港守護到城市信仰"
+  }
+}

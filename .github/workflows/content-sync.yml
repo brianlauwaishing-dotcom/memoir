@@ -1,0 +1,30 @@
+name: Content sync
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  content-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Regenerate content JSON
+        run: python data/scripts/generate_content.py
+
+      - name: Check generated content drift
+        run: |
+          git diff --exit-code data/tainan-route/ || {
+            echo "CSV -> JSON generator output drifted; rerun \`python data/scripts/generate_content.py\` and commit the result"
+            exit 1
+          }
+
+      - name: Run generator tests
+        run: python -m unittest discover -s data/scripts/test -t data/scripts

@@ -1,0 +1,67 @@
+{
+  "architecturalFeatures": {
+    "en": "Small Southern Fujian temple — far smaller than the Sidian Wumiao, but retaining the unpretentious layout of early temples; a striking contrast in scale to its official successor.",
+    "zh": "小型閩南廟宇，規模遠小於祀典武廟，但保留了早期廟宇的質樸格局，與祀典武廟形成鮮明的規模對比。"
+  },
+  "artifacts": [],
+  "duration": {
+    "en": "10–15 分 / min",
+    "zh": "10–15 分 / min"
+  },
+  "facts": {
+    "en": [
+      "Main deity: Guan Sheng Dijun",
+      "Founded: Zheng Kingdom era",
+      "Note: Ancestral origin temple of Sidian Wumiao; the root of Guan Di worship in Tainan"
+    ],
+    "zh": [
+      "主祀：關聖帝君",
+      "創建年代：明鄭時期",
+      "特色：祀典武廟「開基祖廟」，台南關帝信仰源頭"
+    ]
+  },
+  "heroImage": "faith_hidden",
+  "historicalContext": {
+    "en": "Built during the Zheng Kingdom era, predating the Sidian Wumiao; the earliest root temple of Guan Di worship in Tainan. Later ceded its official ritual status to the newly built official temple for political reasons.",
+    "zh": "建於明鄭時期，歷史早於祀典武廟，為台南關帝信仰最早的根源廟宇，後因政治因素祀典地位讓渡給新建的官方武廟。"
+  },
+  "id": "kaiji_wumiao_temple",
+  "modernUse": {
+    "en": "Still maintains daily worship; preserves its historical status as a founding temple and is an important historic site for studying the development of Tainan's temple culture.",
+    "zh": "現仍維持日常祭祀，保存開基廟宇的歷史地位，為研究台南廟宇發展史的重要史蹟。"
+  },
+  "photographyTips": [
+    {
+      "description": {
+        "en": "Contrast with Sidian Wumiao: Photograph the entrances of both temples separately for side-by-side comparison of their scale difference — embodying the historical relationship between 'founding' and 'official' temples.",
+        "zh": "與祀典武廟對比構思：分別拍攝兩廟入口，並排觀察規模差異，體現「開基」與「祀典」的歷史關係。"
+      },
+      "id": 1,
+      "image": "faith_hidden"
+    },
+    {
+      "description": {
+        "en": "Historical wear close-up: Shoot worn marks on doors, stone pillars, or walls to sense the accumulation of time.",
+        "zh": "古舊痕跡特寫：拍攝廟門、石柱或牆面上的歷史刻痕，感受歲月積澱。"
+      },
+      "id": 2,
+      "image": "brick_arches_and_time"
+    },
+    {
+      "description": {
+        "en": "Temple panorama in alley: Shoot the whole temple from the far end of the alley; capture the spatial tension between the small temple and the densely packed residences.",
+        "zh": "巷弄中的廟宇全景：從巷弄遠端拍攝廟宇全景，呈現小廟與高密度民居並存的空間張力。"
+      },
+      "id": 3,
+      "image": "layers_of_colonial"
+    }
+  ],
+  "title": {
+    "en": "Kaiji Wumiao Temple",
+    "zh": "開基武廟"
+  },
+  "whyItMatters": {
+    "en": "The founding Guan Di temple in Tainan — the ancestral origin of the grander Sidian Wumiao. Its irreplaceable role in Tainan's Guan Di worship system makes it essential for understanding the inheritance relationships among Tainan's temples.",
+    "zh": "台南關帝信仰的發源廟宇，為後來規模宏大的祀典武廟之「開基祖廟」，在台南關帝信仰系統中地位不可取代，是理解台南廟宇傳承關係的關鍵場所。"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "category": {
+    "en": "Temples & Folk Beliefs",
+    "zh": "廟宇信仰與宗教文化"
+  },
+  "description": {
+    "en": "A neighborhood sea-deity temple; small in scale but an important window into the faith life of Tainan's early fishing communities. Such small temples have largely disappeared with Taiwan's urbanization, making its survival especially precious.",
+    "zh": "地方性海神廟，規模雖小卻是理解台南早期漁業社群信仰生活的重要窗口。此類小型廟宇在台灣都市化過程中大量消失，能保存至今尤為珍貴。"
+  },
+  "heroImage": "faith_hidden",
+  "id": "faith_hidden_in_alleyways",
+  "journey": [
+    {
+      "order": 1,
+      "spotId": "zonggong_temple",
+      "title": {
+        "en": "Zonggong Temple",
+        "zh": "總趕宮"
+      }
+    },
+    {
+      "order": 2,
+      "spotId": "kaiji_jade_emperor_temple",
+      "title": {
+        "en": "Kaiji Jade Emperor Temple",
+        "zh": "開基玉皇宮"
+      }
+    },
+    {
+      "order": 3,
+      "spotId": "kaiji_wumiao_temple",
+      "title": {
+        "en": "Kaiji Wumiao Temple",
+        "zh": "開基武廟"
+      }
+    }
+  ],
+  "tags": [
+    "temples_folk_beliefs"
+  ],
+  "title": {
+    "en": "Faith Hidden in Alleyways",
+    "zh": "巷弄中的信仰痕跡"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "architecturalFeatures": {
+    "en": "Small Southern Fujian temple architecture integrated into the alleyway space; building scale close to residential dwellings, reflecting the unpretentious character of Tainan's folk religion.",
+    "zh": "小型閩南廟宇建築，融入巷弄空間，建築尺度貼近民居，反映台南庶民信仰的樸實面貌。"
+  },
+  "artifacts": [],
+  "duration": {
+    "en": "10–15 分 / min",
+    "zh": "10–15 分 / min"
+  },
+  "facts": {
+    "en": [
+      "Main deity: Sea-related deity",
+      "Founded: Zheng Kingdom era",
+      "Status: Local community temple",
+      "Note: Early fishing-community temple preserved within alleyways"
+    ],
+    "zh": [
+      "主祀：海神相關神祇",
+      "創建年代：明鄭時期",
+      "廟宇等級：地方廟宇",
+      "特色：保存於巷弄中的早期漁業信仰廟宇"
+    ]
+  },
+  "heroImage": "faith_hidden",
+  "historicalContext": {
+    "en": "Origins traced to the Zheng Kingdom era; once central to fishermen near Anping Harbor, witnessing the historical process of early Han immigrant settlement along Taiwan's coast.",
+    "zh": "創建年代可追溯明鄭時期，曾為安平港一帶漁民信仰核心，見證早期漢人移民在台灣沿海建立聚落的歷史過程。"
+  },
+  "id": "zonggong_temple",
+  "modernUse": {
+    "en": "Still functioning as a community temple, maintained voluntarily by local residents — a genuine microcosm of Tainan's community faith life.",
+    "zh": "現仍維持社區廟宇功能，由在地居民自發維護，是台南社區信仰生活的真實縮影。"
+  },
+  "photographyTips": [
+    {
+      "description": {
+        "en": "Alleyway framing: Shoot the temple facade from the alley entrance, using the walls on both sides as a natural frame to highlight how the temple integrates into everyday space.",
+        "zh": "巷弄視角：站在巷弄入口處拍攝廟宇正面，以巷弄兩側牆壁為框，突顯廟宇融入日常空間的特色。"
+      },
+      "id": 1,
+      "image": "faith_hidden"
+    },
+    {
+      "description": {
+        "en": "Temple meets residence: Shoot the temple and the adjacent house side by side, showing the spatial coexistence of faith and daily life.",
+        "zh": "廟宇與民居對比：拍攝廟宇與緊鄰民居並列的場景，呈現信仰與生活共存的空間關係。"
+      },
+      "id": 2,
+      "image": "brick_arches_and_time"
+    },
+    {
+      "description": {
+        "en": "Incense burner details: Close-up of the incense burner and ash residue outside the temple; note the marks of time and daily use.",
+        "zh": "香爐與日常細節：近距離拍攝廟前香爐、金紙灰燼等細節，注意歲月痕跡與使用感。"
+      },
+      "id": 3,
+      "image": "layers_of_colonial"
+    }
+  ],
+  "title": {
+    "en": "Zonggong Temple",
+    "zh": "總趕宮"
+  },
+  "whyItMatters": {
+    "en": "A neighborhood sea-deity temple; small in scale but an important window into the faith life of Tainan's early fishing communities. Such small temples have largely disappeared with Taiwan's urbanization, making its survival especially precious.",
+    "zh": "地方性海神廟，規模雖小卻是理解台南早期漁業社群信仰生活的重要窗口。此類小型廟宇在台灣都市化過程中大量消失，能保存至今尤為珍貴。"
+  }
+}

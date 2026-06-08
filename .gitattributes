@@ -1,0 +1,2 @@
+data/tainan_routes.csv text eol=lf
+data/tainan-route/**/*.json text eol=lf
