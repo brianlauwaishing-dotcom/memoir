@@ -8,33 +8,53 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import androidx.activity.compose.BackHandler
-import androidx.compose.ui.platform.LocalContext
-import com.mcis.memoir.data.PreferenceManager
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mcis.memoir.ui.language.LanguageSelectionViewModel
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 @Composable
 fun MyAppNavigation() {
-    val context = LocalContext.current
-    val preferenceManager = remember { PreferenceManager(context) }
+    val prefsRepo = remember { MemoirApplication.prefs }
+    val coroutineScope = rememberCoroutineScope()
 
-    // Load initial values from persistent storage
-    var selectedLanguage by remember { mutableStateOf(preferenceManager.selectedLanguage) }
-    var userInterests by remember { mutableStateOf(preferenceManager.userInterests) }
-    var savedRouteIds by remember { mutableStateOf(preferenceManager.savedRouteIds) }
+    val selectedLanguage by prefsRepo.language.collectAsStateWithLifecycle(initialValue = "en")
+    val userInterests by prefsRepo.selectedInterests.collectAsStateWithLifecycle(initialValue = emptySet())
+    var pendingUserInterests by remember { mutableStateOf<Set<String>?>(null) }
+    val currentUserInterests = pendingUserInterests ?: userInterests
+    val savedRouteIds by prefsRepo.bookmarkedRouteIds.collectAsStateWithLifecycle(initialValue = emptySet())
+    val onboardingCompleted by prefsRepo.onboardingDone
+        .map { it as Boolean? }
+        .collectAsStateWithLifecycle(initialValue = null)
 
     // Flow State: Memory Creation
-    var selectedPhotos by remember { mutableStateOf(listOf<Int>()) }
-    
+    var selectedPhotos by rememberSaveable { mutableStateOf(listOf<Int>()) }
+
     // Decide starting destination
-    val initialDestination = if (preferenceManager.onboardingCompleted) HomeDestination else WelcomeDestination
-    val backStack = remember { mutableStateListOf<Any>(initialDestination) }
+    if (onboardingCompleted == null) {
+        SplashScreen()
+        return
+    }
+    val initialDestination = if (onboardingCompleted == true) HomeDestination else WelcomeDestination
+    val backStack = rememberSaveable(
+        onboardingCompleted,
+        saver = destinationStackSaver
+    ) {
+        mutableStateListOf<Any>(initialDestination)
+    }
 
     BackHandler(enabled = backStack.size > 1) {
         backStack.removeLastOrNull()
@@ -68,14 +88,12 @@ fun MyAppNavigation() {
                     )
                 }
                 is LanguageSelectionDestination -> NavEntry(key) {
+                    val vm: LanguageSelectionViewModel = viewModel {
+                        LanguageSelectionViewModel(prefsRepo)
+                    }
                     LanguageSelectionScreen(
-                        initialLanguage = selectedLanguage,
-                        onLanguageSelect = { languageCode ->
-                            selectedLanguage = languageCode
-                            preferenceManager.selectedLanguage = languageCode
-                        },
-                        onNextClick = {
-                            preferenceManager.selectedLanguage = selectedLanguage
+                        viewModel = vm,
+                        onNavigateNext = {
                             backStack.add(CultureInterestDestination)
                         }
                     )
@@ -83,26 +101,33 @@ fun MyAppNavigation() {
                 is CultureInterestDestination -> NavEntry(key) {
                     CultureInterestScreen(
                         selectedLanguage = selectedLanguage,
-                        initialInterests = userInterests,
+                        initialInterests = currentUserInterests,
                         onInterestSelect = { interestId, isSelected ->
-                            userInterests = if (isSelected) {
-                                userInterests + interestId
+                            val latest = pendingUserInterests ?: userInterests
+                            val updated = if (isSelected) {
+                                latest + interestId
                             } else {
-                                userInterests - interestId
+                                latest - interestId
                             }
-                            preferenceManager.userInterests = userInterests
+                            pendingUserInterests = updated
+                            coroutineScope.launch {
+                                prefsRepo.setInterests(updated)
+                            }
                         },
                         onStartExploringClick = {
-                            preferenceManager.selectedLanguage = selectedLanguage
-                            preferenceManager.userInterests = userInterests
-                            preferenceManager.onboardingCompleted = true
+                            val finalInterests = pendingUserInterests ?: userInterests
+                            coroutineScope.launch {
+                                prefsRepo.setInterests(finalInterests)
+                                prefsRepo.markOnboardingDone()
+                            }
                             backStack.add(HomeDestination)
                         },
                         onSkipClick = {
-                            userInterests = emptySet()
-                            preferenceManager.selectedLanguage = selectedLanguage
-                            preferenceManager.userInterests = emptySet()
-                            preferenceManager.onboardingCompleted = true
+                            pendingUserInterests = emptySet()
+                            coroutineScope.launch {
+                                prefsRepo.setInterests(emptySet())
+                                prefsRepo.markOnboardingDone()
+                            }
                             backStack.add(HomeDestination)
                         }
                     )
@@ -306,12 +331,14 @@ fun MyAppNavigation() {
                             backStack.add(MemoriesDestination)
                         },
                         onToggleSave = { routeId ->
-                            savedRouteIds = if (savedRouteIds.contains(routeId)) {
+                            val updated = if (savedRouteIds.contains(routeId)) {
                                 savedRouteIds - routeId
                             } else {
                                 savedRouteIds + routeId
                             }
-                            preferenceManager.savedRouteIds = savedRouteIds
+                            coroutineScope.launch {
+                                prefsRepo.setBookmarkedRouteIds(updated)
+                            }
                         },
                         onSpotClick = { spotId ->
                             backStack.add(SpotIntroDestination(spotId))
@@ -427,4 +454,71 @@ fun MyAppNavigation() {
         }
     )
 
+}
+
+private val destinationStackSaver = Saver<SnapshotStateList<Any>, List<String>>(
+    save = { stack -> stack.map(::destinationToToken) },
+    restore = { tokens ->
+        mutableStateListOf<Any>().apply {
+            addAll(tokens.map(::destinationFromToken))
+        }
+    }
+)
+
+private fun destinationToToken(destination: Any): String = when (destination) {
+    WelcomeDestination -> "welcome"
+    LanguageSelectionDestination -> "language"
+    CultureInterestDestination -> "culture"
+    HomeDestination -> "home"
+    SavedDestination -> "saved"
+    MemoriesDestination -> "memories"
+    MemoryTemplateDestination -> "memory-template"
+    MemoryReflectionDestination -> "memory-reflection"
+    CameraPreviewDestination -> "camera-preview"
+    is MemoryPhotoSelectionDestination -> "memory-photo:${destination.templateId}"
+    is MemoryEditDestination -> "memory-edit:${destination.templateId}:${destination.photoResIds.joinToString(",")}"
+    is RouteDetailDestination -> "route-detail:${destination.routeId}"
+    is SpotDetailDestination -> "spot-detail:${destination.spotId}"
+    is SpotIntroDestination -> "spot-intro:${destination.spotId}"
+    is ArtifactDiscoveryDestination -> "artifact-discovery:${destination.spotId}:${destination.artifactId}"
+    is ArtifactDetailDestination -> "artifact-detail:${destination.spotId}:${destination.artifactId}"
+    is SpotExploreDestination -> "spot-explore:${destination.spotId}"
+    else -> "welcome"
+}
+
+private fun destinationFromToken(token: String): Any {
+    val parts = token.split(":")
+    return when (parts.firstOrNull()) {
+        "welcome" -> WelcomeDestination
+        "language" -> LanguageSelectionDestination
+        "culture" -> CultureInterestDestination
+        "home" -> HomeDestination
+        "saved" -> SavedDestination
+        "memories" -> MemoriesDestination
+        "memory-template" -> MemoryTemplateDestination
+        "memory-reflection" -> MemoryReflectionDestination
+        "camera-preview" -> CameraPreviewDestination
+        "memory-photo" -> MemoryPhotoSelectionDestination(parts.getOrElse(1) { "" })
+        "memory-edit" -> MemoryEditDestination(
+            templateId = parts.getOrElse(1) { "" },
+            photoResIds = parts.getOrNull(2)
+                ?.split(",")
+                ?.filter { it.isNotBlank() }
+                ?.mapNotNull { it.toIntOrNull() }
+                .orEmpty()
+        )
+        "route-detail" -> RouteDetailDestination(parts.getOrElse(1) { "" })
+        "spot-detail" -> SpotDetailDestination(parts.getOrElse(1) { "" })
+        "spot-intro" -> SpotIntroDestination(parts.getOrElse(1) { "" })
+        "artifact-discovery" -> ArtifactDiscoveryDestination(
+            spotId = parts.getOrElse(1) { "" },
+            artifactId = parts.getOrNull(2)?.toIntOrNull() ?: 0
+        )
+        "artifact-detail" -> ArtifactDetailDestination(
+            spotId = parts.getOrElse(1) { "" },
+            artifactId = parts.getOrNull(2)?.toIntOrNull() ?: 0
+        )
+        "spot-explore" -> SpotExploreDestination(parts.getOrElse(1) { "" })
+        else -> WelcomeDestination
+    }
 }

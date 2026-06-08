@@ -1,5 +1,6 @@
 package com.mcis.memoir
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,42 +18,64 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mcis.memoir.ui.language.LanguageEffect
+import com.mcis.memoir.ui.language.LanguageIntent
+import com.mcis.memoir.ui.language.LanguageSelectionViewModel
+import com.mcis.memoir.ui.language.LanguageState
 import com.mcis.memoir.ui.theme.AppTheme
 import com.mcis.memoir.ui.theme.inter
 import com.mcis.memoir.ui.theme.judson
 
-/**
- * Language Selection screen that allows users to choose their preferred language.
- *
- * @param initialLanguage The initial language selection ("en" or "zh").
- * @param onLanguageSelect Callback invoked when a language is selected with the language code.
- * @param onNextClick Callback invoked when the Next button is clicked.
- * @param modifier Optional modifier for the root composable.
- */
 @Composable
 fun LanguageSelectionScreen(
-    initialLanguage: String = "en",
-    onLanguageSelect: (String) -> Unit = {},
-    onNextClick: () -> Unit = {},
+    onNavigateNext: () -> Unit,
+    viewModel: LanguageSelectionViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {
-    var selectedLanguage by remember { mutableStateOf(initialLanguage) }
-    val isChinese = selectedLanguage == "zh"
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel) {
+        viewModel.effects.collect { effect ->
+            when (effect) {
+                LanguageEffect.NavigateNext -> onNavigateNext()
+                is LanguageEffect.ShowError -> Log.w("LanguageSelection", effect.msg)
+            }
+        }
+    }
+
+    LanguageSelectionContent(
+        state = state,
+        onSelect = { tag -> viewModel.onIntent(LanguageIntent.Select(tag)) },
+        onConfirm = { viewModel.onIntent(LanguageIntent.Confirm) },
+        modifier = modifier
+    )
+}
+
+@Composable
+fun LanguageSelectionContent(
+    state: LanguageState,
+    onSelect: (String) -> Unit,
+    onConfirm: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val canConfirm = state.selected != null && !state.applying
 
     Box(
         modifier = modifier
@@ -66,23 +89,20 @@ fun LanguageSelectionScreen(
         ) {
             Spacer(modifier = Modifier.height(120.dp))
 
-            LanguageSelectionContent(isChinese = isChinese)
+            LanguageSelectionCopy()
 
             Spacer(modifier = Modifier.height(32.dp))
 
             LanguageOptionButtons(
-                selectedLanguage = selectedLanguage,
-                onLanguageSelect = { languageCode ->
-                    selectedLanguage = languageCode
-                    onLanguageSelect(languageCode)
-                }
+                selectedLanguage = state.selected,
+                onLanguageSelect = onSelect
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
             NextButton(
-                isChinese = isChinese,
-                onClick = onNextClick,
+                enabled = canConfirm,
+                onClick = onConfirm,
                 modifier = Modifier
                     .align(Alignment.End)
                     .padding(bottom = 80.dp)
@@ -92,15 +112,14 @@ fun LanguageSelectionScreen(
 }
 
 @Composable
-private fun LanguageSelectionContent(
-    isChinese: Boolean,
+private fun LanguageSelectionCopy(
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
     ) {
         Text(
-            text = stringResource(if (isChinese) R.string.language_selection_subtitle_zh else R.string.language_selection_subtitle),
+            text = stringResource(R.string.language_selection_subtitle),
             color = DesignTokens.colorBlack,
             style = TextStyle(
                 fontSize = DesignTokens.fontSizeMedium,
@@ -112,7 +131,7 @@ private fun LanguageSelectionContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = stringResource(if (isChinese) R.string.language_selection_headline_zh else R.string.language_selection_headline),
+            text = stringResource(R.string.language_selection_headline),
             color = DesignTokens.colorBlack,
             style = TextStyle(
                 fontSize = DesignTokens.fontSizeHeadline,
@@ -125,7 +144,7 @@ private fun LanguageSelectionContent(
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            text = stringResource(if (isChinese) R.string.language_selection_description_zh else R.string.language_selection_description),
+            text = stringResource(R.string.language_selection_description),
             color = DesignTokens.colorBlack,
             style = TextStyle(
                 fontSize = DesignTokens.fontSizeBody,
@@ -138,7 +157,7 @@ private fun LanguageSelectionContent(
 
 @Composable
 private fun LanguageOptionButtons(
-    selectedLanguage: String,
+    selectedLanguage: String?,
     onLanguageSelect: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -190,6 +209,7 @@ private fun LanguageOptionButton(
                 }
             )
             .clip(shape)
+            .semantics { selected = isSelected }
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
@@ -207,21 +227,22 @@ private fun LanguageOptionButton(
 
 @Composable
 private fun NextButton(
-    isChinese: Boolean,
+    enabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val shape = RoundedCornerShape(DesignTokens.cornerRadiusLarge)
+    val backgroundColor = if (enabled) DesignTokens.colorMaroon else DesignTokens.colorBorderGray
 
     Box(
         modifier = modifier
             .height(66.dp)
             .background(
-                color = DesignTokens.colorMaroon,
+                color = backgroundColor,
                 shape = shape
             )
             .clip(shape)
-            .clickable(onClick = onClick)
+            .clickable(enabled = enabled, onClick = onClick)
             .padding(horizontal = 34.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -230,7 +251,7 @@ private fun NextButton(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = stringResource(if (isChinese) R.string.next_button_zh else R.string.next_button),
+                text = stringResource(R.string.next_button),
                 style = TextStyle(
                     fontSize = DesignTokens.fontSizeMedium,
                     fontWeight = FontWeight.Normal,
@@ -253,6 +274,10 @@ private fun NextButton(
 @Composable
 fun LanguageSelectionScreenPreview() {
     AppTheme {
-        LanguageSelectionScreen()
+        LanguageSelectionContent(
+            state = LanguageState(selected = "en"),
+            onSelect = {},
+            onConfirm = {}
+        )
     }
 }

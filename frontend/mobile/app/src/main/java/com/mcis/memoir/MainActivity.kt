@@ -6,18 +6,21 @@ import android.os.Bundle
 //import androidx.core.view.ViewCompat
 //import androidx.core.view.WindowInsetsCompat
 
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import com.mcis.memoir.ui.theme.AppTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.LaunchedEffect
+import androidx.navigationevent.compose.LocalNavigationEventDispatcherOwner
+import androidx.navigationevent.compose.rememberNavigationEventDispatcherOwner
 import kotlinx.coroutines.delay
 
 /**
@@ -105,26 +108,31 @@ data object CameraPreviewDestination
  */
 data class SpotExploreDestination(val spotId: String)
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AppTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    var showSplash by remember { mutableStateOf(true) }
+            val navigationEventDispatcherOwner = rememberNavigationEventDispatcherOwner(parent = null)
+            CompositionLocalProvider(
+                LocalNavigationEventDispatcherOwner provides navigationEventDispatcherOwner
+            ) {
+                AppTheme {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        var showSplash by remember { mutableStateOf(true) }
 
-                    LaunchedEffect(Unit) {
-                        delay(2000)
-                        showSplash = false
-                    }
+                        LaunchedEffect(Unit) {
+                            delay(2000)
+                            showSplash = false
+                        }
 
-                    if (showSplash) {
-                        SplashScreen()
-                    } else {
-                        MyAppNavigation()
+                        if (showSplash) {
+                            SplashScreen()
+                        } else {
+                            MyAppNavigation()
+                        }
                     }
                 }
             }
