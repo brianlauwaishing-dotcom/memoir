@@ -60,6 +60,28 @@ class ContentValidationTest {
         }
     }
 
+    @Test
+    fun generatedJsonImageFieldsReferenceExistingDrawableNames() {
+        val root = contentRoot()
+        val index = readIndex(root)
+        val drawableNames = R.drawable::class.java.fields.map { it.name }.toSet()
+
+        index.routes.forEach { id ->
+            val route = ContentJson.decodeFromString<Route>(root.resolve("routes/$id.json").readText())
+            assertDrawableExists("routes/$id.heroImage", route.heroImage, drawableNames)
+        }
+        index.spots.forEach { id ->
+            val spot = ContentJson.decodeFromString<Spot>(root.resolve("spots/$id.json").readText())
+            assertDrawableExists("spots/$id.heroImage", spot.heroImage, drawableNames)
+            spot.photographyTips.forEach { tip ->
+                assertDrawableExists("spots/$id.photographyTips.${tip.id}.image", tip.image, drawableNames)
+            }
+            spot.artifacts.forEach { artifact ->
+                assertDrawableExists("spots/$id.artifacts.${artifact.id}.image", artifact.image, drawableNames)
+            }
+        }
+    }
+
     private fun contentRoot(): File {
         var dir = File(checkNotNull(System.getProperty("user.dir"))).absoluteFile
         repeat(8) {
@@ -93,6 +115,11 @@ class ContentValidationTest {
             is JsonArray -> element.flatMap { collectDrawableNames(it) }
             is JsonPrimitive -> if (element.isString) listOf(element.content) else emptyList()
         }
+
+    private fun assertDrawableExists(label: String, name: String, drawableNames: Set<String>) {
+        assertTrue("$label is blank", name.isNotBlank())
+        assertTrue("$label references missing drawable: $name", name in drawableNames)
+    }
 
     @Serializable
     private data class Index(

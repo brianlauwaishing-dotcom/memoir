@@ -147,7 +147,7 @@ def read_csv(path: Path) -> tuple[dict[str, dict], dict[str, dict]]:
     routes: dict[str, dict] = {}
     spots: dict[str, dict] = {}
 
-    for row in rows[2:]:
+    for row_number, row in enumerate(rows[2:], start=3):
         if not row or not any(cell.strip() for cell in row):
             continue
 
@@ -155,6 +155,8 @@ def read_csv(path: Path) -> tuple[dict[str, dict], dict[str, dict]]:
         if section is not None:
             title_zh, title_en = section
             route_id = slugify(title_en)
+            if route_id in routes:
+                raise ContentError(f"duplicate route id: {route_id} at CSV row {row_number}")
             current_route = {
                 "id": route_id,
                 "title": localized(title_en, title_zh),
@@ -254,13 +256,19 @@ def apply_assets(routes: dict[str, dict], spots: dict[str, dict], assets: dict) 
         binding = route_assets.get(route_id)
         if binding is None:
             raise ContentError(f"missing _assets.json binding: routes.{route_id}")
-        routes[route_id]["heroImage"] = binding if isinstance(binding, str) else binding.get("heroImage", "")
+        hero_image = binding if isinstance(binding, str) else binding.get("heroImage", "")
+        if not hero_image:
+            raise ContentError(f"missing _assets.json binding: routes.{route_id}.heroImage")
+        routes[route_id]["heroImage"] = hero_image
 
     for spot_id in sorted(spots):
         binding = spot_assets.get(spot_id)
         if binding is None:
             raise ContentError(f"missing _assets.json binding: spots.{spot_id}")
-        spots[spot_id]["heroImage"] = binding.get("heroImage", "")
+        hero_image = binding.get("heroImage", "")
+        if not hero_image:
+            raise ContentError(f"missing _assets.json binding: spots.{spot_id}.heroImage")
+        spots[spot_id]["heroImage"] = hero_image
         photo_images = binding.get("photographyTipImages", [])
         artifact_images = binding.get("artifactImages", [])
         for i, tip in enumerate(spots[spot_id]["photographyTips"]):
