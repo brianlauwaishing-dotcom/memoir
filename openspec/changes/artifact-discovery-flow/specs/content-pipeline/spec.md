@@ -52,14 +52,30 @@ The Kotlin model `com.mcis.memoir.data.content.model.Artifact` MUST mirror this 
 - **WHEN** the generator runs twice against unchanged CSV + `_assets.json`
 - **THEN** `git diff --exit-code data/tainan-route/spots/` reports zero changes after the second run
 
-### Requirement: `_assets.json` schema for artifacts is keyed by artifact id
+<!-- The `_assets.json covers every route and spot` requirement is MODIFIED by this change; see the MODIFIED block below. -->
 
-The `_assets.json` per-spot artifact section SHALL be structured as `{ "artifacts": { "<artifactId>": { "image": "<drawable>", "galleryImage": "<drawable>?" } } }` — a map keyed by stringified artifact id, with each entry containing `image` (required) and `galleryImage` (optional). This replaces any earlier flat-list shape (`"artifactImages": ["...", "..."]`).
+## MODIFIED Requirements
+
+### Requirement: `_assets.json` covers every route and spot
+
+`data/tainan-route/_assets.json` SHALL bind a `heroImage` drawable name to every route id present in `index.json.routes`, and a `{ heroImage, photographyTipImages[], artifacts: { "<artifactId>": { "image", "galleryImage"? } } }` block to every spot id present in `index.json.spots`. The per-spot `artifacts` section is a MAP keyed by stringified artifact id (replacing the earlier flat-list shape `artifactImages: [...]` defined in the original `tainan-route-content-pipeline` change); each entry's `image` is REQUIRED and `galleryImage` is OPTIONAL. The generator MUST exit non-zero if any binding is missing (including any artifact whose `image` is absent), naming the offending ids.
+
+#### Scenario: Generator detects an unbound spot id
+- **WHEN** a designer adds a new spot to `tainan_routes.csv`, the generator creates `spots/new_spot.json` and appends `new_spot` to `index.json.spots`, but `_assets.json` has no entry under that key
+- **THEN** the generator prints `missing _assets.json binding: spots.new_spot` to stderr and exits with a non-zero status
+
+#### Scenario: Generator detects an unbound artifact image
+- **WHEN** a spot's `artifacts` map is missing an entry for one of the artifact ids that the CSV produces (or has an entry with no `image` field)
+- **THEN** the generator prints `missing _assets.json binding: spots.<spotId>.artifacts.<id>.image` to stderr and exits with a non-zero status
+
+#### Scenario: All ids are bound
+- **WHEN** every entry in `index.json.routes` and `index.json.spots` has a corresponding key in `_assets.json` whose drawable names resolve via `Resources.getIdentifier`, AND every artifact id in every spot section has an `image` binding (with optional `galleryImage`)
+- **THEN** the generator exits zero and `ContentValidationTest` passes
 
 #### Scenario: _assets.json declares both image fields per artifact
 - **WHEN** `_assets.json` contains `"spots": { "grand_mazu": { "artifacts": { "1": { "image": "dragon_pillar", "galleryImage": "eg1" } } } }`
 - **THEN** the generator emits the spot JSON's artifact id 1 with `image == "dragon_pillar"` and `galleryImage == "eg1"`
 
-#### Scenario: Generator errors on missing image binding
-- **WHEN** a spot's artifact id is missing from `_assets.json` artifacts map (no `image` binding)
-- **THEN** the generator exits non-zero with `missing _assets.json binding: spots.<spotId>.artifacts.<id>.image`
+#### Scenario: _assets.json omits the optional galleryImage
+- **WHEN** an artifact entry in `_assets.json` has `image` but no `galleryImage` key
+- **THEN** the generator succeeds and the emitted artifact JSON has no `galleryImage` field (consumer's `ignoreUnknownKeys = true` / `explicitNulls = false` config handles deserialization to `galleryImage = null`)

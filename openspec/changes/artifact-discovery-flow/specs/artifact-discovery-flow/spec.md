@@ -28,9 +28,13 @@
 - **WHEN** the question is `"How many?"` and the label is `"Dragon"` (label not in question)
 - **THEN** `state.first().highlight == QuestionHighlight(prefix = "How many?", label = "", suffix = "")` — the screen renders the full question with no highlight
 
-#### Scenario: artifactIndex / totalArtifacts reflect spot.artifacts
+#### Scenario: artifactId / displayPosition / totalArtifacts reflect spot.artifacts
 - **WHEN** the VM is constructed with `spotId = "grand_mazu"` (3 artifacts) and `artifactId = 2`
-- **THEN** `state.first().artifactIndex == 2` AND `state.first().totalArtifacts == 3`
+- **THEN** `state.first().artifactId == 2` (stable id, matches navigation argument) AND `state.first().displayPosition == 2` (1-based slot in `spot.artifacts`) AND `state.first().totalArtifacts == 3`
+
+#### Scenario: artifactId and displayPosition diverge when ids are non-sequential
+- **WHEN** a hypothetical spot has artifacts with ids `[5, 7, 11]` and the VM is constructed with `artifactId = 11`
+- **THEN** `state.first().artifactId == 11` AND `state.first().displayPosition == 3` (it's the 3rd artifact in the list) — the More button's `onClick` MUST pass `artifactId` (11) for navigation, NOT `displayPosition` (3)
 
 #### Scenario: Artifact not found, error surfaces in state
 - **WHEN** the VM is constructed with `artifactId = 99` and no matching artifact exists on the spot
@@ -108,6 +112,5 @@
 - **WHEN** the `SpotIntroDestination` entry constructs the VM
 - **THEN** the `viewModel(key = key.spotId, factory = ...)` call uses the spotId as the key, so revisiting the same destination key reuses the same VM instance
 
-## MODIFIED Requirements
-
 <!-- Cross-capability deltas live in ../content-pipeline/spec.md per openspec convention (one spec file per capability). -->
+
