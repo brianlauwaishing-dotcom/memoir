@@ -40,7 +40,7 @@ This umbrella governs cross-cutting architecture. Each of the following lands as
 
 | # | Change | Scope |
 |---|---|---|
-| 1 | `tainan-route-content-pipeline` | `MockData.kt` → `data/tainan-route/` assets + `ContentRepository` |
+| 1 | `tainan-route-content-pipeline` | Build bundled `data/tainan-route/` assets + `ContentRepository`, with compatibility adapters so existing screens can migrate incrementally |
 | 2 | `language-toggle` | LanguageSelection persists choice + flips app locale |
 | 3 | `home-discovery` | HomeScreen search + filter + CultureInterest affects ranking |
 | 4 | `route-bookmarking` | RouteDetail bookmark + SavedScreen renders real bookmarks |
@@ -109,35 +109,44 @@ com/mcis/memoir/
 └── domain/                     # cross-screen use cases only; expected to stay small or empty for MVP
 ```
 
-**Migration moves** (in change #1):
-- Existing root-package screen files (`HomeScreen.kt`, `RouteDetailScreen.kt`, etc.) → `ui/screens/`
-- `data.MockData` → deleted
-- `data.PreferenceManager` → replaced by `data.prefs.UserPreferencesRepository` (DataStore-backed)
-- `data.RouteData.kt` → split into `data.content.model.*`
+**Migration staging**:
+- Change #1 creates `data.content.*`, loads `data/tainan-route/`, validates drawable references, and exposes either the new domain models or a temporary adapter matching the old `RouteData` / `SpotData` shape.
+- Change #1 may leave existing root-package screen files in place if moving them would expand the diff too much. Package moves are cleanup work after repository-backed screens compile.
+- `data.MockData` is deleted only after every direct import is removed.
+- `data.PreferenceManager` is replaced by `data.prefs.UserPreferencesRepository` in change #2, not change #1.
+- `data.RouteData.kt` is split into `data.content.model.*` only after adapters are no longer needed.
 
 ---
 
 ## 4. Data layer
 
+### 4.0 Content authoring pipeline
+
+`data/tainan_routes.csv` remains the designer-editable source during content authoring, but a clean checkout cannot depend on an untracked CSV. Change `tainan-route-content-pipeline` must make the content source reproducible in one of these two ways:
+
+- Commit both `data/tainan_routes.csv` and generated `data/tainan-route/**/*.json`, with CI validating that the JSON is in sync with the CSV.
+- Or commit only `data/tainan-route/**/*.json` and explicitly mark the CSV as a non-required design handoff artifact.
+
+For MVP, choose the first option unless there is a strong reason not to: designers edit CSV, a deterministic generator converts it to JSON, JSON is the APK-bundled artifact, and CI fails if generated JSON differs from committed JSON. The generator may be a script or Gradle task, but change #1 must document the exact command.
+
 ### 4.1 `data/tainan-route/` layout (repo root)
 
 ```
 data/tainan-route/
-├── routes/
-│   ├── sounds_of_temple.json
-│   ├── sea_protection.json
-│   ├── colonial_architecture.json
-│   ├── brick_arches.json
-│   └── faith_hidden.json
-├── spots/
-│   ├── grand_mazu.json
-│   ├── grand_wumiao.json
-│   ├── anping_kaitai.json
-│   └── …
-└── index.json
+|-- index.json
+|-- routes/
+|   |-- sounds_of_temple.json
+|   |-- sea_protection.json
+|   |-- colonial_architecture.json
+|   |-- brick_arches.json
+|   `-- faith_hidden.json
+`-- spots/
+    |-- grand_mazu.json
+    |-- grand_wumiao.json
+    `-- anping_kaitai.json
 ```
 
-`index.json` lists every route id and every spot id so the loader knows what to scan without enumerating files at runtime (AssetManager listing is awkward).
+`index.json` is root-level at `data/tainan-route/index.json`. It lists every route id and every spot id so the loader knows what to scan without enumerating files at runtime (AssetManager listing is awkward).
 
 ### 4.2 JSON schemas
 
@@ -183,6 +192,8 @@ data/tainan-route/
 ```
 
 `heroImage` / `image` values are **drawable resource names** (no extension); the loader resolves them via `Resources.getIdentifier(name, "drawable", pkg)`. Images stay in `app/src/main/res/drawable/` and benefit from the R class.
+
+Change `tainan-route-content-pipeline` MUST include a validation test that loads every JSON file and asserts every referenced drawable name resolves to a non-zero id. Designer-editable content must fail fast during tests, not at runtime.
 
 ### 4.3 Gradle wiring
 
@@ -278,20 +289,74 @@ class ContentRepository(loader: ContentAssetLoader, scope: CoroutineScope) {
 
 ## 5. LLM client (DeepSeek)
 
-### 5.1 Dependencies
+### 5.1 Gradle dependency baseline
 
-`libs.versions.toml`:
+The umbrella requires more than the LLM client. Each per-feature change should add only what it uses, but the final mobile-direct app needs this baseline:
+
+| Area | Required additions |
+|---|---|
+| JSON content assets | `org.jetbrains.kotlin.plugin.serialization`, `kotlinx-serialization-json` |
+| DataStore prefs | `androidx.datastore:datastore-preferences` |
+| Room memories | `androidx.room:room-runtime`, `androidx.room:room-ktx`, Room compiler via KSP |
+| DI / ViewModels | Koin Android + Koin ViewModel support |
+| Lifecycle-aware Compose state | `androidx.lifecycle:lifecycle-runtime-compose` |
+| Nav3 | `androidx.navigation3:navigation3-runtime` and `androidx.navigation3:navigation3-ui` |
+| LLM client | `com.aallam.openai:openai-client`, Ktor CIO client |
+| Unit / integration tests | JUnit5, MockK, Turbine, Robolectric or AndroidX test resources, `kotlinx-coroutines-test`, Room testing |
+
+Candidate catalog additions:
 ```toml
 [versions]
 openai-kotlin = "4.0.1"
 ktor = "3.0.0"
+kotlinx-serialization-json = "<match Kotlin 2.2.x>"
+datastore = "<current AndroidX>"
+room = "<current AndroidX>"
+koin = "<current Koin>"
+junit-jupiter = "<current JUnit5>"
+mockk = "<current MockK>"
+turbine = "<current Turbine>"
+robolectric = "<current Robolectric>"
+kotlinx-coroutines-test = "<match Kotlin/coroutines stack>"
+android-junit5 = "<current android-junit5 plugin>"
 
 [libraries]
-openai-client    = { module = "com.aallam.openai:openai-client", version.ref = "openai-kotlin" }
-ktor-client-cio  = { module = "io.ktor:ktor-client-cio",         version.ref = "ktor"          }
+openai-client              = { module = "com.aallam.openai:openai-client", version.ref = "openai-kotlin" }
+ktor-client-cio            = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
+androidx-datastore-prefs   = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+androidx-room-runtime      = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-room-ktx          = { module = "androidx.room:room-ktx", version.ref = "room" }
+koin-android               = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+koin-androidx-compose      = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
+junit-jupiter              = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
+mockk                      = { module = "io.mockk:mockk", version.ref = "mockk" }
+turbine                    = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+robolectric                = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+kotlinx-coroutines-test    = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines-test" }
+androidx-room-testing      = { module = "androidx.room:room-testing", version.ref = "room" }
+
+[plugins]
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp                  = { id = "com.google.devtools.ksp", version = "<match Kotlin 2.2.x>" }
+android-junit5       = { id = "de.mannodermaus.android-junit5", version.ref = "android-junit5" }
 ```
 
-### 5.2 API key (BuildConfig + local.properties)
+Version placeholders are resolved in the first implementation change that touches each area. Do not leave placeholders in committed Gradle files. If a change keeps Android unit tests on JUnit4 instead, it must update this umbrella's test tooling expectation before implementation.
+
+**Recorded deviation — JUnit4 retained for change #1 `tainan-route-content-pipeline`**: that change ships with the existing `junit = "4.13.2"` catalog entry plus a new `kotlinx-coroutines-test` dependency, and does NOT introduce JUnit5 / MockK / Turbine. Justification: the three new tests in that change (`ContentAssetLoaderTest`, `ContentValidationTest`, `ContentRepositoryTest`) only need fixture-driven JSON parsing assertions, drawable-resolution assertions, and a single-shot `Flow.first()` collection — none of those need parameterized JUnit5 features, MockK class-mocking, or Turbine's multi-emit timing helpers. Hand-written fakes (a 5-line `class FakeContentAssetLoader : ContentAssetLoader`) substitute cleanly for MockK in that change's `ContentRepositoryTest`. The umbrella's JUnit5 + MockK + Turbine baseline (§10 "Required") therefore activates from the first follow-up change that genuinely needs them — most likely the ViewModel-introducing change `home-discovery`, where Intent → State reducers and multi-emit Effect channels make Turbine + MockK earn their weight. Change #1's `tasks.md` does not include any Gradle-catalog additions for those libraries.
+
+### 5.2 Android manifest
+
+Direct LLM calls require network access from the device. Change `ai-reflection-generation` must add:
+
+```xml
+<uses-permission android:name="android.permission.INTERNET" />
+```
+
+This is a normal manifest permission; no runtime prompt is required.
+
+### 5.3 API key (BuildConfig + local.properties)
 
 `local.properties` (gitignored, already exists):
 ```
@@ -319,16 +384,17 @@ android {
 
 **Risk acknowledgement**: APK ships with the key embedded. Decompile-recoverable. Acceptable for an academic demo where the APK is not publicly distributed; if the demo build leaks, rotate the key. Long-term mitigation (proxy server) is explicitly deferred.
 
-### 5.3 Client wrapper
+### 5.4 Client wrapper
 
 ```kotlin
 val networkModule = module {
     single {
-        OpenAI(
+        val config = OpenAIConfig(
             token = BuildConfig.DEEPSEEK_API_KEY,
             host  = OpenAIHost(baseUrl = "https://api.deepseek.com/v1/"),
             timeout = Timeout(socket = 60.seconds)
         )
+        OpenAI(config)
     }
     single { ReflectionClient(get()) }
 }
@@ -346,7 +412,9 @@ class ReflectionClient(private val openAI: OpenAI) {
 }
 ```
 
-### 5.4 Reflection input schema
+`OpenAIConfig` is the preferred documented construction form for `com.aallam.openai:openai-client`; implementation must verify exact API names against current docs before coding.
+
+### 5.5 Reflection input schema
 
 The reflection is **journey-level** and the output target is **a social-media-ready caption** (Instagram / Threads), not a per-spot note.
 
@@ -370,20 +438,56 @@ data class SpotEntry(
 
 The full prompt template, temperature tuning, and token budgeting are finalized in change `ai-reflection-generation`, not here. This umbrella locks only the interface and the error model.
 
-### 5.5 Error model
+### 5.6 Error model
 
 ```kotlin
-when (val r = client.generateReflection(input)) {
-    is Result.Success -> // render r.value
-    is Result.Failure -> when (val e = r.exceptionOrNull()) {
-        is IOException                                -> // "Network error, retry"
-        is OpenAIException -> when (e.statusCode) {
-            401 -> // "API key invalid — contact dev"
-            429 -> // "Rate limited — wait 30s"
-            else -> // "Service unavailable"
+client.generateReflection(input).fold(
+    onSuccess = { text ->
+        // render text
+    },
+    onFailure = { e ->
+        when (e) {
+            is IOException -> showRetry("Network error")
+            is OpenAIException -> when (e.statusCode) {
+                401 -> showError("API key invalid — contact dev")
+                429 -> showRetry("Rate limited — wait 30s")
+                else -> showError("Service unavailable")
+            }
+            else -> showError("Unexpected error")
         }
-        else                                          -> // "Unexpected error"
     }
+)
+```
+
+If callers need richer UI state than success/failure text, change `ReflectionClient` to return a project-owned sealed type instead of trying to pattern-match Kotlin stdlib `Result`:
+
+```kotlin
+sealed interface ReflectionResult {
+    data class Success(val text: String) : ReflectionResult
+    data class Failure(val kind: ReflectionError, val cause: Throwable? = null) : ReflectionResult
+}
+```
+
+```kotlin
+sealed interface ReflectionError {
+    data object Network : ReflectionError
+    data object InvalidApiKey : ReflectionError
+    data object RateLimited : ReflectionError
+    data object ServiceUnavailable : ReflectionError
+    data object Unexpected : ReflectionError
+}
+```
+
+Mapping rules:
+```kotlin
+when (e) {
+    is IOException -> ReflectionError.Network
+    is OpenAIException -> when (e.statusCode) {
+        401 -> ReflectionError.InvalidApiKey
+        429 -> ReflectionError.RateLimited
+        else -> ReflectionError.ServiceUnavailable
+    }
+    else -> ReflectionError.Unexpected
 }
 ```
 
@@ -552,7 +656,7 @@ data class MemoryEntity(
     val status: String,                            // "IN_PROGRESS" / "COMPLETED"
     val createdAt: Long,
     val updatedAt: Long,
-    val photoLocalPaths: String,                   // JSON List<String>
+    val photoLocalPaths: String,                   // JSON List<String>, relative to context.filesDir
     val spotNotes: String,                         // JSON Map<spotId, note>
     val overallMood: String?,
     val userInsights: String,
@@ -592,6 +696,7 @@ context.filesDir/memories/<memoryId>/photo_<index>.jpg
 
 **Lifecycle**:
 - A `Memory` row is created in Room with `status = IN_PROGRESS` when the user enters `MemoryTemplateScreen` and picks a template. The `memoryId` is assigned at that point.
+- `MemoryTemplateScreen` navigates to `MemoryPhotoSelection(memoryId)`, not `MemoryPhotoSelection(templateId)`. The template is resolved from the draft `Memory` row.
 - Photos are copied to `filesDir/memories/<memoryId>/` as the user selects them in `MemoryPhotoSelectionScreen`.
 - If the user abandons the wizard (back-stack out, or explicit cancel from `MemoryEditScreen`), `MemoryRepository.delete(memoryId)` removes the DB row AND deletes `filesDir/memories/<memoryId>/` recursively. This cleanup runs in the wizard ViewModel's `onCleared()` if `status` is still `IN_PROGRESS` AND the user did not explicitly save.
 - When the user completes `MemoryReflectionScreen` and saves, `status` transitions to `COMPLETED`.
@@ -599,7 +704,7 @@ context.filesDir/memories/<memoryId>/photo_<index>.jpg
 Pros: photos cannot disappear when the user deletes them from the gallery; no `takePersistableUriPermission` lifecycle to manage.
 Cons: storage cost; small risk of orphaned directories if the app process dies mid-wizard. Acceptable for MVP — a startup-time scan can sweep orphans (rows with status `IN_PROGRESS` older than 7 days are auto-deleted along with their dirs).
 
-DB stores absolute file paths (`photoLocalPaths` JSON). UI loads via Coil from file path.
+DB stores paths relative to `context.filesDir` (`photoLocalPaths` JSON), for example `memories/<memoryId>/photo_0.jpg`. `MemoryRepository` resolves them to `File` objects before exposing the domain model; UI loads those files via Coil. Avoid absolute paths so tests, backup/restore, and future storage policy changes do not bake old filesystem roots into persisted rows.
 
 ### 7.4 Migration
 
@@ -631,7 +736,12 @@ viewModelScope.launch {
 `AppCompatDelegate.setApplicationLocales`:
 - Triggers Activity re-creation automatically.
 - Updates `LocalConfiguration.current.locales[0]` → both `stringResource()` and `LocalizedText[locale]` pick up correctly.
-- Persists across reboots without us writing anything.
+- Persists across reboots at the platform/AppCompat layer.
+
+DataStore still stores `language` because onboarding and settings need a simple observable user preference. Rendering code should derive the active locale from `LocalConfiguration.current`, not from a separately cached `selectedLanguage` parameter. On app startup, `UserPreferencesRepository` reconciles the two sources:
+- If AppCompat has an application locale, write that tag into DataStore if it differs.
+- If AppCompat has no application locale but DataStore has `en` / `zh`, call `setApplicationLocales` once.
+- If neither source exists, default to `en` and persist it when onboarding completes.
 
 `AndroidManifest.xml`:
 ```xml
@@ -649,7 +759,7 @@ viewModelScope.launch {
 
 ## 9. Navigation (Nav3 type-safe routes)
 
-`build.gradle.kts` already brings in `androidx.navigation3.ui`. Rewrite `MyAppNavigation.kt`:
+`build.gradle.kts` must include both `androidx.navigation3.runtime` and `androidx.navigation3.ui`. Rewrite `MyAppNavigation.kt`:
 
 ```kotlin
 @Serializable data object Splash
@@ -666,24 +776,40 @@ viewModelScope.launch {
 @Serializable data class  ArtifactDetail(val spotId: String, val artifactId: Int)
 @Serializable data object CameraPreview
 @Serializable data object MemoryTemplate
-@Serializable data class  MemoryPhotoSelection(val templateId: String)
+@Serializable data class  MemoryPhotoSelection(val memoryId: String)
 @Serializable data class  MemoryEdit(val memoryId: String)
 @Serializable data class  MemoryReflection(val memoryId: String)
 ```
 
-`MyAppNavigation` uses `NavDisplay` + `entryProvider { entry<RouteDetail> { args -> RouteDetailScreen(args.routeId, …) } }`.
-
-**ID-only navigation**: never pass Parcelable domain objects through navigation. Screens receive an ID and ask their ViewModel to resolve via `ContentRepository`. Koin gets the ID through `SavedStateHandle`:
+`MyAppNavigation` uses `NavDisplay(backStack = backStack, entryProvider = { key -> ... })`. The current Nav3 key is the source of truth for route arguments:
 
 ```kotlin
-viewModel { (handle: SavedStateHandle) ->
-    RouteDetailViewModel(
-        routeId      = handle.toRoute<RouteDetail>().routeId,
-        contentRepo  = get(),
-        bookmarkRepo = get()
-    )
+entryProvider = { key ->
+    when (key) {
+        is RouteDetail -> NavEntry(key) {
+            RouteDetailScreen(routeId = key.routeId)
+        }
+        is SpotIntro -> NavEntry(key) {
+            SpotIntroScreen(spotId = key.spotId)
+        }
+        else -> NavEntry(key) { Text("Unknown route") }
+    }
 }
 ```
+
+**ID-only navigation**: never pass Parcelable domain objects through navigation. Screens receive IDs and ask their ViewModel to resolve via `ContentRepository`.
+
+Do **not** use `SavedStateHandle.toRoute<T>()` for these Nav3 entries. That helper belongs to the Navigation 2.x typed-route stack and does not map cleanly onto this explicit `NavDisplay` back stack. ViewModels take route IDs as constructor parameters:
+
+```kotlin
+class RouteDetailViewModel(
+    private val routeId: String,
+    private val contentRepo: ContentRepository,
+    private val bookmarkRepo: BookmarkRepository
+) : ViewModel()
+```
+
+Koin may provide the ViewModel with parameter injection, but the implementation change must verify the current Koin Compose API before coding the exact call site. The architecture requirement is: route args come from the Nav3 `key`, not from `SavedStateHandle`.
 
 ---
 
@@ -691,6 +817,7 @@ viewModel { (handle: SavedStateHandle) ->
 
 | Layer | Tools | Scope | Priority |
 |---|---|---|---|
+| Unit — Content validation | JUnit5, Android resources or Robolectric if needed | JSON parse, index completeness, duplicate ids, route spot references, drawable name resolution | **Required** |
 | Unit — Repository | JUnit5, MockK, Turbine | Flow emissions, edge cases (empty, duplicate, parse failure) | **Required** |
 | Unit — ViewModel | JUnit5, MockK, Turbine, `MainDispatcherRule` | Intent → State reducer, Effect emission, Repo wiring | **Required** |
 | Unit — LLM client | MockK on `OpenAI` interface | `Result` wrapping, error categorization. No real network. | **Required** |
@@ -720,11 +847,11 @@ No flavor split (no staging vs prod). Both build types read `DEEPSEEK_API_KEY` f
 
 `.github/workflows/mobile-ci.yml` (new):
 ```yaml
-- run: echo "DEEPSEEK_API_KEY=${{ secrets.DEEPSEEK_API_KEY }}" >> frontend/mobile/local.properties
+- run: echo "DEEPSEEK_API_KEY=dummy-ci-key" >> frontend/mobile/local.properties
 - run: cd frontend/mobile && ./gradlew :app:lintDebug :app:testDebugUnitTest :app:assembleDebug
 ```
 
-The CI key may be a separate restricted DeepSeek key with low rate limit — sufficient for build smoke and not enough to run up bills.
+CI uses a dummy key because tests must mock `ReflectionClient` / `OpenAI` and never make real DeepSeek calls. Real keys are injected only for local demo builds or manually triggered release/demo packaging.
 
 ---
 
