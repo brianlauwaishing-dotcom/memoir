@@ -2,7 +2,15 @@ import unittest
 from tempfile import TemporaryDirectory
 from pathlib import Path
 
-from generate_content import ContentError, apply_assets, read_csv, slugify, split_facts
+from generate_content import (
+    ContentError,
+    apply_assets,
+    apply_route_tags,
+    read_csv,
+    read_route_tags,
+    slugify,
+    split_facts,
+)
 
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -64,6 +72,35 @@ class GenerateContentTest(unittest.TestCase):
 
         with self.assertRaisesRegex(ContentError, "missing _assets.json binding: spots.alpha_spot.heroImage"):
             apply_assets(routes, spots, {"routes": {}, "spots": {"alpha_spot": {}}})
+
+    def test_missing_route_tag_entry_fails(self):
+        routes = {"route_alpha": {"id": "route_alpha", "tags": []}}
+        tags = read_route_tags(FIXTURES / "tags_missing_entry.json")
+
+        with self.assertRaisesRegex(ContentError, "missing _tags.json entry: route_alpha"):
+            apply_route_tags(routes, tags)
+
+    def test_empty_route_tag_entry_fails(self):
+        routes = {"route_alpha": {"id": "route_alpha", "tags": []}}
+        tags = read_route_tags(FIXTURES / "tags_empty_value.json")
+
+        with self.assertRaisesRegex(ContentError, "route route_alpha must declare at least one tag"):
+            apply_route_tags(routes, tags)
+
+    def test_unknown_route_tag_fails(self):
+        routes = {"route_alpha": {"id": "route_alpha", "tags": []}}
+        tags = read_route_tags(FIXTURES / "tags_unknown_value.json")
+
+        with self.assertRaisesRegex(ContentError, "moon-cult"):
+            apply_route_tags(routes, tags)
+
+    def test_valid_route_tags_are_applied(self):
+        routes = {"route_alpha": {"id": "route_alpha", "tags": []}}
+        tags = read_route_tags(FIXTURES / "tags_valid.json")
+
+        apply_route_tags(routes, tags)
+
+        self.assertEqual(["temples", "architecture"], routes["route_alpha"]["tags"])
 
     def write_csv(self, text: str) -> Path:
         directory = TemporaryDirectory()

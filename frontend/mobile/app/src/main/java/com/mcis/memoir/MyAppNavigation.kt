@@ -8,6 +8,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -17,11 +18,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import androidx.activity.compose.BackHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mcis.memoir.i18n.LocaleController
+import com.mcis.memoir.ui.culture.CultureInterestViewModel
+import com.mcis.memoir.ui.culture.CultureInterestViewModelFactory
+import com.mcis.memoir.ui.home.HomeEffect
+import com.mcis.memoir.ui.home.HomeViewModel
+import com.mcis.memoir.ui.home.HomeViewModelFactory
 import com.mcis.memoir.ui.language.LanguageSelectionViewModel
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -32,9 +40,6 @@ fun MyAppNavigation() {
     val coroutineScope = rememberCoroutineScope()
 
     val selectedLanguage by prefsRepo.language.collectAsStateWithLifecycle(initialValue = "en")
-    val userInterests by prefsRepo.selectedInterests.collectAsStateWithLifecycle(initialValue = emptySet())
-    var pendingUserInterests by remember { mutableStateOf<Set<String>?>(null) }
-    val currentUserInterests = pendingUserInterests ?: userInterests
     val savedRouteIds by prefsRepo.bookmarkedRouteIds.collectAsStateWithLifecycle(initialValue = emptySet())
     val onboardingCompleted by prefsRepo.onboardingDone
         .map { it as Boolean? }
@@ -99,33 +104,19 @@ fun MyAppNavigation() {
                     )
                 }
                 is CultureInterestDestination -> NavEntry(key) {
+                    val vm: CultureInterestViewModel = viewModel(
+                        factory = CultureInterestViewModelFactory(MemoirApplication.prefs)
+                    )
                     CultureInterestScreen(
-                        selectedLanguage = selectedLanguage,
-                        initialInterests = currentUserInterests,
-                        onInterestSelect = { interestId, isSelected ->
-                            val latest = pendingUserInterests ?: userInterests
-                            val updated = if (isSelected) {
-                                latest + interestId
-                            } else {
-                                latest - interestId
-                            }
-                            pendingUserInterests = updated
-                            coroutineScope.launch {
-                                prefsRepo.setInterests(updated)
-                            }
-                        },
+                        viewModel = vm,
                         onStartExploringClick = {
-                            val finalInterests = pendingUserInterests ?: userInterests
                             coroutineScope.launch {
-                                prefsRepo.setInterests(finalInterests)
                                 prefsRepo.markOnboardingDone()
                             }
                             backStack.add(HomeDestination)
                         },
                         onSkipClick = {
-                            pendingUserInterests = emptySet()
                             coroutineScope.launch {
-                                prefsRepo.setInterests(emptySet())
                                 prefsRepo.markOnboardingDone()
                             }
                             backStack.add(HomeDestination)
@@ -133,25 +124,32 @@ fun MyAppNavigation() {
                     )
                 }
                 is HomeDestination -> NavEntry(key) {
+                    val ctx = LocalContext.current
+                    val currentLocale = LocaleController.currentLocale()
+                    val vm: HomeViewModel = viewModel(
+                        factory = HomeViewModelFactory(
+                            content = MemoirApplication.content,
+                            prefs = MemoirApplication.prefs,
+                            resources = ctx.resources,
+                            localeProvider = { currentLocale }
+                        )
+                    )
                     HomeScreen(
-                        selectedLanguage = selectedLanguage,
-                        initialInterests = userInterests,
-                        onNavigateToHome = {
-                            if (backStack.last() != HomeDestination) {
-                                backStack.clear()
-                                backStack.add(HomeDestination)
-                            }
-                        },
+                        viewModel = vm,
                         onNavigateToSaved = {
                             backStack.add(SavedDestination)
                         },
                         onNavigateToMemories = {
                             backStack.add(MemoriesDestination)
-                        },
-                        onMoreClick = { routeId ->
-                            backStack.add(RouteDetailDestination(routeId))
                         }
                     )
+                    LaunchedEffect(vm) {
+                        vm.effects.collect { effect ->
+                            when (effect) {
+                                is HomeEffect.NavigateToRoute -> backStack.add(RouteDetailDestination(effect.routeId))
+                            }
+                        }
+                    }
                 }
                 is SavedDestination -> NavEntry(key) {
                     SavedScreen(
@@ -342,7 +340,8 @@ fun MyAppNavigation() {
                         },
                         onSpotClick = { spotId ->
                             backStack.add(SpotIntroDestination(spotId))
-                        }
+                        },
+                        contentRepository = MemoirApplication.content
                     )
                 }
                 is SpotIntroDestination -> NavEntry(key) {

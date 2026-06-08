@@ -15,12 +15,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,48 +32,43 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mcis.memoir.ui.culture.CultureInterestViewModel
+import com.mcis.memoir.ui.home.Tag
+import com.mcis.memoir.ui.home.TagCatalog
 import com.mcis.memoir.ui.theme.AppTheme
 import com.mcis.memoir.ui.theme.inter
 import com.mcis.memoir.ui.theme.judson
 
-data class CultureInterest(
-    val id: String,
-    val nameResourceId: Int
-)
-
-/**
- * Culture Interest Selection screen that allows users to choose their cultural interests.
- *
- * @param selectedLanguage The current language selection ("en" or "zh").
- * @param onInterestSelect Callback invoked when an interest is toggled.
- * @param onStartExploringClick Callback invoked when the Start Exploring button is clicked.
- * @param onSkipClick Callback invoked when the Skip button is clicked.
- * @param modifier Optional modifier for the root composable.
- */
 @Composable
 fun CultureInterestScreen(
-    selectedLanguage: String = "en",
-    initialInterests: Set<String> = emptySet(),
-    onInterestSelect: (String, Boolean) -> Unit = { _, _ -> },
-    onStartExploringClick: () -> Unit = {},
-    onSkipClick: () -> Unit = {},
+    viewModel: CultureInterestViewModel,
+    onStartExploringClick: () -> Unit,
+    onSkipClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isChinese = selectedLanguage == "zh"
-    
-    val interests = remember {
-        listOf(
-            CultureInterest("temples", R.string.culture_temples),
-            CultureInterest("old_streets", R.string.culture_old_streets),
-            CultureInterest("architecture", R.string.culture_architecture),
-            CultureInterest("trade", R.string.culture_trade),
-            CultureInterest("colonial", R.string.culture_colonial),
-            CultureInterest("crafts", R.string.culture_crafts)
-        )
-    }
+    val selected by viewModel.selected.collectAsStateWithLifecycle()
 
-    var selectedInterests by remember { mutableStateOf(initialInterests) }
+    CultureInterestContent(
+        selected = selected,
+        onToggle = viewModel::toggle,
+        onSkip = {
+            viewModel.skip()
+            onSkipClick()
+        },
+        onStart = onStartExploringClick,
+        modifier = modifier
+    )
+}
 
+@Composable
+private fun CultureInterestContent(
+    selected: Set<String>,
+    onToggle: (String) -> Unit,
+    onSkip: () -> Unit,
+    onStart: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -83,6 +77,7 @@ fun CultureInterestScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 29.dp)
         ) {
             Box(
@@ -91,30 +86,22 @@ fun CultureInterestScreen(
                     .padding(top = 14.dp),
                 contentAlignment = Alignment.CenterEnd
             ) {
-                SkipButton(isChinese = isChinese, onClick = onSkipClick)
+                SkipButton(onClick = onSkip)
             }
 
             Spacer(modifier = Modifier.height(120.dp))
 
-            CultureSelectionContent(isChinese = isChinese)
+            CultureSelectionContent()
 
             Spacer(modifier = Modifier.height(32.dp))
 
             InterestOptionsList(
-                interests = interests,
-                selectedInterests = selectedInterests,
-                isChinese = isChinese,
-                onInterestToggle = { interestId, isSelected ->
-                    selectedInterests = if (isSelected) {
-                        selectedInterests + interestId
-                    } else {
-                        selectedInterests - interestId
-                    }
-                    onInterestSelect(interestId, isSelected)
-                }
+                interests = TagCatalog.all,
+                selectedInterests = selected,
+                onInterestToggle = onToggle
             )
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(32.dp))
 
             Box(
                 modifier = Modifier
@@ -122,7 +109,7 @@ fun CultureInterestScreen(
                     .padding(bottom = 80.dp),
                 contentAlignment = Alignment.CenterEnd
             ) {
-                StartExploringButton(isChinese = isChinese, onClick = onStartExploringClick)
+                StartExploringButton(onClick = onStart)
             }
         }
     }
@@ -130,14 +117,13 @@ fun CultureInterestScreen(
 
 @Composable
 private fun CultureSelectionContent(
-    isChinese: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
     ) {
         Text(
-            text = stringResource(if (isChinese) R.string.culture_interest_subtitle_zh else R.string.culture_interest_subtitle),
+            text = stringResource(R.string.culture_interest_subtitle),
             color = DesignTokens.colorBlack,
             style = TextStyle(
                 fontSize = DesignTokens.fontSizeMedium,
@@ -149,7 +135,7 @@ private fun CultureSelectionContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = stringResource(if (isChinese) R.string.culture_interest_headline_zh else R.string.culture_interest_headline),
+            text = stringResource(R.string.culture_interest_headline),
             color = DesignTokens.colorBlack,
             style = TextStyle(
                 fontSize = DesignTokens.fontSizeHeadline,
@@ -163,41 +149,20 @@ private fun CultureSelectionContent(
 
 @Composable
 private fun InterestOptionsList(
-    interests: List<CultureInterest>,
+    interests: List<Tag>,
     selectedInterests: Set<String>,
-    isChinese: Boolean,
-    onInterestToggle: (String, Boolean) -> Unit,
+    onInterestToggle: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = modifier.fillMaxWidth()
     ) {
-        interests.forEach { interest ->
-            // In a real app, you'd have translated strings for each interest.
-            // For now, we use the existing ones as they contain both EN and ZH in the resource name logic.
-            // But wait, the resource IDs are for EN. Let's map them to ZH if needed.
-            val label = if (isChinese) {
-                when(interest.id) {
-                    "temples" -> stringResource(R.string.home_category_temples_zh)
-                    "old_streets" -> stringResource(R.string.home_category_old_streets_zh)
-                    "architecture" -> stringResource(R.string.home_category_architecture_zh)
-                    "trade" -> stringResource(R.string.home_category_trade_zh)
-                    "colonial" -> stringResource(R.string.home_category_colonial_zh)
-                    "crafts" -> stringResource(R.string.home_category_crafts_zh)
-                    else -> stringResource(interest.nameResourceId)
-                }
-            } else {
-                stringResource(interest.nameResourceId)
-            }
-            
+        interests.forEach { tag ->
             InterestOptionButton(
-                label = label,
-                isSelected = interest.id in selectedInterests,
-                onClick = {
-                    val newState = interest.id !in selectedInterests
-                    onInterestToggle(interest.id, newState)
-                }
+                label = stringResource(tag.labelRes),
+                isSelected = tag.id in selectedInterests,
+                onClick = { onInterestToggle(tag.id) }
             )
         }
     }
@@ -248,7 +213,6 @@ private fun InterestOptionButton(
 
 @Composable
 private fun SkipButton(
-    isChinese: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -260,7 +224,7 @@ private fun SkipButton(
             .padding(vertical = 10.dp)
     ) {
         Text(
-            text = stringResource(if (isChinese) R.string.skip_button_zh else R.string.skip_button),
+            text = stringResource(R.string.skip_button),
             style = TextStyle(
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Normal,
@@ -281,7 +245,6 @@ private fun SkipButton(
 
 @Composable
 private fun StartExploringButton(
-    isChinese: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -303,7 +266,7 @@ private fun StartExploringButton(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = stringResource(if (isChinese) R.string.start_exploring_button_zh else R.string.start_exploring_button),
+                text = stringResource(R.string.start_exploring_button),
                 style = TextStyle(
                     fontSize = DesignTokens.fontSizeMedium,
                     fontWeight = FontWeight.Normal,
@@ -331,6 +294,11 @@ private fun StartExploringButton(
 @Composable
 fun CultureInterestScreenPreview() {
     AppTheme {
-        CultureInterestScreen()
+        CultureInterestContent(
+            selected = setOf("temples", "crafts"),
+            onToggle = {},
+            onSkip = {},
+            onStart = {}
+        )
     }
 }

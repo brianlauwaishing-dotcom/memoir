@@ -11,8 +11,20 @@ ROOT = Path(__file__).resolve().parents[2]
 CSV_PATH = ROOT / "data" / "tainan_routes.csv"
 CONTENT_DIR = ROOT / "data" / "tainan-route"
 ASSETS_PATH = CONTENT_DIR / "_assets.json"
+TAGS_PATH = CONTENT_DIR / "_tags.json"
 ROUTES_DIR = CONTENT_DIR / "routes"
 SPOTS_DIR = CONTENT_DIR / "spots"
+
+# Keep tag id list in sync with frontend/mobile/app/src/main/java/com/mcis/memoir/ui/home/TagCatalog.kt.
+# Both must agree on the set used to validate route JSON.
+TAG_CATALOG_KNOWN_IDS = {
+    "temples",
+    "old_streets",
+    "architecture",
+    "trade",
+    "colonial",
+    "crafts",
+}
 
 SECTION_RE = re.compile(r"^Route\s+[A-Z]\b(.*)$")
 PHOTO_MARKER_RE = re.compile(r"[①②③④⑤⑥⑦⑧⑨⑩ロヮワ]\s*")
@@ -163,7 +175,7 @@ def read_csv(path: Path) -> tuple[dict[str, dict], dict[str, dict]]:
                 "category": localized(current_category[1], current_category[0]),
                 "heroImage": "",
                 "description": localized("", ""),
-                "tags": [slugify(current_category[1])],
+                "tags": [],
                 "journey": [],
             }
             routes[route_id] = current_route
@@ -248,6 +260,57 @@ def read_assets(path: Path) -> dict:
         raise ContentError(f"invalid _assets.json: {exc}") from exc
 
 
+def read_route_tags(path: Path) -> dict[str, list[str]]:
+    try:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:
+        raise ContentError(f"missing _tags.json: {path}") from exc
+    except json.JSONDecodeError as exc:
+        raise ContentError(f"invalid _tags.json: {exc}") from exc
+
+    if not isinstance(raw, dict):
+        raise ContentError("_tags.json must be an object keyed by route id")
+
+    tags_by_route: dict[str, list[str]] = {}
+    for route_id, value in raw.items():
+        if not isinstance(route_id, str):
+            raise ContentError("_tags.json route ids must be strings")
+        if not isinstance(value, list):
+            raise ContentError(f"_tags.json entry for {route_id} must be a list of tag ids")
+
+        tags: list[str] = []
+        for tag in value:
+            if not isinstance(tag, str):
+                raise ContentError(f"_tags.json entry for {route_id} contains a non-string tag id")
+            tag = tag.strip()
+            if tag and tag not in tags:
+                tags.append(tag)
+        tags_by_route[route_id] = tags
+    return tags_by_route
+
+
+def apply_route_tags(routes: dict[str, dict], tags_by_route: dict[str, list[str]]) -> None:
+    route_ids = set(routes)
+    extra = sorted(set(tags_by_route) - route_ids)
+    if extra:
+        raise ContentError(f"_tags.json contains unknown route ids: {', '.join(extra)}")
+
+    for route_id in sorted(routes):
+        if route_id not in tags_by_route:
+            raise ContentError(f"missing _tags.json entry: {route_id}")
+        tags = tags_by_route[route_id]
+        if not tags:
+            raise ContentError(
+                f"route {route_id} must declare at least one tag from TagCatalog.ids"
+            )
+        unknown = [tag for tag in tags if tag not in TAG_CATALOG_KNOWN_IDS]
+        if unknown:
+            raise ContentError(
+                f"route {route_id} declares unknown tag ids outside TagCatalog.ids: {', '.join(unknown)}"
+            )
+        routes[route_id]["tags"] = tags
+
+
 def apply_assets(routes: dict[str, dict], spots: dict[str, dict], assets: dict) -> None:
     route_assets = assets.get("routes", {})
     spot_assets = assets.get("spots", {})
@@ -287,6 +350,7 @@ def write_json(path: Path, obj: dict) -> None:
 
 def generate() -> None:
     routes, spots = read_csv(CSV_PATH)
+    apply_route_tags(routes, read_route_tags(TAGS_PATH))
     apply_assets(routes, spots, read_assets(ASSETS_PATH))
 
     ROUTES_DIR.mkdir(parents=True, exist_ok=True)

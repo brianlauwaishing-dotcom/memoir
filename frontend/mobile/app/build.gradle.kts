@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.android.junit5)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
 }
@@ -69,7 +70,12 @@ dependencies {
 
 
     testImplementation(libs.junit)
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.mockk)
+    testImplementation(libs.turbine)
     testImplementation(libs.kotlinx.coroutines.test)
+    testRuntimeOnly(libs.junit.platform.launcher)
+    testRuntimeOnly(libs.junit.vintage.engine)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

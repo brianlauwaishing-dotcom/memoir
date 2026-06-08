@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -27,8 +29,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import android.content.res.Resources
 import com.mcis.memoir.data.MockData
+import com.mcis.memoir.data.JourneyItem
 import com.mcis.memoir.data.RouteData
+import com.mcis.memoir.data.content.ContentRepository
+import com.mcis.memoir.data.content.model.Route
 import com.mcis.memoir.ui.components.BottomNavigationBar
 import com.mcis.memoir.ui.components.UntitledIcon
 import com.mcis.memoir.ui.icons.*
@@ -51,21 +57,45 @@ fun RouteDetailScreen(
     onNavigateToMemories: () -> Unit = {},
     onToggleSave: (String) -> Unit = {},
     onSpotClick: (String) -> Unit = {},
+    contentRepository: ContentRepository? = null,
     modifier: Modifier = Modifier
 ) {
     val isChinese = selectedLanguage == "zh"
-
-    // Mimic backend fetch
-    val route = remember(routeId) { MockData.routes.find { it.id == routeId } }
+    val resources = LocalContext.current.resources
+    val routeState by produceState<RouteDetailLoadState>(
+        initialValue = RouteDetailLoadState.Loading,
+        routeId,
+        contentRepository
+    ) {
+        val legacyRoute = MockData.routes.find { it.id == routeId }
+        value = if (contentRepository == null) {
+            legacyRoute?.let(RouteDetailLoadState::Ready) ?: RouteDetailLoadState.NotFound
+        } else {
+            contentRepository.route(routeId)
+                ?.toRouteData(resources)
+                ?.let(RouteDetailLoadState::Ready)
+                ?: legacyRoute?.let(RouteDetailLoadState::Ready)
+                ?: RouteDetailLoadState.NotFound
+        }
+    }
 
     // Debounce state to prevent multiple rapid clicks
     var isNavigating by remember { mutableStateOf(false) }
 
-    if (route == null) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Route not found")
+    val route = when (val state = routeState) {
+        RouteDetailLoadState.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("")
+            }
+            return
         }
-        return
+        RouteDetailLoadState.NotFound -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("Route not found")
+            }
+            return
+        }
+        is RouteDetailLoadState.Ready -> state.route
     }
 
     Box(
@@ -358,6 +388,28 @@ fun TimelineItem(
         }
     }
 }
+
+private sealed interface RouteDetailLoadState {
+    data object Loading : RouteDetailLoadState
+    data object NotFound : RouteDetailLoadState
+    data class Ready(val route: RouteData) : RouteDetailLoadState
+}
+
+internal fun Route.toRouteData(resources: Resources): RouteData = RouteData(
+    id = id,
+    titleEn = title.en,
+    titleZh = title.zh,
+    categoryEn = category.en,
+    categoryZh = category.zh,
+    imageRes = resources.getIdentifier(heroImage, "drawable", "com.mcis.memoir")
+        .takeIf { it != 0 }
+        ?: R.drawable.sounds_of_temple,
+    descriptionEn = description.en,
+    descriptionZh = description.zh,
+    journeyItems = journey
+        .sortedBy { it.order }
+        .map { JourneyItem(it.order, it.spotId, it.title.en, it.title.zh) }
+)
 
 @Preview(showBackground = true, device = "spec:width=412dp,height=915dp")
 @Composable
