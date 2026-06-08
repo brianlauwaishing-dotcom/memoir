@@ -1,11 +1,6 @@
 package com.mcis.memoir
 
 import android.os.Bundle
-//import androidx.activity.enableEdgeToEdge
-//import androidx.appcompat.app.AppCompatActivity
-//import androidx.core.view.ViewCompat
-//import androidx.core.view.WindowInsetsCompat
-
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import com.mcis.memoir.ui.theme.AppTheme
@@ -14,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
@@ -121,11 +116,17 @@ class MainActivity : AppCompatActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
                     ) {
-                        var showSplash by remember { mutableStateOf(true) }
+                        // Show the launch splash only on a genuine cold start. rememberSaveable
+                        // keeps this flag across Activity recreation (e.g. the recreation
+                        // triggered by applying a per-app locale), so the logo does not flash
+                        // again mid-flow after the user picks a language.
+                        var showSplash by rememberSaveable { mutableStateOf(true) }
 
                         LaunchedEffect(Unit) {
-                            delay(2000)
-                            showSplash = false
+                            if (showSplash) {
+                                delay(2000)
+                                showSplash = false
+                            }
                         }
 
                         if (showSplash) {
@@ -137,13 +138,5 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
-//        enableEdgeToEdge()
-//        setContentView(R.layout.activity_main)
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-//            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-//            insets
-//        }
     }
 }
