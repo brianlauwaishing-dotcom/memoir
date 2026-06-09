@@ -31,6 +31,10 @@ import com.mcis.memoir.ui.home.HomeEffect
 import com.mcis.memoir.ui.home.HomeViewModel
 import com.mcis.memoir.ui.home.HomeViewModelFactory
 import com.mcis.memoir.ui.language.LanguageSelectionViewModel
+import com.mcis.memoir.ui.route.RouteDetailViewModel
+import com.mcis.memoir.ui.route.RouteDetailViewModelFactory
+import com.mcis.memoir.ui.saved.SavedViewModel
+import com.mcis.memoir.ui.saved.SavedViewModelFactory
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -40,7 +44,6 @@ fun MyAppNavigation() {
     val coroutineScope = rememberCoroutineScope()
 
     val selectedLanguage by prefsRepo.language.collectAsStateWithLifecycle(initialValue = "en")
-    val savedRouteIds by prefsRepo.bookmarkedRouteIds.collectAsStateWithLifecycle(initialValue = emptySet())
     val onboardingCompleted by prefsRepo.onboardingDone
         .map { it as Boolean? }
         .collectAsStateWithLifecycle(initialValue = null)
@@ -152,17 +155,21 @@ fun MyAppNavigation() {
                     }
                 }
                 is SavedDestination -> NavEntry(key) {
+                    val ctx = LocalContext.current
+                    val currentLocale = LocaleController.currentLocale()
+                    val vm: SavedViewModel = viewModel(
+                        factory = SavedViewModelFactory(
+                            content = MemoirApplication.content,
+                            prefs = MemoirApplication.prefs,
+                            resources = ctx.resources,
+                            localeProvider = { currentLocale }
+                        )
+                    )
                     SavedScreen(
-                        selectedLanguage = selectedLanguage,
-                        savedRouteIds = savedRouteIds,
+                        viewModel = vm,
                         onNavigateToHome = {
                             backStack.clear()
                             backStack.add(HomeDestination)
-                        },
-                        onNavigateToSaved = {
-                            if (backStack.last() != SavedDestination) {
-                                backStack.add(SavedDestination)
-                            }
                         },
                         onNavigateToMemories = {
                             backStack.add(MemoriesDestination)
@@ -311,16 +318,22 @@ fun MyAppNavigation() {
                     )
                 }
                 is RouteDetailDestination -> NavEntry(key) {
+                    val ctx = LocalContext.current
+                    val currentLocale = LocaleController.currentLocale()
+                    val vm: RouteDetailViewModel = viewModel(
+                        key = key.routeId,
+                        factory = RouteDetailViewModelFactory(
+                            routeId = key.routeId,
+                            content = MemoirApplication.content,
+                            prefs = MemoirApplication.prefs,
+                            resources = ctx.resources,
+                            localeProvider = { currentLocale }
+                        )
+                    )
                     RouteDetailScreen(
-                        selectedLanguage = selectedLanguage,
-                        routeId = key.routeId,
-                        isSaved = savedRouteIds.contains(key.routeId),
+                        viewModel = vm,
                         onBackClick = {
                             backStack.removeLastOrNull()
-                        },
-                        onNavigateToHome = {
-                            backStack.clear()
-                            backStack.add(HomeDestination)
                         },
                         onNavigateToSaved = {
                             backStack.add(SavedDestination)
@@ -328,20 +341,9 @@ fun MyAppNavigation() {
                         onNavigateToMemories = {
                             backStack.add(MemoriesDestination)
                         },
-                        onToggleSave = { routeId ->
-                            val updated = if (savedRouteIds.contains(routeId)) {
-                                savedRouteIds - routeId
-                            } else {
-                                savedRouteIds + routeId
-                            }
-                            coroutineScope.launch {
-                                prefsRepo.setBookmarkedRouteIds(updated)
-                            }
-                        },
                         onSpotClick = { spotId ->
                             backStack.add(SpotIntroDestination(spotId))
-                        },
-                        contentRepository = MemoirApplication.content
+                        }
                     )
                 }
                 is SpotIntroDestination -> NavEntry(key) {

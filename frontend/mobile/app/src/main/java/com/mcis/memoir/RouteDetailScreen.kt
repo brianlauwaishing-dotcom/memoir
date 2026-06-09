@@ -4,16 +4,27 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -21,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -29,252 +39,97 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import android.content.res.Resources
-import com.mcis.memoir.data.MockData
-import com.mcis.memoir.data.JourneyItem
-import com.mcis.memoir.data.RouteData
-import com.mcis.memoir.data.content.ContentRepository
-import com.mcis.memoir.data.content.model.Route
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mcis.memoir.i18n.LocaleController
 import com.mcis.memoir.ui.components.BottomNavigationBar
 import com.mcis.memoir.ui.components.UntitledIcon
 import com.mcis.memoir.ui.icons.*
+import com.mcis.memoir.ui.route.JourneyRowState
+import com.mcis.memoir.ui.route.RouteDetailIntent
+import com.mcis.memoir.ui.route.RouteDetailState
+import com.mcis.memoir.ui.route.RouteDetailViewModel
 import com.mcis.memoir.ui.theme.AppTheme
 import com.mcis.memoir.ui.theme.inter
 import com.mcis.memoir.ui.theme.judson
 
-/**
- * Detailed screen for a cultural route.
- * Balanced to fill the screen while remaining non-scrollable on standard devices.
- */
 @Composable
 fun RouteDetailScreen(
-    selectedLanguage: String = "en",
-    routeId: String = "temples",
-    isSaved: Boolean = false,
-    onBackClick: () -> Unit = {},
-    onNavigateToHome: () -> Unit = {},
-    onNavigateToSaved: () -> Unit = {},
-    onNavigateToMemories: () -> Unit = {},
-    onToggleSave: (String) -> Unit = {},
-    onSpotClick: (String) -> Unit = {},
-    contentRepository: ContentRepository? = null,
+    viewModel: RouteDetailViewModel,
+    onBackClick: () -> Unit,
+    onNavigateToSaved: () -> Unit,
+    onNavigateToMemories: () -> Unit,
+    onSpotClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isChinese = selectedLanguage == "zh"
-    val resources = LocalContext.current.resources
-    val routeState by produceState<RouteDetailLoadState>(
-        initialValue = RouteDetailLoadState.Loading,
-        routeId,
-        contentRepository
-    ) {
-        val legacyRoute = MockData.routes.find { it.id == routeId }
-        value = if (contentRepository == null) {
-            legacyRoute?.let(RouteDetailLoadState::Ready) ?: RouteDetailLoadState.NotFound
-        } else {
-            contentRepository.route(routeId)
-                ?.toRouteData(resources)
-                ?.let(RouteDetailLoadState::Ready)
-                ?: legacyRoute?.let(RouteDetailLoadState::Ready)
-                ?: RouteDetailLoadState.NotFound
-        }
-    }
-
-    // Debounce state to prevent multiple rapid clicks
+    val state by viewModel.state.collectAsStateWithLifecycle()
     var isNavigating by remember { mutableStateOf(false) }
 
-    val route = when (val state = routeState) {
-        RouteDetailLoadState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("")
+    RouteDetailContent(
+        state = state,
+        onIntent = viewModel::onIntent,
+        onBackClick = {
+            if (!isNavigating) {
+                isNavigating = true
+                onBackClick()
             }
-            return
-        }
-        RouteDetailLoadState.NotFound -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Route not found")
-            }
-            return
-        }
-        is RouteDetailLoadState.Ready -> state.route
-    }
+        },
+        onNavigateToSaved = onNavigateToSaved,
+        onNavigateToMemories = onNavigateToMemories,
+        onSpotClick = onSpotClick,
+        modifier = modifier
+    )
+}
+
+@Composable
+internal fun RouteDetailContent(
+    state: RouteDetailState,
+    onIntent: (RouteDetailIntent) -> Unit,
+    onBackClick: () -> Unit,
+    onNavigateToSaved: () -> Unit,
+    onNavigateToMemories: () -> Unit,
+    onSpotClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val isChinese = LocaleController.currentLocale().language == "zh"
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(DesignTokens.colorLanguageSelectionBackground)
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            // Main Content Area - Scrollable
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                // Hero Image Section
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(259.dp)
-                ) {
-                    Image(
-                        painter = painterResource(route.imageRes),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-
-                Column(
-                    modifier = Modifier
-                        .padding(horizontal = 29.dp)
-                        .padding(top = 24.dp)
-                ) {
-                    // Title
-                    val title = if (isChinese) route.titleZh else route.titleEn
-                    Text(
-                        text = title,
-                        style = TextStyle(
-                            fontFamily = judson,
-                            fontSize = 40.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black,
-                            lineHeight = 44.sp
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // Description with Vertical Line
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.Top
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .width(1.dp)
-                                .height(70.dp)
-                                .background(Color.Black)
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        
-                        val description = if (isChinese) route.descriptionZh else route.descriptionEn
-                        
-                        Text(
-                            text = description,
-                            style = TextStyle(
-                                fontFamily = inter,
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Normal,
-                                color = Color.Black,
-                                lineHeight = 24.sp
-                            )
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // Your Journey Section
-                    Text(
-                        text = if (isChinese) stringResource(R.string.route_detail_your_journey_zh) else stringResource(R.string.route_detail_your_journey),
-                        style = TextStyle(
-                            fontFamily = inter,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Normal,
-                            color = Color.Black
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Timeline Items
-                    route.journeyItems.forEachIndexed { index, item ->
-                        val label = if (isChinese) item.labelZh else item.labelEn
-                        TimelineItem(
-                            number = item.id,
-                            label = label,
-                            hasLine = index < route.journeyItems.size - 1,
-                            onClick = { onSpotClick(item.spotId) }
-                        )
-                    }
-                    
-                    // Extra spacing at the end of scrollable content to ensure content isn't blocked by the fixed button
-                    Spacer(modifier = Modifier.height(30.dp))
+        when {
+            state.error != null -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(text = stringResource(R.string.route_not_found))
                 }
             }
-
-            // Fixed Bottom Section (Save Place Button)
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                val shape = RoundedCornerShape(50.dp)
-                Box(
-                    modifier = Modifier
-                        .width(239.dp)
-                        .height(65.dp)
-                        .background(
-                            color = if (isSaved) Color(0xFF5C5C5C) else DesignTokens.colorMaroon, 
-                            shape = shape
-                        )
-                        .clip(shape)
-                        .clickable { onToggleSave(routeId) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        UntitledIcon(
-                            imageVector = UntitledIcons.SavedIcon,
-                            contentDescription = null,
-                            tint = Color.White,
-                            size = 24.dp
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Text(
-                            text = if (isChinese) {
-                                if (isSaved) "取消收藏" else stringResource(R.string.route_detail_save_place_zh)
-                            } else {
-                                if (isSaved) "Saved" else stringResource(R.string.route_detail_save_place)
-                            },
-                            style = TextStyle(
-                                fontFamily = inter,
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.Normal,
-                                color = Color.White
-                            )
-                        )
-                    }
+            state.isLoading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = DesignTokens.colorMaroon)
                 }
             }
-
-            // Bottom Navigation
-            BottomNavigationBar(
-                isChinese = isChinese,
-                onHomeClick = onNavigateToHome,
-                onSavedClick = onNavigateToSaved,
-                onMemoriesClick = onNavigateToMemories,
-                currentDestination = ""
-            )
+            else -> {
+                RouteDetailLoadedContent(
+                    state = state,
+                    isChinese = isChinese,
+                    onIntent = onIntent,
+                    onNavigateToSaved = onNavigateToSaved,
+                    onNavigateToMemories = onNavigateToMemories,
+                    onSpotClick = onSpotClick
+                )
+            }
         }
 
-        // Fixed Back Button (Top Left)
         Box(
             modifier = Modifier
                 .padding(top = 57.dp, start = 18.dp)
                 .size(24.dp)
-                .clickable { 
-                    if (!isNavigating) {
-                        isNavigating = true
-                        onBackClick()
-                    }
-                },
+                .clickable(onClick = onBackClick),
             contentAlignment = Alignment.Center
         ) {
             UntitledIcon(
                 imageVector = UntitledIcons.BackIcon,
-                contentDescription = "Back",
+                contentDescription = stringResource(R.string.back_button),
                 tint = Color.White,
                 size = 24.dp
             )
@@ -283,9 +138,166 @@ fun RouteDetailScreen(
 }
 
 @Composable
+private fun RouteDetailLoadedContent(
+    state: RouteDetailState,
+    isChinese: Boolean,
+    onIntent: (RouteDetailIntent) -> Unit,
+    onNavigateToSaved: () -> Unit,
+    onNavigateToMemories: () -> Unit,
+    onSpotClick: (String) -> Unit
+) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(259.dp)
+                    .background(Color.LightGray)
+            ) {
+                if (state.heroDrawableRes != 0) {
+                    Image(
+                        painter = painterResource(state.heroDrawableRes),
+                        contentDescription = state.title,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 29.dp)
+                    .padding(top = 24.dp)
+            ) {
+                Text(
+                    text = state.title,
+                    style = TextStyle(
+                        fontFamily = judson,
+                        fontSize = 40.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black,
+                        lineHeight = 44.sp
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.Top
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(1.dp)
+                            .height(70.dp)
+                            .background(Color.Black)
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = state.description,
+                        style = TextStyle(
+                            fontFamily = inter,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Normal,
+                            color = Color.Black,
+                            lineHeight = 24.sp
+                        )
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text(
+                    text = stringResource(R.string.route_detail_your_journey),
+                    style = TextStyle(
+                        fontFamily = inter,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.Black
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                state.journey.forEachIndexed { index, row ->
+                    TimelineItem(
+                        number = row.order,
+                        label = row.label,
+                        hasLine = index < state.journey.size - 1,
+                        onClick = {
+                            onSpotClick(row.spotId)
+                            onIntent(RouteDetailIntent.SpotClicked(row.spotId))
+                        }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(30.dp))
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            val shape = RoundedCornerShape(50.dp)
+            Box(
+                modifier = Modifier
+                    .width(239.dp)
+                    .height(65.dp)
+                    .background(
+                        color = if (state.isSaved) Color(0xFF5C5C5C) else DesignTokens.colorMaroon,
+                        shape = shape
+                    )
+                    .clip(shape)
+                    .clickable { onIntent(RouteDetailIntent.BookmarkToggled) },
+                contentAlignment = Alignment.Center
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    UntitledIcon(
+                        imageVector = UntitledIcons.SavedIcon,
+                        contentDescription = null,
+                        tint = Color.White,
+                        size = 24.dp
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = stringResource(
+                            if (state.isSaved) {
+                                R.string.route_detail_save_place_saved
+                            } else {
+                                R.string.route_detail_save_place
+                            }
+                        ),
+                        style = TextStyle(
+                            fontFamily = inter,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Normal,
+                            color = Color.White
+                        )
+                    )
+                }
+            }
+        }
+
+        BottomNavigationBar(
+            isChinese = isChinese,
+            onSavedClick = onNavigateToSaved,
+            onMemoriesClick = onNavigateToMemories,
+            currentDestination = ""
+        )
+    }
+}
+
+@Composable
 fun TimelineItem(
-    number: Int, 
-    label: String, 
+    number: Int,
+    label: String,
     hasLine: Boolean,
     onClick: () -> Unit = {}
 ) {
@@ -299,7 +311,6 @@ fun TimelineItem(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.width(33.dp)
         ) {
-            // Left column container for circle and lines
             Box(
                 modifier = Modifier.height(58.dp),
                 contentAlignment = Alignment.TopCenter
@@ -307,7 +318,7 @@ fun TimelineItem(
                 if (number > 1) {
                     Box(
                         modifier = Modifier
-                            .height(8.5.dp) // 4dp gap from circle top (12.5 - 4)
+                            .height(8.5.dp)
                             .width(1.dp)
                             .background(Color(0xFFD2C7B3))
                     )
@@ -331,8 +342,8 @@ fun TimelineItem(
                 if (hasLine) {
                     Box(
                         modifier = Modifier
-                            .padding(top = 49.5.dp) // 4dp gap from circle bottom (45.5 + 4)
-                            .height(8.5.dp) // To fill the rest of the 58dp box (58 - 49.5)
+                            .padding(top = 49.5.dp)
+                            .height(8.5.dp)
                             .width(1.dp)
                             .background(Color(0xFFD2C7B3))
                     )
@@ -348,10 +359,9 @@ fun TimelineItem(
                 )
             }
         }
-        
+
         Spacer(modifier = Modifier.width(22.dp))
-        
-        // Text Box
+
         val shape = RoundedCornerShape(10.dp)
         Box(
             modifier = Modifier
@@ -389,32 +399,25 @@ fun TimelineItem(
     }
 }
 
-private sealed interface RouteDetailLoadState {
-    data object Loading : RouteDetailLoadState
-    data object NotFound : RouteDetailLoadState
-    data class Ready(val route: RouteData) : RouteDetailLoadState
-}
-
-internal fun Route.toRouteData(resources: Resources): RouteData = RouteData(
-    id = id,
-    titleEn = title.en,
-    titleZh = title.zh,
-    categoryEn = category.en,
-    categoryZh = category.zh,
-    imageRes = resources.getIdentifier(heroImage, "drawable", "com.mcis.memoir")
-        .takeIf { it != 0 }
-        ?: R.drawable.sounds_of_temple,
-    descriptionEn = description.en,
-    descriptionZh = description.zh,
-    journeyItems = journey
-        .sortedBy { it.order }
-        .map { JourneyItem(it.order, it.spotId, it.title.en, it.title.zh) }
-)
-
 @Preview(showBackground = true, device = "spec:width=412dp,height=915dp")
 @Composable
 fun RouteDetailScreenPreview() {
     AppTheme {
-        RouteDetailScreen()
+        RouteDetailContent(
+            state = RouteDetailState(
+                isLoading = false,
+                routeId = "demo",
+                title = "Demo Route",
+                description = "A demo description",
+                heroDrawableRes = R.drawable.sounds_of_temple,
+                journey = listOf(JourneyRowState(1, "demo_spot", "Demo Spot")),
+                isSaved = false
+            ),
+            onIntent = {},
+            onBackClick = {},
+            onNavigateToSaved = {},
+            onNavigateToMemories = {},
+            onSpotClick = {}
+        )
     }
 }

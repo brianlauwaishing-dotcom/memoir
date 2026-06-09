@@ -95,6 +95,7 @@
 
     <!-- Saved (Travel Plan) Screen -->
     <string name="saved_headline">My travel plan</string>
+    <string name="saved_empty_message">No saved routes yet</string>
     <string name="saved_headline_zh">我的旅遊計畫</string>
 
     <!-- Memories Screen -->
@@ -201,6 +202,7 @@
     <string name="route_detail_your_journey">YOUR JOURNEY</string>
     <string name="route_detail_your_journey_zh">您的旅程</string>
     <string name="route_detail_save_place">Save Place</string>
+    <string name="route_detail_save_place_saved">Saved</string>
     <string name="route_detail_save_place_zh">收藏地點</string>
     <string name="route_not_found">Route not found</string>
     <string name="route_not_found_zh">找不到路徑</string>

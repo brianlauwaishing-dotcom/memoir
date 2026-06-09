@@ -89,4 +89,6 @@
     <string name="route_detail_your_journey">您的旅程</string>
     <string name="route_detail_save_place">收藏地點</string>
     <string name="route_not_found">找不到路徑</string>
+    <string name="saved_empty_message">目前還沒有收藏的路徑</string>
+    <string name="route_detail_save_place_saved">已收藏</string>
 </resources>
