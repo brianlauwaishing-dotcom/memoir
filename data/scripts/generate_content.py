@@ -51,8 +51,8 @@ EXPECTED_COLUMNS = {
     "photo_en": "Photography Tips (EN)",
     "artifact_zh": "為甚麼要看?（中）",
     "artifact_en": "為甚麼要看?（英）",
-    "look_zh": "look closer（中）",
-    "look_en": "look closer（英）",
+    "question_zh": "look closer（中）",
+    "question_en": "look closer（英）",
 }
 
 
@@ -195,6 +195,13 @@ def read_csv(path: Path) -> tuple[dict[str, dict], dict[str, dict]]:
         photo_tips_zh = split_photo_tips(get(row, mapping, "photo_zh"))
         artifacts_en = split_artifacts(get(row, mapping, "artifact_en"))
         artifacts_zh = split_artifacts(get(row, mapping, "artifact_zh"))
+        questions_en = split_artifacts(get(row, mapping, "question_en"))
+        questions_zh = split_artifacts(get(row, mapping, "question_zh"))
+        artifact_count = max(len(artifacts_en), len(artifacts_zh))
+        questions_count = max(len(questions_en), len(questions_zh))
+        if questions_count < artifact_count:
+            for artifact_id in range(questions_count + 1, artifact_count + 1):
+                raise ContentError(f"empty question for spots.{spot_id}.artifacts[{artifact_id}]")
 
         spot = {
             "id": spot_id,
@@ -220,9 +227,18 @@ def read_csv(path: Path) -> tuple[dict[str, dict], dict[str, dict]]:
                 }
                 for i in range(max(len(photo_tips_en), len(photo_tips_zh)))
             ],
-            "artifacts": [
+            "artifacts": [],
+        }
+
+        for i in range(artifact_count):
+            question_en = questions_en[i][1] if i < len(questions_en) else ""
+            question_zh = questions_zh[i][1] if i < len(questions_zh) else ""
+            artifact_id = i + 1
+            if not question_en.strip() or not question_zh.strip():
+                raise ContentError(f"empty question for spots.{spot_id}.artifacts[{artifact_id}]")
+            spot["artifacts"].append(
                 {
-                    "id": i + 1,
+                    "id": artifact_id,
                     "title": localized(
                         artifacts_en[i][0] if i < len(artifacts_en) else "",
                         artifacts_zh[i][0] if i < len(artifacts_zh) else "",
@@ -231,11 +247,10 @@ def read_csv(path: Path) -> tuple[dict[str, dict], dict[str, dict]]:
                         artifacts_en[i][1] if i < len(artifacts_en) else "",
                         artifacts_zh[i][1] if i < len(artifacts_zh) else "",
                     ),
+                    "question": localized(question_en, question_zh),
                     "image": "",
                 }
-                for i in range(max(len(artifacts_en), len(artifacts_zh)))
-            ],
-        }
+            )
 
         spots.setdefault(spot_id, spot)
         current_route["journey"].append(
@@ -333,11 +348,21 @@ def apply_assets(routes: dict[str, dict], spots: dict[str, dict], assets: dict) 
             raise ContentError(f"missing _assets.json binding: spots.{spot_id}.heroImage")
         spots[spot_id]["heroImage"] = hero_image
         photo_images = binding.get("photographyTipImages", [])
-        artifact_images = binding.get("artifactImages", [])
+        artifact_bindings = binding.get("artifacts", {})
         for i, tip in enumerate(spots[spot_id]["photographyTips"]):
             tip["image"] = photo_images[i] if i < len(photo_images) else spots[spot_id]["heroImage"]
-        for i, artifact in enumerate(spots[spot_id]["artifacts"]):
-            artifact["image"] = artifact_images[i] if i < len(artifact_images) else spots[spot_id]["heroImage"]
+        # Keep this artifact-shape validation in sync with Artifact.kt — both must agree on required fields (id, title, description, question, image).
+        for artifact in spots[spot_id]["artifacts"]:
+            artifact_id = str(artifact["id"])
+            artifact_binding = artifact_bindings.get(artifact_id)
+            if not isinstance(artifact_binding, dict) or not artifact_binding.get("image"):
+                raise ContentError(
+                    f"missing _assets.json binding: spots.{spot_id}.artifacts.{artifact_id}.image"
+                )
+            artifact["image"] = artifact_binding["image"]
+            gallery_image = artifact_binding.get("galleryImage")
+            if gallery_image:
+                artifact["galleryImage"] = gallery_image
 
 
 def write_json(path: Path, obj: dict) -> None:

@@ -249,8 +249,10 @@ data class Spot(
 
 @Serializable data class LocalizedFacts(val en: List<String>, val zh: List<String>)
 @Serializable data class PhotographyTip(val id: Int, val description: LocalizedText, val image: String)
-@Serializable data class Artifact(val id: Int, val title: LocalizedText, val description: LocalizedText, val image: String)
+@Serializable data class Artifact(val id: Int, val title: LocalizedText, val description: LocalizedText, val question: LocalizedText, val image: String, val galleryImage: String? = null)
 ```
+
+Recorded deviation: change `artifact-discovery-flow` introduced required `question` and optional `galleryImage` fields to support the existing discovery UX.
 
 ### 4.5 Loader + Repository
 

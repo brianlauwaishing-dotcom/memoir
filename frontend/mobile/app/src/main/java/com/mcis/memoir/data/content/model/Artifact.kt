@@ -7,5 +7,7 @@ data class Artifact(
     val id: Int,
     val title: LocalizedText,
     val description: LocalizedText,
-    val image: String
+    val question: LocalizedText,
+    val image: String,
+    val galleryImage: String? = null
 )

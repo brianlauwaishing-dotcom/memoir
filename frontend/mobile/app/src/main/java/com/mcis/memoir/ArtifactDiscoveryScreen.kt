@@ -3,12 +3,24 @@ package com.mcis.memoir
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,48 +37,60 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mcis.memoir.data.MockData
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mcis.memoir.ui.artifact.ArtifactDiscoveryState
+import com.mcis.memoir.ui.artifact.ArtifactDiscoveryViewModel
+import com.mcis.memoir.ui.artifact.QuestionHighlight
 import com.mcis.memoir.ui.components.UntitledIcon
 import com.mcis.memoir.ui.icons.*
 import com.mcis.memoir.ui.theme.AppTheme
 import com.mcis.memoir.ui.theme.inter
 
-/**
- * Screen for the "Look Closer" discovery step of an artifact.
- * Based on Figma node 622:223.
- */
 @Composable
 fun ArtifactDiscoveryScreen(
-    selectedLanguage: String = "en",
-    spotId: String = "grand_mazu",
-    artifactId: Int = 1,
-    onBackClick: () -> Unit = {},
-    onInfoClick: (String) -> Unit = {},
-    onMoreClick: (String, Int) -> Unit = { _, _ -> },
-    onCameraClick: () -> Unit = {},
+    viewModel: ArtifactDiscoveryViewModel,
+    onBackClick: () -> Unit,
+    onInfoClick: (String) -> Unit,
+    onMoreClick: (String, Int) -> Unit,
+    onCameraClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isChinese = selectedLanguage == "zh"
-    val spot = remember(spotId) { MockData.spots.find { it.id == spotId } }
-    val artifact = remember(artifactId) { spot?.discoveryItems?.find { it.id == artifactId } }
+    val state by viewModel.state.collectAsStateWithLifecycle(initialValue = ArtifactDiscoveryState())
+    ArtifactDiscoveryContent(
+        state = state,
+        onBackClick = onBackClick,
+        onInfoClick = onInfoClick,
+        onMoreClick = onMoreClick,
+        onCameraClick = onCameraClick,
+        modifier = modifier
+    )
+}
 
-    if (spot == null || artifact == null) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(if (isChinese) stringResource(R.string.spot_not_found_zh) else stringResource(R.string.spot_not_found))
-        }
-        return
-    }
-
+@Composable
+private fun ArtifactDiscoveryContent(
+    state: ArtifactDiscoveryState,
+    onBackClick: () -> Unit,
+    onInfoClick: (String) -> Unit,
+    onMoreClick: (String, Int) -> Unit,
+    onCameraClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Box(modifier = modifier.fillMaxSize()) {
-        // 1. Full Screen Artifact Image
-        Image(
-            painter = painterResource(artifact.imageRes),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+        if (state.imageDrawableRes == 0) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.DarkGray)
+            )
+        } else {
+            Image(
+                painter = painterResource(state.imageDrawableRes),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
 
-        // 2. Gradient Overlay
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -78,149 +102,153 @@ fun ArtifactDiscoveryScreen(
                 )
         )
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 42.dp)
-        ) {
-            Spacer(modifier = Modifier.height(57.dp))
+        when {
+            state.isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = Color.White)
+            }
 
-            // 3. Header Row
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().offset(x = (-24).dp)
+            state.error != null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = stringResource(R.string.spot_not_found), color = Color.White)
+            }
+
+            else -> Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 42.dp)
             ) {
-                Box(
+                Spacer(modifier = Modifier.height(57.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .size(24.dp)
-                        .clickable { onBackClick() },
-                    contentAlignment = Alignment.Center
+                        .fillMaxWidth()
+                        .offset(x = (-24).dp)
                 ) {
-                    UntitledIcon(
-                        imageVector = UntitledIcons.BackIcon,
-                        contentDescription = if (isChinese) stringResource(R.string.back_button_zh) else stringResource(R.string.back_button),
-                        tint = Color.White,
-                        size = 24.dp
-                    )
-                }
-                Spacer(modifier = Modifier.width(3.dp))
-                Text(
-                    text = if (isChinese) stringResource(R.string.discovery_mode_zh) else stringResource(R.string.discovery_mode),
-                    style = TextStyle(
-                        fontFamily = inter,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = Color.White
-                    )
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                // 4. Info Button
-                UntitledIcon(
-                    imageVector = UntitledIcons.InfoIcon,
-                    contentDescription = if (isChinese) stringResource(R.string.spot_explore_info_content_description_zh) else stringResource(R.string.spot_explore_info_content_description),
-                    tint = Color.White,
-                    size = 38.dp,
-                    modifier = Modifier
-                        .offset(x = 26.dp, y = (-7).dp)
-                        .clip(CircleShape)
-                        .clickable { onInfoClick(spotId) }
-                )
-            }
-
-            Spacer(modifier = Modifier.height(450.dp))
-
-            // 5. "Look Closer" Label and Index
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom
-            ) {
-                Text(
-                    text = if (isChinese) stringResource(R.string.discovery_look_closer_zh) else stringResource(R.string.discovery_look_closer),
-                    style = TextStyle(
-                        fontSize = 36.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = Color.White
-                    )
-                )
-                Text(
-                    text = "${artifact.id}/${spot.discoveryItems.size}",
-                    style = TextStyle(
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = Color.White
-                    ),
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-            }
-
-            // 6. Question with highlighting
-            val question = if (isChinese) artifact.questionZh else artifact.questionEn
-            val label = if (isChinese) artifact.labelZh else artifact.labelEn
-            val annotatedQuestion = buildAnnotatedString {
-                val parts = question.split(label)
-                if (parts.size > 1) {
-                    append(parts[0])
-                    withStyle(style = SpanStyle(color = Color(0xFFBF1B20))) {
-                        append(label)
+                    Box(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable { onBackClick() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        UntitledIcon(
+                            imageVector = UntitledIcons.BackIcon,
+                            contentDescription = stringResource(R.string.back_button),
+                            tint = Color.White,
+                            size = 24.dp
+                        )
                     }
-                    append(parts[1])
-                } else {
-                    append(question)
+                    Spacer(modifier = Modifier.width(3.dp))
+                    Text(
+                        text = stringResource(R.string.discovery_mode),
+                        style = TextStyle(
+                            fontFamily = inter,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Normal,
+                            color = Color.White
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    UntitledIcon(
+                        imageVector = UntitledIcons.InfoIcon,
+                        contentDescription = stringResource(R.string.spot_explore_info_content_description),
+                        tint = Color.White,
+                        size = 38.dp,
+                        modifier = Modifier
+                            .offset(x = 26.dp, y = (-7).dp)
+                            .clip(CircleShape)
+                            .clickable { state.spotId?.let(onInfoClick) }
+                    )
                 }
-            }
 
-            Text(
-                text = annotatedQuestion,
-                style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Normal, color = Color.White),
-                modifier = Modifier.width(242.dp)
-            )
+                Spacer(modifier = Modifier.height(450.dp))
 
-            Spacer(modifier = Modifier.height(128.dp))
-
-            // 7. Buttons Row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // "More" Button -> Now leads to the storytelling ArtifactDetailScreen
-                val buttonShape = RoundedCornerShape(15.dp)
-                Box(
-                    modifier = Modifier
-                        .width(145.dp)
-                        .height(51.dp)
-                        .background(DesignTokens.colorMaroon, buttonShape)
-                        .clip(buttonShape)
-                        .clickable { onMoreClick(spotId, artifactId) },
-                    contentAlignment = Alignment.Center
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom
                 ) {
                     Text(
-                        text = if (isChinese) stringResource(R.string.more_button_zh) else stringResource(R.string.more_button),
-                        style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Normal, color = Color.White)
+                        text = stringResource(R.string.discovery_look_closer),
+                        style = TextStyle(
+                            fontSize = 36.sp,
+                            fontWeight = FontWeight.Normal,
+                            color = Color.White
+                        )
+                    )
+                    Text(
+                        text = "${state.displayPosition}/${state.totalArtifacts}",
+                        style = TextStyle(
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Normal,
+                            color = Color.White
+                        ),
+                        modifier = Modifier.padding(bottom = 8.dp)
                     )
                 }
 
-                // Camera Action Button
-                Box(
-                    modifier = Modifier
-                        .size(80.dp)
-                        .background(DesignTokens.colorMaroon, CircleShape)
-                        .clip(CircleShape)
-                        .clickable { onCameraClick() },
-                    contentAlignment = Alignment.Center
+                Text(
+                    text = highlightedQuestion(state.highlight),
+                    style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Normal, color = Color.White),
+                    modifier = Modifier.width(242.dp)
+                )
+
+                Spacer(modifier = Modifier.height(128.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    UntitledIcon(
-                        imageVector = UntitledIcons.CameraIcon,
-                        contentDescription = if (isChinese) stringResource(R.string.spot_explore_take_photo_zh) else stringResource(R.string.spot_explore_take_photo),
-                        tint = Color.White,
-                        size = 24.dp
-                    )
+                    val buttonShape = RoundedCornerShape(15.dp)
+                    Box(
+                        modifier = Modifier
+                            .width(145.dp)
+                            .height(51.dp)
+                            .background(DesignTokens.colorMaroon, buttonShape)
+                            .clip(buttonShape)
+                            .clickable {
+                                state.spotId?.let { spotId ->
+                                    onMoreClick(spotId, state.artifactId)
+                                }
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = stringResource(R.string.more_button),
+                            style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Normal, color = Color.White)
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .size(80.dp)
+                            .background(DesignTokens.colorMaroon, CircleShape)
+                            .clip(CircleShape)
+                            .clickable { onCameraClick() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        UntitledIcon(
+                            imageVector = UntitledIcons.CameraIcon,
+                            contentDescription = stringResource(R.string.spot_explore_take_photo),
+                            tint = Color.White,
+                            size = 24.dp
+                        )
+                    }
                 }
             }
         }
+    }
+}
+
+private fun highlightedQuestion(highlight: QuestionHighlight) = buildAnnotatedString {
+    append(highlight.prefix)
+    if (highlight.label.isNotEmpty()) {
+        withStyle(style = SpanStyle(color = Color(0xFFBF1B20))) {
+            append(highlight.label)
+        }
+        append(highlight.suffix)
     }
 }
 
@@ -228,6 +256,21 @@ fun ArtifactDiscoveryScreen(
 @Composable
 fun ArtifactDiscoveryScreenPreview() {
     AppTheme {
-        ArtifactDiscoveryScreen()
+        ArtifactDiscoveryContent(
+            state = ArtifactDiscoveryState(
+                isLoading = false,
+                spotId = "demo",
+                artifactId = 1,
+                displayPosition = 1,
+                totalArtifacts = 3,
+                label = "Dragon Pillar",
+                highlight = QuestionHighlight("How many ", "Dragon Pillar", " carvings do you see?"),
+                imageDrawableRes = R.drawable.dragon_pillar
+            ),
+            onBackClick = {},
+            onInfoClick = {},
+            onMoreClick = { _, _ -> },
+            onCameraClick = {}
+        )
     }
 }

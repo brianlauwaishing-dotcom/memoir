@@ -9,8 +9,13 @@
         "en": "The coiling dragon pillar symbolizes protection and strength.\nIn traditional belief, the dragon guards sacred spaces, carrying hopes for safety and harmony.",
         "zh": "盤旋而上的龍柱，象徵守護與力量。\n龍在傳統信仰中能鎮守空間，也承載人們對平安與秩序的想像。"
       },
+      "galleryImage": "eg1",
       "id": 1,
       "image": "dragon_pillar",
+      "question": {
+        "en": "How many dragons are on the pillars?",
+        "zh": "龍柱上有幾條龍呢？"
+      },
       "title": {
         "en": "Dragon Pillar",
         "zh": "龍柱"
@@ -21,8 +26,13 @@
         "en": "Standing at the center of the hall, Mazu is the heart of maritime faith.\nShe is believed to protect sailors and travelers, as well as everyday life and safety.",
         "zh": "立於殿中的媽祖，是海上信仰的核心。\n人們相信她守護航海與旅途，也守護日常生活的平安。"
       },
+      "galleryImage": "eg2",
       "id": 2,
       "image": "eg2",
+      "question": {
+        "en": "What is she ?",
+        "zh": "你認識這位神明嗎？"
+      },
       "title": {
         "en": "Mazu Statue",
         "zh": "媽祖像"
@@ -33,8 +43,13 @@
         "en": "The stone figures at the prayer hall depict foreign-looking guardians.\nThey reflect historical encounters and imagination, revealing Taiwan’s early connections with the wider world.",
         "zh": "殿前的憨番雕像，帶有異域形象的守護者。\n這些角色源自歷史交流與想像，見證台灣與世界的早期連結。"
       },
+      "galleryImage": "eg3",
       "id": 3,
       "image": "eg3",
+      "question": {
+        "en": "What is he doing?",
+        "zh": "他正在做什麼呢？"
+      },
       "title": {
         "en": "Hanfan (Foreign Stone Figures)",
         "zh": "拜殿憨番"

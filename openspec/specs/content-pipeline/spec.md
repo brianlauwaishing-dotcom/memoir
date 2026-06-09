@@ -1,9 +1,7 @@
 ## Purpose
 
 Define the source, generation, validation, packaging, and runtime access contract for Tainan route content.
-
 ## Requirements
-
 ### Requirement: Designer-editable CSV is the canonical content source
 
 The `data/tainan_routes.csv` file at the repo root SHALL be the single canonical source for Tainan-route content. Generated JSON files under `data/tainan-route/` MUST NOT be hand-edited; the only hand-edited side input is `data/tainan-route/_assets.json`, which binds spot/route ids to drawable resource names.
@@ -122,15 +120,27 @@ No two route JSON files SHALL share the same `id` field value. No two spot JSON 
 
 ### Requirement: `_assets.json` covers every route and spot
 
-`data/tainan-route/_assets.json` SHALL bind a `heroImage` drawable name to every route id present in `index.json.routes`, and a `{ heroImage, photographyTipImages[], artifactImages[] }` block to every spot id present in `index.json.spots`. The generator MUST exit non-zero if any binding is missing, naming the offending ids.
+`data/tainan-route/_assets.json` SHALL bind a `heroImage` drawable name to every route id present in `index.json.routes`, and a `{ heroImage, photographyTipImages[], artifacts: { "<artifactId>": { "image", "galleryImage"? } } }` block to every spot id present in `index.json.spots`. The per-spot `artifacts` section is a MAP keyed by stringified artifact id (replacing the earlier flat-list shape `artifactImages: [...]` defined in the original `tainan-route-content-pipeline` change); each entry's `image` is REQUIRED and `galleryImage` is OPTIONAL. The generator MUST exit non-zero if any binding is missing (including any artifact whose `image` is absent), naming the offending ids.
 
 #### Scenario: Generator detects an unbound spot id
 - **WHEN** a designer adds a new spot to `tainan_routes.csv`, the generator creates `spots/new_spot.json` and appends `new_spot` to `index.json.spots`, but `_assets.json` has no entry under that key
 - **THEN** the generator prints `missing _assets.json binding: spots.new_spot` to stderr and exits with a non-zero status
 
+#### Scenario: Generator detects an unbound artifact image
+- **WHEN** a spot's `artifacts` map is missing an entry for one of the artifact ids that the CSV produces (or has an entry with no `image` field)
+- **THEN** the generator prints `missing _assets.json binding: spots.<spotId>.artifacts.<id>.image` to stderr and exits with a non-zero status
+
 #### Scenario: All ids are bound
-- **WHEN** every entry in `index.json.routes` and `index.json.spots` has a corresponding key in `_assets.json` whose drawable names resolve via `Resources.getIdentifier`
+- **WHEN** every entry in `index.json.routes` and `index.json.spots` has a corresponding key in `_assets.json` whose drawable names resolve via `Resources.getIdentifier`, AND every artifact id in every spot section has an `image` binding (with optional `galleryImage`)
 - **THEN** the generator exits zero and `ContentValidationTest` passes
+
+#### Scenario: _assets.json declares both image fields per artifact
+- **WHEN** `_assets.json` contains `"spots": { "grand_mazu": { "artifacts": { "1": { "image": "dragon_pillar", "galleryImage": "eg1" } } } }`
+- **THEN** the generator emits the spot JSON's artifact id 1 with `image == "dragon_pillar"` and `galleryImage == "eg1"`
+
+#### Scenario: _assets.json omits the optional galleryImage
+- **WHEN** an artifact entry in `_assets.json` has `image` but no `galleryImage` key
+- **THEN** the generator succeeds and the emitted artifact JSON has no `galleryImage` field (consumer's `ignoreUnknownKeys = true` / `explicitNulls = false` config handles deserialization to `galleryImage = null`)
 
 ### Requirement: ContentRepository serves routes and spots by id
 
@@ -174,3 +184,98 @@ Landing this change MUST NOT modify or delete `com.mcis.memoir.data.MockData`, `
 #### Scenario: Importing both old and new layers in the same file
 - **WHEN** a Kotlin file imports both `com.mcis.memoir.data.MockData` and `com.mcis.memoir.data.content.ContentRepository`
 - **THEN** compilation succeeds with no package collision or duplicate-class error
+
+### Requirement: Routes declare filter tags from the canonical tag id set
+
+Every route JSON under `data/tainan-route/routes/` SHALL declare a top-level `"tags"` field as a non-empty array of strings. Each entry MUST be a member of the canonical tag id set. The canonical set is defined once in Kotlin source as `com.mcis.memoir.ui.home.TagCatalog.ids`, and mirrored as a hard-coded constant inside `data/scripts/generate_content.py` (with mutual cross-reference comments in both files). The Python generator MUST exit non-zero if any route violates the rule against its own copy of the set; a new JVM unit test `HomeContentTagValidationTest` (owned by this change, NOT an edit to change #1's `ContentValidationTest.kt`) MUST fail if any committed route JSON violates the rule against `TagCatalog.ids`; together these two checks catch both editor-side and code-side drift.
+
+#### Scenario: Route declares an empty tags array
+- **WHEN** a route JSON has `"tags": []`
+- **THEN** the generator exits non-zero AND `ContentValidationTest` fails, both citing the route id and the rule "every route must declare at least one tag from TagCatalog.ids"
+
+#### Scenario: Route omits the tags field entirely
+- **WHEN** a route JSON has no `"tags"` field
+- **THEN** kotlinx-serialization deserialization uses the default empty list (per `Route.tags: List<String> = emptyList()` in change #1's model), AND `ContentValidationTest` fails citing the missing-or-empty `tags` rule
+
+#### Scenario: Route declares an unknown tag
+- **WHEN** a route JSON has `"tags": ["temples", "moon-cult"]` and `"moon-cult"` is not in the canonical set
+- **THEN** the generator exits non-zero (caught by the generator's hard-coded mirror set) AND `HomeContentTagValidationTest` fails (caught by `TagCatalog.ids`), both citing the route id and the unknown tag id
+
+#### Scenario: All committed routes have valid tags
+- **WHEN** `HomeContentTagValidationTest` runs against the committed `data/tainan-route/routes/*.json`
+- **THEN** every route's `tags` array is non-empty AND every tag id appears in `TagCatalog.ids` AND the test passes
+
+#### Scenario: Generator mirror drifts from TagCatalog
+- **WHEN** the generator's hard-coded tag id mirror set differs from `TagCatalog.ids` (e.g. one side adds `"food"` and the other doesn't)
+- **THEN** at least one of these failures occurs on the next CI run: (a) the generator accepts a route id the JVM test then rejects, OR (b) the JVM test accepts a route id the generator then rejects on regeneration — either way the drift is caught before merge
+
+### Requirement: Generator side input declares route tags
+
+The content generator SHALL source each route's tag list from either (a) a new `tags` column in `data/tainan_routes.csv` (pipe-separated) OR (b) a committed `data/tainan-route/_tags.json` side input keyed by route id. The implementation MAY pick either path; the chosen path MUST be documented in `data/scripts/README.md`.
+
+#### Scenario: CSV-column variant
+- **WHEN** the generator chooses the CSV-column path, the CSV contains a `tags` column with `"temples|folk-belief"` for one route, and the generator runs
+- **THEN** the corresponding `routes/<id>.json` contains `"tags": ["temples", "folk-belief"]` (split on `|` or `｜`, trimmed, deduped, in source order)
+
+#### Scenario: Side-input variant
+- **WHEN** the generator chooses the `_tags.json` path, the file contains `{"sounds_of_temple": ["temples"]}` for one route, and the generator runs
+- **THEN** the corresponding `routes/sounds_of_temple.json` contains `"tags": ["temples"]`
+
+#### Scenario: Determinism preserved
+- **WHEN** the generator runs twice against unchanged inputs (CSV or side-input + `_assets.json`)
+- **THEN** `git diff --exit-code data/tainan-route/` reports zero changes after the second run (the tag-emission step does not introduce non-determinism)
+
+### Requirement: Artifact schema carries question and optional galleryImage
+
+Each entry in `Spot.artifacts` (JSON `spots/<id>.json`) SHALL declare:
+- `id: Int` — stable artifact id within the spot
+- `title: LocalizedText` — short label (e.g. "Dragon Pillar" / "龍柱"), used both for the discovery card and for highlighting inside the question
+- `description: LocalizedText` — long storytelling text shown on `ArtifactDetailScreen`
+- `question: LocalizedText` — discovery prompt shown on `ArtifactDiscoveryScreen` (e.g. "How many dragons are on the pillars?" / "龍柱上有幾條龍呢？")
+- `image: String` — drawable resource name for the primary artifact image
+- `galleryImage: String?` — OPTIONAL drawable resource name for a secondary illustration (e.g. a sketch)
+
+The Kotlin model `com.mcis.memoir.data.content.model.Artifact` MUST mirror this schema. `question` is required; `galleryImage` is nullable with `default = null`. This deviates from umbrella §4.4's earlier minimal `Artifact` shape — the deviation is intentional and recorded in the umbrella spec.
+
+#### Scenario: Artifact JSON omits the question field
+- **WHEN** a `spots/<id>.json` contains an artifact entry with no `question` field
+- **THEN** kotlinx-serialization deserialization throws `MissingFieldException`, AND the generator (which validates before writing) exits non-zero citing the spot id and artifact id
+
+#### Scenario: Artifact JSON has empty question text
+- **WHEN** a `spots/<id>.json` contains an artifact entry with `question == {"en": "", "zh": ""}`
+- **THEN** the generator exits non-zero with `empty question for spots.<id>.artifacts[<n>]`, AND `ArtifactSchemaValidationTest` fails the build before any APK ships
+
+#### Scenario: Artifact JSON omits the optional galleryImage
+- **WHEN** a `spots/<id>.json` contains an artifact entry with no `galleryImage` field
+- **THEN** deserialization succeeds with `galleryImage = null`, AND `ArtifactSchemaValidationTest` does NOT fail
+
+#### Scenario: Non-null galleryImage drawable resolves
+- **WHEN** an artifact has `galleryImage = "eg1"` and `R.drawable.eg1` exists in the app's drawable set
+- **THEN** `ArtifactSchemaValidationTest` passes the drawable-resolution check
+
+#### Scenario: Non-null galleryImage with bad drawable name fails the test
+- **WHEN** an artifact has `galleryImage = "missing_drawable"` and no matching `R.drawable.missing_drawable` exists
+- **THEN** `ArtifactSchemaValidationTest` fails citing the spot id, artifact id, and the unresolved drawable name
+
+### Requirement: Content generator emits question and galleryImage with validation
+
+`data/scripts/generate_content.py` SHALL read artifact question text from designated CSV columns (`為甚麼要看?（中）` / `為甚麼要看?（英）` or equivalents identified at implementation time) and write `question.en` + `question.zh` into each emitted artifact JSON entry. It SHALL read each artifact's optional `galleryImage` from `data/tainan-route/_assets.json` under a per-spot, per-artifact-id binding and emit it only when present.
+
+#### Scenario: Generator errors on missing question text
+- **WHEN** the CSV row for an artifact has blank `question_en` or `question_zh`
+- **THEN** the generator exits non-zero with `empty question for spots.<spotId>.artifacts[<id>]` and writes no JSON to disk for that spot
+
+#### Scenario: Generator emits artifact with both required and optional fields
+- **WHEN** the CSV provides full bilingual question text AND `_assets.json` binds a `galleryImage` for the artifact
+- **THEN** the resulting `spots/<id>.json` contains an artifact entry with `question: {en, zh}`, `image`, AND `galleryImage` — all present and non-null
+
+#### Scenario: Generator omits galleryImage field when binding is absent
+- **WHEN** `_assets.json` has no `galleryImage` key for an artifact id
+- **THEN** the resulting JSON entry has no `galleryImage` field (relies on `explicitNulls = false` in the consumer's `Json` config to deserialize as null)
+
+#### Scenario: Determinism preserved across the new fields
+- **WHEN** the generator runs twice against unchanged CSV + `_assets.json`
+- **THEN** `git diff --exit-code data/tainan-route/spots/` reports zero changes after the second run
+
+<!-- The `_assets.json covers every route and spot` requirement is MODIFIED by this change; see the MODIFIED block below. -->
+

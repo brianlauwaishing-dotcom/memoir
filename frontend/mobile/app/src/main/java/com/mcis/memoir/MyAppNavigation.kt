@@ -31,10 +31,16 @@ import com.mcis.memoir.ui.home.HomeEffect
 import com.mcis.memoir.ui.home.HomeViewModel
 import com.mcis.memoir.ui.home.HomeViewModelFactory
 import com.mcis.memoir.ui.language.LanguageSelectionViewModel
+import com.mcis.memoir.ui.artifact.ArtifactDetailViewModel
+import com.mcis.memoir.ui.artifact.ArtifactDetailViewModelFactory
+import com.mcis.memoir.ui.artifact.ArtifactDiscoveryViewModel
+import com.mcis.memoir.ui.artifact.ArtifactDiscoveryViewModelFactory
 import com.mcis.memoir.ui.route.RouteDetailViewModel
 import com.mcis.memoir.ui.route.RouteDetailViewModelFactory
 import com.mcis.memoir.ui.saved.SavedViewModel
 import com.mcis.memoir.ui.saved.SavedViewModelFactory
+import com.mcis.memoir.ui.spot.SpotIntroViewModel
+import com.mcis.memoir.ui.spot.SpotIntroViewModelFactory
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -347,9 +353,19 @@ fun MyAppNavigation() {
                     )
                 }
                 is SpotIntroDestination -> NavEntry(key) {
+                    val ctx = LocalContext.current
+                    val currentLocale = LocaleController.currentLocale()
+                    val vm: SpotIntroViewModel = viewModel(
+                        key = key.spotId,
+                        factory = SpotIntroViewModelFactory(
+                            spotId = key.spotId,
+                            content = MemoirApplication.content,
+                            resources = ctx.resources,
+                            localeProvider = { currentLocale }
+                        )
+                    )
                     SpotIntroScreen(
-                        selectedLanguage = selectedLanguage,
-                        spotId = key.spotId,
+                        viewModel = vm,
                         onBackClick = {
                             backStack.removeLastOrNull()
                         },
@@ -362,10 +378,20 @@ fun MyAppNavigation() {
                     )
                 }
                 is ArtifactDiscoveryDestination -> NavEntry(key) {
+                    val ctx = LocalContext.current
+                    val currentLocale = LocaleController.currentLocale()
+                    val vm: ArtifactDiscoveryViewModel = viewModel(
+                        key = "${key.spotId}/${key.artifactId}",
+                        factory = ArtifactDiscoveryViewModelFactory(
+                            spotId = key.spotId,
+                            artifactId = key.artifactId,
+                            content = MemoirApplication.content,
+                            resources = ctx.resources,
+                            localeProvider = { currentLocale }
+                        )
+                    )
                     ArtifactDiscoveryScreen(
-                        selectedLanguage = selectedLanguage,
-                        spotId = key.spotId,
-                        artifactId = key.artifactId,
+                        viewModel = vm,
                         onBackClick = {
                             // Ensure we go back to SpotIntro, not just previous screen
                             while (backStack.lastOrNull() != SpotIntroDestination(key.spotId) && backStack.size > 1) {
@@ -387,10 +413,20 @@ fun MyAppNavigation() {
                     )
                 }
                 is ArtifactDetailDestination -> NavEntry(key) {
+                    val ctx = LocalContext.current
+                    val currentLocale = LocaleController.currentLocale()
+                    val vm: ArtifactDetailViewModel = viewModel(
+                        key = "${key.spotId}/${key.artifactId}",
+                        factory = ArtifactDetailViewModelFactory(
+                            spotId = key.spotId,
+                            artifactId = key.artifactId,
+                            content = MemoirApplication.content,
+                            resources = ctx.resources,
+                            localeProvider = { currentLocale }
+                        )
+                    )
                     ArtifactDetailScreen(
-                        selectedLanguage = selectedLanguage,
-                        spotId = key.spotId,
-                        artifactId = key.artifactId,
+                        viewModel = vm,
                         onBackClick = {
                             // Ensure we go back to SpotIntro, not just previous screen
                             while (backStack.lastOrNull() != SpotIntroDestination(key.spotId) && backStack.size > 1) {
@@ -400,8 +436,8 @@ fun MyAppNavigation() {
                                 backStack.add(SpotIntroDestination(key.spotId))
                             }
                         },
-                        onInfoClick = { spotId ->
-                            backStack.add(SpotDetailDestination(spotId))
+                        onInfoClick = {
+                            backStack.add(SpotDetailDestination(key.spotId))
                         },
                         onCameraClick = {
                             backStack.add(CameraPreviewDestination)

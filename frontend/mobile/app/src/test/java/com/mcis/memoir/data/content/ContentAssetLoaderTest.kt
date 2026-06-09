@@ -44,7 +44,14 @@ class ContentAssetLoaderTest {
                 {"id": 1, "description": {"en": "Tip", "zh": "提示"}, "image": "sounds_of_temple"}
               ],
               "artifacts": [
-                {"id": 1, "title": {"en": "Artifact", "zh": "文物"}, "description": {"en": "Look", "zh": "看"}, "image": "eg1"}
+                {
+                  "id": 1,
+                  "title": {"en": "Artifact", "zh": "??"},
+                  "description": {"en": "Look", "zh": "??"},
+                  "question": {"en": "What is the Artifact?", "zh": "???????"},
+                  "image": "eg1",
+                  "galleryImage": "eg2"
+                }
               ]
             }
             """.trimIndent()
@@ -55,6 +62,8 @@ class ContentAssetLoaderTest {
         assertEquals("known_spot", route.journey.single().spotId)
         assertEquals(listOf("one"), spot.facts.en)
         assertEquals("Tip", spot.photographyTips.single().description.en)
+        assertEquals("What is the Artifact?", spot.artifacts.single().question.en)
+        assertEquals("eg2", spot.artifacts.single().galleryImage)
     }
 
     @Test

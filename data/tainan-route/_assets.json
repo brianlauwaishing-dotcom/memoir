@@ -12,11 +12,17 @@
   },
   "spots": {
     "anping_kaitai_tianhou_temple": {
-      "artifactImages": [
-        "eg1",
-        "eg2",
-        "eg3"
-      ],
+      "artifacts": {
+        "1": {
+          "image": "eg1"
+        },
+        "2": {
+          "image": "eg2"
+        },
+        "3": {
+          "image": "eg3"
+        }
+      },
       "heroImage": "anping_kaitai_tianhou_temple",
       "photographyTipImages": [
         "sounds_of_temple",
@@ -25,11 +31,20 @@
       ]
     },
     "grand_mazu_temple_datianhougong": {
-      "artifactImages": [
-        "dragon_pillar",
-        "eg2",
-        "eg3"
-      ],
+      "artifacts": {
+        "1": {
+          "galleryImage": "eg1",
+          "image": "dragon_pillar"
+        },
+        "2": {
+          "galleryImage": "eg2",
+          "image": "eg2"
+        },
+        "3": {
+          "galleryImage": "eg3",
+          "image": "eg3"
+        }
+      },
       "heroImage": "grand_mazu_temple",
       "photographyTipImages": [
         "sounds_of_temple",
@@ -38,11 +53,17 @@
       ]
     },
     "grand_wumiao_temple_sidian_wumiao": {
-      "artifactImages": [
-        "eg1",
-        "eg2",
-        "eg3"
-      ],
+      "artifacts": {
+        "1": {
+          "image": "eg1"
+        },
+        "2": {
+          "image": "eg2"
+        },
+        "3": {
+          "image": "eg3"
+        }
+      },
       "heroImage": "faith_hidden",
       "photographyTipImages": [
         "faith_hidden",
@@ -51,11 +72,17 @@
       ]
     },
     "kaiji_jade_emperor_temple": {
-      "artifactImages": [
-        "eg1",
-        "eg2",
-        "eg3"
-      ],
+      "artifacts": {
+        "1": {
+          "image": "eg1"
+        },
+        "2": {
+          "image": "eg2"
+        },
+        "3": {
+          "image": "eg3"
+        }
+      },
       "heroImage": "faith_hidden",
       "photographyTipImages": [
         "faith_hidden",
@@ -64,11 +91,17 @@
       ]
     },
     "kaiji_wumiao_temple": {
-      "artifactImages": [
-        "eg1",
-        "eg2",
-        "eg3"
-      ],
+      "artifacts": {
+        "1": {
+          "image": "eg1"
+        },
+        "2": {
+          "image": "eg2"
+        },
+        "3": {
+          "image": "eg3"
+        }
+      },
       "heroImage": "faith_hidden",
       "photographyTipImages": [
         "faith_hidden",
@@ -77,11 +110,17 @@
       ]
     },
     "taiwan_s_first_heaven_temple_tiantan": {
-      "artifactImages": [
-        "eg1",
-        "eg2",
-        "eg3"
-      ],
+      "artifacts": {
+        "1": {
+          "image": "eg1"
+        },
+        "2": {
+          "image": "eg2"
+        },
+        "3": {
+          "image": "eg3"
+        }
+      },
       "heroImage": "sounds_of_temple",
       "photographyTipImages": [
         "sounds_of_temple",
@@ -90,11 +129,17 @@
       ]
     },
     "temple_of_the_wind_god": {
-      "artifactImages": [
-        "eg1",
-        "eg2",
-        "eg3"
-      ],
+      "artifacts": {
+        "1": {
+          "image": "eg1"
+        },
+        "2": {
+          "image": "eg2"
+        },
+        "3": {
+          "image": "eg3"
+        }
+      },
       "heroImage": "sea_protection",
       "photographyTipImages": [
         "sea_protection",
@@ -103,11 +148,17 @@
       ]
     },
     "zonggong_temple": {
-      "artifactImages": [
-        "eg1",
-        "eg2",
-        "eg3"
-      ],
+      "artifacts": {
+        "1": {
+          "image": "eg1"
+        },
+        "2": {
+          "image": "eg2"
+        },
+        "3": {
+          "image": "eg3"
+        }
+      },
       "heroImage": "faith_hidden",
       "photographyTipImages": [
         "faith_hidden",
