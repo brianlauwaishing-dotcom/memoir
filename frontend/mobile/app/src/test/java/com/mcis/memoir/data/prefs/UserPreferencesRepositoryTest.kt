@@ -33,6 +33,11 @@ class UserPreferencesRepositoryTest {
 
             assertEquals(setOf("route-a", "route-b"), bookmarkedRouteIds.first())
         }
+        repository(this).apply {
+            setCapturedArtifactKeys(setOf("spot-a:1", "spot-b:4"))
+
+            assertEquals(setOf("spot-a:1", "spot-b:4"), capturedArtifactKeys.first())
+        }
     }
 
     @Test

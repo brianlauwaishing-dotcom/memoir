@@ -1,66 +1,86 @@
 package com.mcis.memoir
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.toRect
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mcis.memoir.data.MockData
-import com.mcis.memoir.data.TemplateData
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mcis.memoir.ui.components.BottomNavigationBar
 import com.mcis.memoir.ui.components.UntitledIcon
 import com.mcis.memoir.ui.icons.*
-import com.mcis.memoir.ui.theme.AppTheme
+import com.mcis.memoir.ui.memory.components.FilePhoto
+import com.mcis.memoir.ui.memory.edit.EditEffect
+import com.mcis.memoir.ui.memory.edit.EditIntent
+import com.mcis.memoir.ui.memory.edit.EditState
+import com.mcis.memoir.ui.memory.edit.EditViewModel
 import com.mcis.memoir.ui.theme.inter
 
-/**
- * Screen for previewing and editing a memory.
- * Shows the chosen template as a mask overlay with imported photos placed underneath.
- */
 @Composable
 fun MemoryEditScreen(
-    selectedLanguage: String = "en",
-    templateId: String = "old_street",
-    photoResIds: List<Int> = emptyList(),
+    viewModel: EditViewModel,
     onBackClick: () -> Unit = {},
-    onSaveClick: () -> Unit = {},
+    onNavigateToReflection: (String) -> Unit = {},
     onNavigateToHome: () -> Unit = {},
     onNavigateToSaved: () -> Unit = {},
     onNavigateToMemories: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val isChinese = selectedLanguage == "zh"
-    val template = remember(templateId) { MockData.templates.find { it.id == templateId } }
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val isChinese = LocalConfiguration.current.locales[0].language == "zh"
+
+    LaunchedEffect(viewModel) {
+        viewModel.effects.collect { effect ->
+            when (effect) {
+                is EditEffect.NavigateToReflection -> onNavigateToReflection(effect.memoryId)
+            }
+        }
+    }
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(DesignTokens.colorLanguageSelectionBackground)
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            // Header
+        Column(modifier = Modifier.fillMaxSize()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -68,7 +88,7 @@ fun MemoryEditScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = if (isChinese) stringResource(R.string.memory_flow_preview_edit_zh) else stringResource(R.string.memory_flow_preview_edit),
+                    text = stringResource(R.string.memory_flow_preview_edit),
                     style = TextStyle(
                         fontFamily = inter,
                         fontSize = 24.sp,
@@ -76,8 +96,7 @@ fun MemoryEditScreen(
                         color = DesignTokens.colorMaroon
                     )
                 )
-                
-                // Back Button
+
                 Box(
                     modifier = Modifier
                         .align(Alignment.CenterStart)
@@ -89,15 +108,14 @@ fun MemoryEditScreen(
                 ) {
                     UntitledIcon(
                         imageVector = UntitledIcons.BackIcon,
-                        contentDescription = if (isChinese) stringResource(R.string.back_button_zh) else stringResource(R.string.back_button),
+                        contentDescription = stringResource(R.string.back_button),
                         size = 24.dp,
                         tint = DesignTokens.colorMaroon
                     )
                 }
 
-                // Save Button
                 Text(
-                    text = if (isChinese) stringResource(R.string.save_button_zh) else stringResource(R.string.save_button),
+                    text = stringResource(R.string.save_button),
                     style = TextStyle(
                         fontFamily = inter,
                         fontSize = 16.sp,
@@ -107,23 +125,21 @@ fun MemoryEditScreen(
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
                         .padding(end = 17.dp)
-                        .clickable { onSaveClick() }
+                        .clickable { viewModel.onIntent(EditIntent.SaveClicked) }
                 )
             }
 
-            // Main Preview Area (The Canvas to be saved)
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
                     .background(Color.White)
             ) {
-                if (template != null) {
-                    TemplateCanvas(template, photoResIds)
+                if (state.templateImageRes != 0) {
+                    TemplateCanvas(state)
                 }
             }
 
-            // Editing Toolbar
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -133,14 +149,13 @@ fun MemoryEditScreen(
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                EditToolItem(UntitledIcons.MoveIcon, if (isChinese) stringResource(R.string.memory_flow_move_zh) else stringResource(R.string.memory_flow_move))
-                EditToolItem(UntitledIcons.FiltersIcon, if (isChinese) stringResource(R.string.memory_flow_filters_zh) else stringResource(R.string.memory_flow_filters))
-                EditToolItem(UntitledIcons.StickersIcon, if (isChinese) stringResource(R.string.memory_flow_stickers_zh) else stringResource(R.string.memory_flow_stickers))
-                EditToolItem(UntitledIcons.FontsIcon, if (isChinese) stringResource(R.string.memory_flow_fonts_zh) else stringResource(R.string.memory_flow_fonts))
-                EditToolItem(UntitledIcons.StampsIcon, if (isChinese) stringResource(R.string.memory_flow_stamps_zh) else stringResource(R.string.memory_flow_stamps))
+                EditToolItem(UntitledIcons.MoveIcon, stringResource(R.string.memory_flow_move), "Move")
+                EditToolItem(UntitledIcons.FiltersIcon, stringResource(R.string.memory_flow_filters), "Filters")
+                EditToolItem(UntitledIcons.StickersIcon, stringResource(R.string.memory_flow_stickers), "Stickers")
+                EditToolItem(UntitledIcons.FontsIcon, stringResource(R.string.memory_flow_fonts), "Fonts")
+                EditToolItem(UntitledIcons.StampsIcon, stringResource(R.string.memory_flow_stamps), "Stamps")
             }
 
-            // Bottom Navigation Bar
             BottomNavigationBar(
                 isChinese = isChinese,
                 onHomeClick = onNavigateToHome,
@@ -153,28 +168,28 @@ fun MemoryEditScreen(
 }
 
 @Composable
-fun TemplateCanvas(template: TemplateData, photoResIds: List<Int>) {
-    val maskPainter = template.maskRes?.let { painterResource(it) }
-    
+private fun TemplateCanvas(state: EditState) {
+    val context = LocalContext.current
+    val maskPainter = if (state.templateMaskRes != 0) painterResource(state.templateMaskRes) else null
+
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val canvasWidth = maxWidth
         val canvasHeight = maxHeight
 
-        // 1. Photos Layer (Drawn FIRST - placed BEHIND the template)
         Box(modifier = Modifier.fillMaxSize()) {
-            template.slots.forEachIndexed { index, slot ->
-                if (index < photoResIds.size) {
-                    val photoRes = photoResIds[index]
+            state.templateSlots.forEachIndexed { index, slot ->
+                val relativePath = state.photoPaths.getOrNull(index)
+                if (relativePath != null) {
                     Box(
                         modifier = Modifier
-                            .offset(x = canvasWidth * slot.xPercent, y = canvasHeight * slot.yPercent)
-                            .width(canvasWidth * slot.widthPercent)
-                            .height(canvasHeight * slot.heightPercent)
+                            .offset(x = canvasWidth * slot.x, y = canvasHeight * slot.y)
+                            .width(canvasWidth * slot.width)
+                            .height(canvasHeight * slot.height)
                             .rotate(slot.rotation)
                     ) {
-                        Image(
-                            painter = painterResource(photoRes),
-                            contentDescription = null,
+                        FilePhoto(
+                            relativePath = relativePath,
+                            filesDir = context.filesDir,
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
                         )
@@ -183,20 +198,14 @@ fun TemplateCanvas(template: TemplateData, photoResIds: List<Int>) {
             }
         }
 
-        // 2. Template Mask Layer (Drawn LAST - placed ON TOP)
-        // We use DstOut blending if a mask is provided to "punch holes" in the template image
         Image(
-            painter = painterResource(template.imageRes),
+            painter = painterResource(state.templateImageRes),
             contentDescription = null,
             modifier = Modifier
                 .fillMaxSize()
                 .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
                 .drawWithContent {
-                    // Draw the template artwork
                     drawContent()
-                    
-                    // If a mask is provided, use it to punch holes in the artwork
-                    // DstOut keeps destination (artwork) where source (mask) is NOT present (alpha 0)
                     if (maskPainter != null) {
                         drawIntoCanvas { canvas ->
                             val paint = Paint().apply {
@@ -216,13 +225,13 @@ fun TemplateCanvas(template: TemplateData, photoResIds: List<Int>) {
 }
 
 @Composable
-private fun EditToolItem(icon: ImageVector, label: String) {
+private fun EditToolItem(icon: ImageVector, label: String, logName: String) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
-            .clickable { /* Tool logic */ }
+            .clickable { Log.w("memory-creation-flow", "$logName not yet implemented") }
             .padding(8.dp)
     ) {
         UntitledIcon(
@@ -237,20 +246,6 @@ private fun EditToolItem(icon: ImageVector, label: String) {
                 fontFamily = inter,
                 fontSize = 10.sp,
                 color = DesignTokens.colorMaroon
-            )
-        )
-    }
-}
-
-@Preview(showBackground = true, device = "spec:width=412dp,height=915dp")
-@Composable
-fun MemoryEditScreenPreview() {
-    AppTheme {
-        MemoryEditScreen(
-            photoResIds = listOf(
-                R.drawable.sounds_of_temple, 
-                R.drawable.sea_protection, 
-                R.drawable.faith_hidden
             )
         )
     }

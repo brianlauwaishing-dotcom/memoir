@@ -2,6 +2,7 @@ package com.mcis.memoir
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,9 +12,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -114,19 +116,20 @@ private fun ArtifactDiscoveryContent(
             else -> Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 42.dp)
+                    .padding(horizontal = 24.dp)
             ) {
-                Spacer(modifier = Modifier.height(57.dp))
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .offset(x = (-24).dp)
+                        .statusBarsPadding()
+                        .padding(top = 16.dp)
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(48.dp)
+                            .background(Color.Black.copy(alpha = 0.38f), CircleShape)
+                            .clip(CircleShape)
                             .clickable { onBackClick() },
                         contentAlignment = Alignment.Center
                     ) {
@@ -137,32 +140,43 @@ private fun ArtifactDiscoveryContent(
                             size = 24.dp
                         )
                     }
-                    Spacer(modifier = Modifier.width(3.dp))
-                    Text(
-                        text = stringResource(R.string.discovery_mode),
-                        style = TextStyle(
-                            fontFamily = inter,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Normal,
-                            color = Color.White
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Box(
+                        modifier = Modifier
+                            .background(Color.Black.copy(alpha = 0.38f), RoundedCornerShape(18.dp))
+                            .padding(horizontal = 14.dp, vertical = 10.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.discovery_mode),
+                            style = TextStyle(
+                                fontFamily = inter,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = Color.White
+                            )
                         )
-                    )
+                    }
 
                     Spacer(modifier = Modifier.weight(1f))
 
-                    UntitledIcon(
-                        imageVector = UntitledIcons.InfoIcon,
-                        contentDescription = stringResource(R.string.spot_explore_info_content_description),
-                        tint = Color.White,
-                        size = 38.dp,
+                    Box(
                         modifier = Modifier
-                            .offset(x = 26.dp, y = (-7).dp)
+                            .size(48.dp)
+                            .background(Color.Black.copy(alpha = 0.38f), CircleShape)
                             .clip(CircleShape)
-                            .clickable { state.spotId?.let(onInfoClick) }
-                    )
+                            .clickable { state.spotId?.let(onInfoClick) },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        UntitledIcon(
+                            imageVector = UntitledIcons.InfoIcon,
+                            contentDescription = stringResource(R.string.spot_explore_info_content_description),
+                            tint = Color.White,
+                            size = 30.dp
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(450.dp))
+                Spacer(modifier = Modifier.weight(1f))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -178,7 +192,7 @@ private fun ArtifactDiscoveryContent(
                         )
                     )
                     Text(
-                        text = "${state.displayPosition}/${state.totalArtifacts}",
+                        text = "${state.capturedArtifactsCount}/${state.totalArtifacts}",
                         style = TextStyle(
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Normal,
@@ -194,10 +208,13 @@ private fun ArtifactDiscoveryContent(
                     modifier = Modifier.width(242.dp)
                 )
 
-                Spacer(modifier = Modifier.height(128.dp))
+                Spacer(modifier = Modifier.height(28.dp))
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .navigationBarsPadding()
+                        .padding(bottom = 24.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -225,6 +242,7 @@ private fun ArtifactDiscoveryContent(
                         modifier = Modifier
                             .size(80.dp)
                             .background(DesignTokens.colorMaroon, CircleShape)
+                            .border(2.dp, Color.White.copy(alpha = 0.88f), CircleShape)
                             .clip(CircleShape)
                             .clickable { onCameraClick() },
                         contentAlignment = Alignment.Center

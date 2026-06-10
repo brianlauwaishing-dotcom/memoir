@@ -3,59 +3,76 @@ package com.mcis.memoir
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mcis.memoir.data.MockData
-import com.mcis.memoir.data.TemplateData
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mcis.memoir.ui.components.BottomNavigationBar
 import com.mcis.memoir.ui.components.UntitledIcon
 import com.mcis.memoir.ui.icons.*
-import com.mcis.memoir.ui.theme.AppTheme
+import com.mcis.memoir.ui.memory.template.MemoryTemplateEffect
+import com.mcis.memoir.ui.memory.template.MemoryTemplateIntent
+import com.mcis.memoir.ui.memory.template.MemoryTemplateViewModel
+import com.mcis.memoir.ui.memory.template.TemplateCard
 import com.mcis.memoir.ui.theme.inter
 
-/**
- * Screen for choosing a memory template.
- */
 @Composable
 fun MemoryTemplateScreen(
-    selectedLanguage: String = "en",
+    viewModel: MemoryTemplateViewModel,
     onBackClick: () -> Unit = {},
     onNavigateToHome: () -> Unit = {},
     onNavigateToSaved: () -> Unit = {},
     onNavigateToMemories: () -> Unit = {},
-    onTemplateSelect: (String) -> Unit = {},
+    onNavigateToPhotoSelection: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val isChinese = selectedLanguage == "zh"
-    val templates = remember { MockData.templates }
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val isChinese = LocalConfiguration.current.locales[0].language == "zh"
+
+    LaunchedEffect(viewModel) {
+        viewModel.effects.collect { effect ->
+            when (effect) {
+                is MemoryTemplateEffect.NavigateToPhotoSelection -> onNavigateToPhotoSelection(effect.memoryId)
+            }
+        }
+    }
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(DesignTokens.colorLanguageSelectionBackground)
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            // Header
+        Column(modifier = Modifier.fillMaxSize()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -63,7 +80,7 @@ fun MemoryTemplateScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = if (isChinese) stringResource(R.string.memory_flow_choose_template_zh) else stringResource(R.string.memory_flow_choose_template),
+                    text = stringResource(R.string.memory_flow_choose_template),
                     style = TextStyle(
                         fontFamily = inter,
                         fontSize = 24.sp,
@@ -71,8 +88,7 @@ fun MemoryTemplateScreen(
                         color = DesignTokens.colorMaroon
                     )
                 )
-                
-                // Back Button
+
                 Box(
                     modifier = Modifier
                         .align(Alignment.CenterStart)
@@ -84,7 +100,7 @@ fun MemoryTemplateScreen(
                 ) {
                     UntitledIcon(
                         imageVector = UntitledIcons.BackIcon,
-                        contentDescription = if (isChinese) stringResource(R.string.back_button_zh) else stringResource(R.string.back_button),
+                        contentDescription = stringResource(R.string.back_button),
                         size = 24.dp,
                         tint = DesignTokens.colorMaroon
                     )
@@ -98,21 +114,19 @@ fun MemoryTemplateScreen(
                 contentPadding = PaddingValues(horizontal = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(templates) { template ->
-                    TemplateCard(
-                        template = template, 
-                        isChinese = isChinese,
-                        onClick = { onTemplateSelect(template.id) }
+                items(state.templates) { template ->
+                    MemoryTemplateCard(
+                        template = template,
+                        onClick = {
+                            viewModel.onIntent(MemoryTemplateIntent.TemplateClicked(template.id))
+                        }
                     )
                 }
-                
-                item {
-                    Spacer(modifier = Modifier.height(100.dp))
-                }
+
+                item { Spacer(modifier = Modifier.height(100.dp)) }
             }
         }
 
-        // Bottom Navigation Bar
         BottomNavigationBar(
             modifier = Modifier.align(Alignment.BottomCenter),
             isChinese = isChinese,
@@ -125,8 +139,8 @@ fun MemoryTemplateScreen(
 }
 
 @Composable
-fun TemplateCard(template: TemplateData, isChinese: Boolean, onClick: () -> Unit = {}) {
-    val cardShape = RoundedCornerShape(0.dp) // Based on design context, cards look sharp or very slightly rounded
+private fun MemoryTemplateCard(template: TemplateCard, onClick: () -> Unit = {}) {
+    val cardShape = RoundedCornerShape(0.dp)
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -137,7 +151,6 @@ fun TemplateCard(template: TemplateData, isChinese: Boolean, onClick: () -> Unit
             .clickable { onClick() }
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
-            // Template Preview Image
             Image(
                 painter = painterResource(template.imageRes),
                 contentDescription = null,
@@ -146,7 +159,7 @@ fun TemplateCard(template: TemplateData, isChinese: Boolean, onClick: () -> Unit
                     .fillMaxHeight(),
                 contentScale = ContentScale.Crop
             )
-            
+
             Column(
                 modifier = Modifier
                     .padding(start = 12.dp, top = 16.dp, end = 12.dp)
@@ -155,7 +168,7 @@ fun TemplateCard(template: TemplateData, isChinese: Boolean, onClick: () -> Unit
                 verticalArrangement = Arrangement.Top
             ) {
                 Text(
-                    text = if (isChinese) template.titleZh else template.titleEn,
+                    text = template.title,
                     style = TextStyle(
                         fontFamily = inter,
                         fontSize = 16.sp,
@@ -165,7 +178,7 @@ fun TemplateCard(template: TemplateData, isChinese: Boolean, onClick: () -> Unit
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = if (isChinese) template.descriptionZh else template.descriptionEn,
+                    text = template.description,
                     style = TextStyle(
                         fontFamily = inter,
                         fontSize = 8.sp,
@@ -175,8 +188,7 @@ fun TemplateCard(template: TemplateData, isChinese: Boolean, onClick: () -> Unit
                     lineHeight = 12.sp
                 )
             }
-            
-            // Arrow icon on the right
+
             Box(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
@@ -187,18 +199,9 @@ fun TemplateCard(template: TemplateData, isChinese: Boolean, onClick: () -> Unit
                 Image(
                     painter = painterResource(R.drawable.arrow_right),
                     contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                    colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.Black)
+                    modifier = Modifier.size(16.dp)
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true, device = "spec:width=412dp,height=915dp")
-@Composable
-fun MemoryTemplateScreenPreview() {
-    AppTheme {
-        MemoryTemplateScreen()
     }
 }

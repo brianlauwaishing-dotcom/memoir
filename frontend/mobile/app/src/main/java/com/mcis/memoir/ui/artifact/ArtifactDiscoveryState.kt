@@ -6,6 +6,7 @@ data class ArtifactDiscoveryState(
     val artifactId: Int = 0,
     val displayPosition: Int = 0,
     val totalArtifacts: Int = 0,
+    val capturedArtifactsCount: Int = 0,
     val label: String = "",
     val highlight: QuestionHighlight = QuestionHighlight("", "", ""),
     val imageDrawableRes: Int = 0,

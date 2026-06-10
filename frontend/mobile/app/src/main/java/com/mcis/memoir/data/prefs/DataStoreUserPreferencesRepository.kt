@@ -30,6 +30,11 @@ class DataStoreUserPreferencesRepository(
             preferences[UserPrefsKeys.BOOKMARKED_ROUTES].orEmpty()
         }
 
+    override val capturedArtifactKeys: Flow<Set<String>> =
+        dataStore.data.map { preferences ->
+            preferences[UserPrefsKeys.CAPTURED_ARTIFACTS].orEmpty()
+        }
+
     override suspend fun setLanguage(tag: String) {
         dataStore.edit { preferences ->
             preferences[UserPrefsKeys.LANGUAGE] = tag
@@ -51,6 +56,12 @@ class DataStoreUserPreferencesRepository(
     override suspend fun setBookmarkedRouteIds(set: Set<String>) {
         dataStore.edit { preferences ->
             preferences[UserPrefsKeys.BOOKMARKED_ROUTES] = set
+        }
+    }
+
+    override suspend fun setCapturedArtifactKeys(set: Set<String>) {
+        dataStore.edit { preferences ->
+            preferences[UserPrefsKeys.CAPTURED_ARTIFACTS] = set
         }
     }
 

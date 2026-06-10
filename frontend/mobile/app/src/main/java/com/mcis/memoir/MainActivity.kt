@@ -56,17 +56,17 @@ data object MemoryTemplateDestination
 /**
  * Navigation destination for the Memory Photo Selection screen.
  */
-data class MemoryPhotoSelectionDestination(val templateId: String)
+data class MemoryPhotoSelectionDestination(val memoryId: String)
 
 /**
  * Navigation destination for the Memory Edit (Preview & Edit) screen.
  */
-data class MemoryEditDestination(val templateId: String, val photoResIds: List<Int>)
+data class MemoryEditDestination(val memoryId: String)
 
 /**
  * Navigation destination for the Memory Reflection screen.
  */
-data object MemoryReflectionDestination
+data class MemoryReflectionDestination(val memoryId: String)
 
 /**
  * Navigation destination for the Route Detail screen.
@@ -96,7 +96,7 @@ data class ArtifactDetailDestination(val spotId: String, val artifactId: Int)
 /**
  * Navigation destination for the Camera Preview screen.
  */
-data object CameraPreviewDestination
+data class CameraPreviewDestination(val spotId: String, val artifactId: Int)
 
 /**
  * Navigation destination for the Spot Explore (Continue Exploring) screen.

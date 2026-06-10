@@ -4,16 +4,20 @@ import android.content.res.Resources
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mcis.memoir.data.content.ContentRepository
+import com.mcis.memoir.data.prefs.UserPreferencesRepository
+import com.mcis.memoir.data.prefs.artifactCaptureKey
 import java.util.Locale
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class ArtifactDiscoveryViewModel(
     private val spotId: String,
     private val artifactId: Int,
     private val contentRepo: ContentRepository,
+    private val prefsRepo: UserPreferencesRepository,
     private val resources: Resources,
     private val localeProvider: () -> Locale
 ) : ViewModel() {
@@ -32,7 +36,7 @@ class ArtifactDiscoveryViewModel(
             val locale = localeProvider()
             val label = artifact.title[locale]
             val question = artifact.question[locale]
-            _state.value = ArtifactDiscoveryState(
+            val baseState = ArtifactDiscoveryState(
                 isLoading = false,
                 spotId = spot.id,
                 artifactId = artifact.id,
@@ -42,6 +46,12 @@ class ArtifactDiscoveryViewModel(
                 highlight = computeHighlight(question, label),
                 imageDrawableRes = drawable(artifact.image)
             )
+            prefsRepo.capturedArtifactKeys.collectLatest { capturedKeys ->
+                val capturedCount = spot.artifacts.count { artifact ->
+                    artifactCaptureKey(spot.id, artifact.id) in capturedKeys
+                }
+                _state.value = baseState.copy(capturedArtifactsCount = capturedCount)
+            }
         }
     }
 

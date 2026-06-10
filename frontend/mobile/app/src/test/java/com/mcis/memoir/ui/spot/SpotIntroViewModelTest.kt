@@ -9,11 +9,14 @@ import com.mcis.memoir.data.content.model.Artifact
 import com.mcis.memoir.data.content.model.LocalizedFacts
 import com.mcis.memoir.data.content.model.LocalizedText
 import com.mcis.memoir.data.content.model.Spot
+import com.mcis.memoir.data.prefs.UserPreferencesRepository
 import io.mockk.every
 import io.mockk.mockk
 import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -54,10 +57,25 @@ class SpotIntroViewModelTest {
             assertEquals("grand_mazu", loaded.spotId)
             assertEquals("Grand Mazu Temple", loaded.title)
             assertEquals(11, loaded.heroDrawableRes)
-            assertEquals("3/3", loaded.foundLabel)
+            assertEquals("0/3", loaded.foundLabel)
             assertEquals(3, loaded.discoveryItems.size)
             assertEquals(listOf("Dragon Pillar", "Mazu Statue", "Hanfan"), loaded.discoveryItems.map { it.label })
             assertEquals(listOf(21, 22, 23), loaded.discoveryItems.map { it.imageDrawableRes })
+        }
+    }
+
+    @Test
+    fun foundLabelCountsCapturedArtifactsForThisSpot() = runTest(mainDispatcher) {
+        val vm = viewModel(
+            capturedArtifactKeys = setOf("grand_mazu:1", "grand_mazu:3", "other_spot:2")
+        )
+
+        vm.state.test {
+            assertTrue(awaitItem().isLoading)
+            advanceUntilIdle()
+
+            val loaded = awaitItem()
+            assertEquals("2/3", loaded.foundLabel)
         }
     }
 
@@ -78,13 +96,32 @@ class SpotIntroViewModelTest {
 
     private fun TestScope.viewModel(
         spotId: String = "grand_mazu",
-        locale: Locale = Locale.ENGLISH
+        locale: Locale = Locale.ENGLISH,
+        capturedArtifactKeys: Set<String> = emptySet()
     ): SpotIntroViewModel = SpotIntroViewModel(
         spotId = spotId,
         contentRepo = ContentRepository(FakeContentAssetLoader(snapshot()), this),
+        prefsRepo = FakePrefs(capturedArtifactKeys),
         resources = resources(),
         localeProvider = { locale }
     )
+
+    private class FakePrefs(
+        capturedKeys: Set<String>
+    ) : UserPreferencesRepository {
+        override val language: Flow<String> = MutableStateFlow("en")
+        override val selectedInterests: Flow<Set<String>> = MutableStateFlow(emptySet())
+        override val onboardingDone: Flow<Boolean> = MutableStateFlow(true)
+        override val bookmarkedRouteIds: Flow<Set<String>> = MutableStateFlow(emptySet())
+        override val capturedArtifactKeys: Flow<Set<String>> = MutableStateFlow(capturedKeys)
+
+        override suspend fun setLanguage(tag: String) = Unit
+        override suspend fun setInterests(set: Set<String>) = Unit
+        override suspend fun markOnboardingDone() = Unit
+        override suspend fun setBookmarkedRouteIds(set: Set<String>) = Unit
+        override suspend fun setCapturedArtifactKeys(set: Set<String>) = Unit
+        override suspend fun persistedLanguageTag(): String? = null
+    }
 
     private class FakeContentAssetLoader(
         private val snapshot: ContentSnapshot

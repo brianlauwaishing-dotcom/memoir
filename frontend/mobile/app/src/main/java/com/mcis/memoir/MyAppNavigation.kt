@@ -13,8 +13,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -31,6 +29,14 @@ import com.mcis.memoir.ui.home.HomeEffect
 import com.mcis.memoir.ui.home.HomeViewModel
 import com.mcis.memoir.ui.home.HomeViewModelFactory
 import com.mcis.memoir.ui.language.LanguageSelectionViewModel
+import com.mcis.memoir.ui.memory.edit.EditViewModel
+import com.mcis.memoir.ui.memory.edit.EditViewModelFactory
+import com.mcis.memoir.ui.memory.photo.PhotoSelectionViewModel
+import com.mcis.memoir.ui.memory.photo.PhotoSelectionViewModelFactory
+import com.mcis.memoir.ui.memory.reflection.ReflectionViewModel
+import com.mcis.memoir.ui.memory.reflection.ReflectionViewModelFactory
+import com.mcis.memoir.ui.memory.template.MemoryTemplateViewModel
+import com.mcis.memoir.ui.memory.template.MemoryTemplateViewModelFactory
 import com.mcis.memoir.ui.artifact.ArtifactDetailViewModel
 import com.mcis.memoir.ui.artifact.ArtifactDetailViewModelFactory
 import com.mcis.memoir.ui.artifact.ArtifactDiscoveryViewModel
@@ -41,6 +47,8 @@ import com.mcis.memoir.ui.saved.SavedViewModel
 import com.mcis.memoir.ui.saved.SavedViewModelFactory
 import com.mcis.memoir.ui.spot.SpotIntroViewModel
 import com.mcis.memoir.ui.spot.SpotIntroViewModelFactory
+import com.mcis.memoir.data.prefs.artifactCaptureKey
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -53,9 +61,6 @@ fun MyAppNavigation() {
     val onboardingCompleted by prefsRepo.onboardingDone
         .map { it as Boolean? }
         .collectAsStateWithLifecycle(initialValue = null)
-
-    // Flow State: Memory Creation
-    var selectedPhotos by rememberSaveable { mutableStateOf(listOf<Int>()) }
 
     // Decide starting destination
     if (onboardingCompleted == null) {
@@ -201,14 +206,22 @@ fun MyAppNavigation() {
                             }
                         },
                         onCreateMemoryClick = {
-                            selectedPhotos = emptyList() // Reset for new creation
                             backStack.add(MemoryTemplateDestination)
                         }
                     )
                 }
                 is MemoryTemplateDestination -> NavEntry(key) {
+                    val ctx = LocalContext.current
+                    val currentLocale = LocaleController.currentLocale()
+                    val vm: MemoryTemplateViewModel = viewModel(
+                        factory = MemoryTemplateViewModelFactory(
+                            repo = MemoirApplication.memoryRepo,
+                            resources = ctx.resources,
+                            localeProvider = { currentLocale }
+                        )
+                    )
                     MemoryTemplateScreen(
-                        selectedLanguage = selectedLanguage,
+                        viewModel = vm,
                         onBackClick = {
                             backStack.removeLastOrNull()
                         },
@@ -227,24 +240,28 @@ fun MyAppNavigation() {
                                 backStack.add(MemoriesDestination)
                             }
                         },
-                        onTemplateSelect = { templateId ->
-                            selectedPhotos = emptyList() // Clear selection when choosing a new template
-                            backStack.add(MemoryPhotoSelectionDestination(templateId))
+                        onNavigateToPhotoSelection = { memoryId ->
+                            backStack.add(MemoryPhotoSelectionDestination(memoryId))
                         }
                     )
                 }
                 is MemoryPhotoSelectionDestination -> NavEntry(key) {
+                    val ctx = LocalContext.current
+                    val vm: PhotoSelectionViewModel = viewModel(
+                        key = key.memoryId,
+                        factory = PhotoSelectionViewModelFactory(
+                            memoryId = key.memoryId,
+                            repo = MemoirApplication.memoryRepo,
+                            contentResolver = ctx.contentResolver
+                        )
+                    )
                     MemoryPhotoSelectionScreen(
-                        selectedLanguage = selectedLanguage,
-                        templateId = key.templateId,
-                        initialPhotos = selectedPhotos,
-                        onPhotosChange = { selectedPhotos = it },
+                        viewModel = vm,
                         onBackClick = {
                             backStack.removeLastOrNull()
                         },
-                        onNextClick = { photos ->
-                            selectedPhotos = photos
-                            backStack.add(MemoryEditDestination(key.templateId, photos))
+                        onNavigateToEdit = { memoryId ->
+                            backStack.add(MemoryEditDestination(memoryId))
                         },
                         onNavigateToHome = {
                             backStack.clear()
@@ -264,15 +281,20 @@ fun MyAppNavigation() {
                     )
                 }
                 is MemoryEditDestination -> NavEntry(key) {
+                    val vm: EditViewModel = viewModel(
+                        key = key.memoryId,
+                        factory = EditViewModelFactory(
+                            memoryId = key.memoryId,
+                            repo = MemoirApplication.memoryRepo
+                        )
+                    )
                     MemoryEditScreen(
-                        selectedLanguage = selectedLanguage,
-                        templateId = key.templateId,
-                        photoResIds = selectedPhotos,
+                        viewModel = vm,
                         onBackClick = {
                             backStack.removeLastOrNull()
                         },
-                        onSaveClick = {
-                            backStack.add(MemoryReflectionDestination)
+                        onNavigateToReflection = { memoryId ->
+                            backStack.add(MemoryReflectionDestination(memoryId))
                         },
                         onNavigateToHome = {
                             backStack.clear()
@@ -292,13 +314,19 @@ fun MyAppNavigation() {
                     )
                 }
                 is MemoryReflectionDestination -> NavEntry(key) {
+                    val vm: ReflectionViewModel = viewModel(
+                        key = key.memoryId,
+                        factory = ReflectionViewModelFactory(
+                            memoryId = key.memoryId,
+                            repo = MemoirApplication.memoryRepo
+                        )
+                    )
                     MemoryReflectionScreen(
-                        selectedLanguage = selectedLanguage,
+                        viewModel = vm,
                         onBackClick = {
                             backStack.removeLastOrNull()
                         },
-                        onNextClick = {
-                            // Clear backstack to Memories
+                        onNavigateToMemoriesList = {
                             while (backStack.lastOrNull() != MemoriesDestination && backStack.size > 1) {
                                 backStack.removeLastOrNull()
                             }
@@ -360,6 +388,7 @@ fun MyAppNavigation() {
                         factory = SpotIntroViewModelFactory(
                             spotId = key.spotId,
                             content = MemoirApplication.content,
+                            prefs = MemoirApplication.prefs,
                             resources = ctx.resources,
                             localeProvider = { currentLocale }
                         )
@@ -386,6 +415,7 @@ fun MyAppNavigation() {
                             spotId = key.spotId,
                             artifactId = key.artifactId,
                             content = MemoirApplication.content,
+                            prefs = MemoirApplication.prefs,
                             resources = ctx.resources,
                             localeProvider = { currentLocale }
                         )
@@ -408,7 +438,7 @@ fun MyAppNavigation() {
                             backStack.add(ArtifactDetailDestination(spotId, artifactId))
                         },
                         onCameraClick = {
-                            backStack.add(CameraPreviewDestination)
+                            backStack.add(CameraPreviewDestination(key.spotId, key.artifactId))
                         }
                     )
                 }
@@ -440,7 +470,7 @@ fun MyAppNavigation() {
                             backStack.add(SpotDetailDestination(key.spotId))
                         },
                         onCameraClick = {
-                            backStack.add(CameraPreviewDestination)
+                            backStack.add(CameraPreviewDestination(key.spotId, key.artifactId))
                         },
                         onNavigateToHome = {
                             backStack.clear()
@@ -460,7 +490,12 @@ fun MyAppNavigation() {
                             backStack.removeLastOrNull()
                         },
                         onCaptureClick = {
-                            backStack.removeLastOrNull()
+                            coroutineScope.launch {
+                                val captureKey = artifactCaptureKey(key.spotId, key.artifactId)
+                                val current = prefsRepo.capturedArtifactKeys.first()
+                                prefsRepo.setCapturedArtifactKeys(current + captureKey)
+                                backStack.removeLastOrNull()
+                            }
                         }
                     )
                 }
@@ -510,10 +545,10 @@ private fun destinationToToken(destination: Any): String = when (destination) {
     SavedDestination -> "saved"
     MemoriesDestination -> "memories"
     MemoryTemplateDestination -> "memory-template"
-    MemoryReflectionDestination -> "memory-reflection"
-    CameraPreviewDestination -> "camera-preview"
-    is MemoryPhotoSelectionDestination -> "memory-photo:${destination.templateId}"
-    is MemoryEditDestination -> "memory-edit:${destination.templateId}:${destination.photoResIds.joinToString(",")}"
+    is CameraPreviewDestination -> "camera-preview:${destination.spotId}:${destination.artifactId}"
+    is MemoryPhotoSelectionDestination -> "memory-photo:${destination.memoryId}"
+    is MemoryEditDestination -> "memory-edit:${destination.memoryId}"
+    is MemoryReflectionDestination -> "memory-reflection:${destination.memoryId}"
     is RouteDetailDestination -> "route-detail:${destination.routeId}"
     is SpotDetailDestination -> "spot-detail:${destination.spotId}"
     is SpotIntroDestination -> "spot-intro:${destination.spotId}"
@@ -533,17 +568,13 @@ private fun destinationFromToken(token: String): Any {
         "saved" -> SavedDestination
         "memories" -> MemoriesDestination
         "memory-template" -> MemoryTemplateDestination
-        "memory-reflection" -> MemoryReflectionDestination
-        "camera-preview" -> CameraPreviewDestination
-        "memory-photo" -> MemoryPhotoSelectionDestination(parts.getOrElse(1) { "" })
-        "memory-edit" -> MemoryEditDestination(
-            templateId = parts.getOrElse(1) { "" },
-            photoResIds = parts.getOrNull(2)
-                ?.split(",")
-                ?.filter { it.isNotBlank() }
-                ?.mapNotNull { it.toIntOrNull() }
-                .orEmpty()
+        "memory-reflection" -> MemoryReflectionDestination(parts.getOrElse(1) { "" })
+        "camera-preview" -> CameraPreviewDestination(
+            spotId = parts.getOrElse(1) { "" },
+            artifactId = parts.getOrNull(2)?.toIntOrNull() ?: 0
         )
+        "memory-photo" -> MemoryPhotoSelectionDestination(parts.getOrElse(1) { "" })
+        "memory-edit" -> MemoryEditDestination(parts.getOrElse(1) { "" })
         "route-detail" -> RouteDetailDestination(parts.getOrElse(1) { "" })
         "spot-detail" -> SpotDetailDestination(parts.getOrElse(1) { "" })
         "spot-intro" -> SpotIntroDestination(parts.getOrElse(1) { "" })

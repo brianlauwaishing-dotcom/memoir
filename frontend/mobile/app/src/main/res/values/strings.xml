@@ -158,6 +158,12 @@
     <string name="spot_explore_share_content_description">Share icon</string>
     <string name="spot_explore_share_content_description_zh">分享圖示</string>
 
+    <!-- Camera Preview Screen -->
+    <string name="camera_close_content_description">Close</string>
+    <string name="camera_capture_content_description">Capture</string>
+    <string name="camera_permission_required">Camera access required to take photos.</string>
+    <string name="camera_capture_failed">Could not save photo. Try again.</string>
+
     <!-- Memory Flow (Template, Photos, Edit) -->
     <string name="memory_flow_choose_template">Choose Template</string>
     <string name="memory_flow_choose_template_zh">選擇模板</string>
@@ -181,10 +187,21 @@
     <string name="memory_flow_fonts_zh">字體</string>
     <string name="memory_flow_stamps">Stamps</string>
     <string name="memory_flow_stamps_zh">印章</string>
+    <string name="template_old_street">Old Street Journal</string>
+    <string name="template_old_street_desc">Magazine-style layout journaling old streets and daily life.</string>
+    <string name="template_city_walk">City Walk Map</string>
+    <string name="template_city_walk_desc">Record your day trip with maps, location markers, and photo cards.</string>
+    <string name="template_taiwan_pop">Taiwan Pop Collage</string>
+    <string name="template_taiwan_pop_desc">Youthful collage with stickers, handwritten text, and photo cards.</string>
+    <string name="template_heritage_arch">Heritage Architecture Archive</string>
+    <string name="template_heritage_arch_desc">Exhibition-catalogue layout for historical buildings and annotations.</string>
 
     <!-- Memory Reflection Screen -->
     <string name="memory_reflection_headline">Travel Reflection</string>
     <string name="memory_reflection_headline_zh">旅遊心得</string>
+    <string name="memory_reflection_mood_label">How did you feel?</string>
+    <string name="memory_reflection_insights_label">What did you learn?</string>
+    <string name="memory_reflection_feedback_label">Looking back...</string>
     <string name="memory_reflection_my_reflection">My Reflection</string>
     <string name="memory_reflection_my_reflection_zh">我的心得</string>
     <string name="memory_reflection_polish_ai">Polish with AI</string>
