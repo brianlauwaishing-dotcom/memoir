@@ -2,13 +2,16 @@ package com.mcis.memoir
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,6 +49,8 @@ fun MemoriesScreen(
     onNavigateToSaved: () -> Unit = {},
     onNavigateToMemories: () -> Unit = {},
     onCreateMemoryClick: () -> Unit = {},
+    onRouteClick: (String) -> Unit = {},
+    onSpotClick: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val isChinese = selectedLanguage == "zh"
@@ -54,6 +60,10 @@ fun MemoriesScreen(
 
     var activeMenuMemoryId by remember { mutableStateOf<String?>(null) }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var selectedTab by remember { mutableStateOf("route") }
+
+    // 儲存的書籤 ID (Mock)
+    val savedSpotIds = remember { mutableStateListOf("grand_mazu_temple_datianhougong", "grand_wumiao_temple_sidian_wumiao") }
 
     Box(
         modifier = modifier
@@ -67,7 +77,7 @@ fun MemoriesScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 54.dp, bottom = 12.dp),
+                    .padding(top = 54.dp, bottom = 24.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -81,101 +91,253 @@ fun MemoriesScreen(
                 )
             }
 
-            // Scrollable Content
-            LazyColumn(
+            // Route / Bookmark selector (更新為新版底線設計)
+            Row(
                 modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+                    .padding(bottom = 24.dp),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.Bottom
             ) {
-                // In Progress Section
-                if (inProgressMemories.isNotEmpty()) {
-                    item {
-                        Text(
-                            text = if (isChinese) stringResource(R.string.memories_in_progress_zh) else stringResource(R.string.memories_in_progress),
-                            style = TextStyle(
-                                fontFamily = inter,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black
-                            ),
-                            modifier = Modifier.padding(bottom = 8.dp)
+                // Route Tab
+                Column(
+                    modifier = Modifier
+                        .width(IntrinsicSize.Min)
+                        .clickable { selectedTab = "route" },
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = if (isChinese) "行程" else "Route",
+                        style = TextStyle(
+                            fontFamily = inter,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
                         )
-                    }
-                    items(inProgressMemories) { memory ->
-                        InProgressMemoryCard(
-                            memory = memory, 
-                            isChinese = isChinese,
-                            onMoreClick = { activeMenuMemoryId = it.id }
-                        )
-                    }
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Box(
+                        modifier = Modifier
+                            .height(2.dp)
+                            .fillMaxWidth()
+                            .background(if (selectedTab == "route") DesignTokens.colorMaroon else Color.Transparent)
+                    )
                 }
 
-                // Completed Section
-                if (completedMemories.isNotEmpty()) {
-                    item {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = if (isChinese) stringResource(R.string.memories_completed_zh) else stringResource(R.string.memories_completed),
-                            style = TextStyle(
-                                fontFamily = inter,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black
-                            ),
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-                    }
-                    items(completedMemories) { memory ->
-                        CompletedMemoryCard(
-                            memory = memory, 
-                            isChinese = isChinese,
-                            onMoreClick = { activeMenuMemoryId = it.id }
-                        )
-                    }
-                }
+                Spacer(modifier = Modifier.width(24.dp))
 
-                // Spacer to ensure content isn't blocked by the fixed button
-                item {
-                    Spacer(modifier = Modifier.height(20.dp))
+                // Bookmark Tab
+                Column(
+                    modifier = Modifier
+                        .width(IntrinsicSize.Min)
+                        .clickable { selectedTab = "bookmark" },
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = if (isChinese) "書籤" else "Bookmark",
+                        style = TextStyle(
+                            fontFamily = inter,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Box(
+                        modifier = Modifier
+                            .height(2.dp)
+                            .fillMaxWidth()
+                            .background(if (selectedTab == "bookmark") DesignTokens.colorMaroon else Color.Transparent)
+                    )
                 }
             }
 
-            // Fixed Bottom Action Area
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                val buttonShape = RoundedCornerShape(50.dp)
+            if (selectedTab == "route") {
+                // Scrollable Content for Route
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    // In Progress Section
+                    if (inProgressMemories.isNotEmpty()) {
+                        item {
+                            Text(
+                                text = if (isChinese) stringResource(R.string.memories_in_progress_zh) else stringResource(R.string.memories_in_progress),
+                                style = TextStyle(
+                                    fontFamily = inter,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black
+                                ),
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                        }
+                        items(inProgressMemories) { memory ->
+                            InProgressMemoryCard(
+                                memory = memory,
+                                isChinese = isChinese,
+                                onMoreClick = { activeMenuMemoryId = it.id }
+                            )
+                        }
+                    }
+
+                    // Completed Section
+                    if (completedMemories.isNotEmpty()) {
+                        item {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = if (isChinese) stringResource(R.string.memories_completed_zh) else stringResource(R.string.memories_completed),
+                                style = TextStyle(
+                                    fontFamily = inter,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black
+                                ),
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                        }
+                        items(completedMemories) { memory ->
+                            CompletedMemoryCard(
+                                memory = memory,
+                                isChinese = isChinese,
+                                onMoreClick = { activeMenuMemoryId = it.id }
+                            )
+                        }
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(20.dp))
+                    }
+                }
+
+                // Fixed Bottom Action Area
                 Box(
                     modifier = Modifier
-                        .width(335.dp) // Stretched wider
-                        .height(76.dp) // Increased height slightly for better balance with width
-                        .background(DesignTokens.colorMaroon, buttonShape)
-                        .clip(buttonShape)
-                        .clickable { onCreateMemoryClick() },
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        UntitledIcon(
-                            imageVector = UntitledIcons.AddIcon,
-                            contentDescription = null,
-                            tint = Color.White,
-                            size = 40.dp // Enlarge icon from 32dp to 40dp
-                        )
-                        Spacer(modifier = Modifier.width(16.dp)) // Slightly increased spacing for the larger icon
-                        Text(
-                            text = if (isChinese) stringResource(R.string.memories_create_button_zh) else stringResource(R.string.memories_create_button),
-                            style = TextStyle(
-                                fontFamily = inter,
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.Normal,
-                                color = Color.White
+                    val buttonShape = RoundedCornerShape(50.dp)
+                    Box(
+                        modifier = Modifier
+                            .width(335.dp)
+                            .height(76.dp)
+                            .background(DesignTokens.colorMaroon, buttonShape)
+                            .clip(buttonShape)
+                            .clickable { onCreateMemoryClick() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            UntitledIcon(
+                                imageVector = UntitledIcons.AddIcon,
+                                contentDescription = null,
+                                tint = Color.White,
+                                size = 40.dp
                             )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(
+                                text = if (isChinese) stringResource(R.string.memories_create_button_zh) else stringResource(R.string.memories_create_button),
+                                style = TextStyle(
+                                    fontFamily = inter,
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Normal,
+                                    color = Color.White
+                                )
+                            )
+                        }
+                    }
+                }
+            } else {
+                // Bookmark Content (全新設計)
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp)
+                ) {
+                    // Search Bar
+                    var searchText by remember { mutableStateOf("") }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp)
+                            .background(Color(0xFFE2E0D8), RoundedCornerShape(24.dp))
+                            .padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search",
+                            tint = Color.Gray
                         )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        BasicTextField(
+                            value = searchText,
+                            onValueChange = { searchText = it },
+                            textStyle = TextStyle(
+                                fontFamily = inter,
+                                fontSize = 16.sp,
+                                color = Color.Black
+                            ),
+                            decorationBox = { innerTextField ->
+                                if (searchText.isEmpty()) {
+                                    Text(
+                                        text = if (isChinese) "搜尋書籤" else "Search Bookmarks",
+                                        style = TextStyle(
+                                            fontFamily = inter,
+                                            fontSize = 16.sp,
+                                            color = Color.Gray
+                                        )
+                                    )
+                                }
+                                innerTextField()
+                            },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    Text(
+                        text = if (isChinese) "選擇書籤" else "Choose Bookmarks",
+                        style = TextStyle(
+                            fontFamily = inter,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.Black
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Bookmark List
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        contentPadding = PaddingValues(bottom = 24.dp)
+                    ) {
+                        val spotsToRender = MockData.spots.filter { it.id in savedSpotIds }
+                        // 搜尋過濾邏輯
+                        val filteredSpots = if (searchText.isEmpty()) {
+                            spotsToRender
+                        } else {
+                            spotsToRender.filter {
+                                it.titleEn.contains(searchText, ignoreCase = true) ||
+                                        it.titleZh.contains(searchText, ignoreCase = true)
+                            }
+                        }
+
+                        items(filteredSpots, key = { it.id }) { spot ->
+                            SimpleBookmarkCard(
+                                spot = spot,
+                                isChinese = isChinese,
+                                onClick = { onSpotClick(spot.id) }
+                            )
+                        }
                     }
                 }
             }
@@ -204,7 +366,7 @@ fun MemoriesScreen(
                 ) {
                     MemoryActionMenu(
                         isChinese = isChinese,
-                        onDeleteClick = { 
+                        onDeleteClick = {
                             showDeleteDialog = true
                         }
                     )
@@ -217,7 +379,7 @@ fun MemoriesScreen(
             DeleteConfirmationDialog(
                 isChinese = isChinese,
                 onCancel = { showDeleteDialog = false },
-                onDelete = { 
+                onDelete = {
                     showDeleteDialog = false
                     activeMenuMemoryId = null
                 }
@@ -225,6 +387,72 @@ fun MemoriesScreen(
         }
     }
 }
+
+// -------------------------------------------------------------
+// 全新的書籤卡片設計 (對應 Figma)
+// -------------------------------------------------------------
+@Composable
+fun SimpleBookmarkCard(
+    spot: com.mcis.memoir.data.SpotData,
+    isChinese: Boolean,
+    onClick: () -> Unit
+) {
+    val title = if (isChinese) spot.titleZh else spot.titleEn
+    val cardShape = RoundedCornerShape(12.dp)
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(100.dp)
+            .shadow(elevation = 4.dp, shape = cardShape, spotColor = Color(0x20000000))
+            .background(Color(0xFFFBFBF6), cardShape)
+            .clip(cardShape)
+            .clickable { onClick() }
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Image
+            Image(
+                painter = painterResource(spot.imageRes),
+                contentDescription = title,
+                modifier = Modifier
+                    .width(100.dp)
+                    .fillMaxHeight(),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(modifier = Modifier.width(24.dp))
+
+            // Title
+            Text(
+                text = title,
+                style = TextStyle(
+                    fontFamily = inter,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                ),
+                modifier = Modifier.weight(1f)
+            )
+
+            // Bookmark Icon
+            UntitledIcon(
+                imageVector = UntitledIcons.SavedFilled,
+                contentDescription = "Bookmark",
+                tint = DesignTokens.colorMaroon,
+                size = 28.dp,
+                modifier = Modifier.padding(end = 16.dp)
+            )
+        }
+    }
+}
+
+
+// -------------------------------------------------------------
+// 原有的 UI 元件 (無更動)
+// -------------------------------------------------------------
 
 @Composable
 fun MemoryActionMenu(isChinese: Boolean, onDeleteClick: () -> Unit) {
@@ -284,7 +512,7 @@ fun DeleteConfirmationDialog(isChinese: Boolean, onCancel: () -> Unit, onDelete:
                 text = if (isChinese) stringResource(R.string.memories_delete_confirm_zh) else stringResource(R.string.memories_delete_confirm),
                 style = TextStyle(fontFamily = inter, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.Black),
                 modifier = Modifier.padding(horizontal = 24.dp),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(18.dp))
             Row(modifier = Modifier.fillMaxWidth().height(44.dp)) {
@@ -353,7 +581,6 @@ fun InProgressMemoryCard(memory: MemoryData, isChinese: Boolean, onMoreClick: (M
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    // Progress Bar
                     Box(
                         modifier = Modifier
                             .width(160.dp)
@@ -381,8 +608,7 @@ fun InProgressMemoryCard(memory: MemoryData, isChinese: Boolean, onMoreClick: (M
                 }
             }
         }
-        
-        // More Button (Top Right of Card)
+
         Box(
             modifier = Modifier
                 .align(Alignment.TopEnd)
@@ -473,8 +699,7 @@ fun CompletedMemoryCard(memory: MemoryData, isChinese: Boolean, onMoreClick: (Me
                 }
             }
         }
-        
-        // More Button (Top Right of Card)
+
         Box(
             modifier = Modifier
                 .align(Alignment.TopEnd)
@@ -486,8 +711,7 @@ fun CompletedMemoryCard(memory: MemoryData, isChinese: Boolean, onMoreClick: (Me
         ) {
             UntitledIcon(imageVector = UntitledIcons.MoreIcon, contentDescription = "More", size = 18.dp, tint = Color.Black)
         }
-        
-        // Arrow Button
+
         Box(
             modifier = Modifier
                 .align(Alignment.BottomEnd)

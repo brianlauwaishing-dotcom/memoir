@@ -83,7 +83,7 @@ object MockData {
 
     val spots = listOf(
         SpotData(
-            id = "grand_mazu",
+            id = "grand_mazu_temple_datianhougong",
             titleEn = "Grand Mazu Temple",
             titleZh = "大天后宮",
             imageRes = R.drawable.grand_mazu_temple,
@@ -166,7 +166,7 @@ object MockData {
             )
         ),
         SpotData(
-            id = "grand_wumiao",
+            id = "grand_wumiao_temple_sidian_wumiao",
             titleEn = "Grand Wumiao Temple",
             titleZh = "祀典武廟",
             imageRes = R.drawable.faith_hidden,

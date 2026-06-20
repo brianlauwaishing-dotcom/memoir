@@ -207,6 +207,9 @@ fun MyAppNavigation() {
                         },
                         onCreateMemoryClick = {
                             backStack.add(MemoryTemplateDestination)
+                        },
+                        onSpotClick = { spotId ->
+                            backStack.add(MemoryPhotoSelectionDestination(spotId))
                         }
                     )
                 }
