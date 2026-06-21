@@ -228,9 +228,11 @@ class RoomMemoryRepository(
     private fun memoriesRoot(): File = File(filesDir, "memories")
 
     private fun File.isUnder(parent: File): Boolean {
-        val targetPath = canonicalFile.toPath()
-        val parentPath = parent.canonicalFile.toPath()
-        return targetPath.startsWith(parentPath)
+        // File.toPath() is API 26+; minSdk is 24, so compare canonical path strings instead.
+        // Match Path.startsWith semantics (component boundary) by anchoring on the separator.
+        val targetPath = canonicalFile.path
+        val parentPath = parent.canonicalFile.path
+        return targetPath == parentPath || targetPath.startsWith(parentPath + File.separator)
     }
 
     private companion object {

@@ -1,0 +1,2816 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 9.1.1" type="baseline" client="gradle" dependencies="false" name="AGP (9.1.1)" variant="all" version="9.1.1">
+
+    <issue
+        id="UnusedAttribute"
+        message="Attribute `localeConfig` is only used in API level 33 and higher (current min is 24)"
+        errorLine1="        android:localeConfig=&quot;@xml/locales_config&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="16"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UnusedAttribute"
+        message="Attribute `enableOnBackInvokedCallback` is only used in API level 33 and higher (current min is 24)"
+        errorLine1="        android:enableOnBackInvokedCallback=&quot;false&quot;>"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="20"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="RedundantLabel"
+        message="Redundant label can be removed"
+        errorLine1="            android:label=&quot;@string/app_name&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="24"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.application than 9.1.1 is available: 9.2.1"
+        errorLine1="agp = &quot;9.1.1&quot;"
+        errorLine2="      ~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="2"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.core:core-ktx than 1.18.0 is available: 1.19.0"
+        errorLine1="coreKtx = &quot;1.18.0&quot;"
+        errorLine2="          ~~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="3"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.appcompat:appcompat than 1.6.1 is available: 1.7.1"
+        errorLine1="appcompat = &quot;1.6.1&quot;"
+        errorLine2="            ~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="9"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.android.material:material than 1.10.0 is available: 1.14.0"
+        errorLine1="material = &quot;1.10.0&quot;"
+        errorLine2="           ~~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="10"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.constraintlayout:constraintlayout than 2.1.4 is available: 2.2.1"
+        errorLine1="constraintlayout = &quot;2.1.4&quot;"
+        errorLine2="                   ~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="12"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.10.0 is available: 2.11.0"
+        errorLine1="lifecycleRuntimeKtx = &quot;2.10.0&quot;"
+        errorLine2="                      ~~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="13"
+            column="23"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.lifecycle:lifecycle-runtime-ktx than 2.10.0 is available: 2.11.0"
+        errorLine1="lifecycleRuntimeKtx = &quot;2.10.0&quot;"
+        errorLine2="                      ~~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="13"
+            column="23"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.10.0 is available: 2.11.0"
+        errorLine1="lifecycleRuntimeKtx = &quot;2.10.0&quot;"
+        errorLine2="                      ~~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="13"
+            column="23"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.camera:camera-camera2 than 1.4.1 is available: 1.6.1"
+        errorLine1="camerax = &quot;1.4.1&quot;"
+        errorLine2="          ~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="16"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.camera:camera-core than 1.4.1 is available: 1.6.1"
+        errorLine1="camerax = &quot;1.4.1&quot;"
+        errorLine2="          ~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="16"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.camera:camera-lifecycle than 1.4.1 is available: 1.6.1"
+        errorLine1="camerax = &quot;1.4.1&quot;"
+        errorLine2="          ~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="16"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.camera:camera-view than 1.4.1 is available: 1.6.1"
+        errorLine1="camerax = &quot;1.4.1&quot;"
+        errorLine2="          ~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="16"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.compose:compose-bom than 2024.09.00 is available: 2026.06.00"
+        errorLine1="composeBom = &quot;2024.09.00&quot;"
+        errorLine2="             ~~~~~~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="19"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.navigation3:navigation3-runtime than 1.0.1 is available: 1.1.3"
+        errorLine1="nav3Core = &quot;1.0.1&quot;"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="29"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.navigation3:navigation3-ui than 1.0.1 is available: 1.1.3"
+        errorLine1="nav3Core = &quot;1.0.1&quot;"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="29"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of org.jetbrains.kotlin.plugin.compose than 2.2.10 is available: 2.4.0"
+        errorLine1="kotlin = &quot;2.2.10&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="17"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of org.jetbrains.kotlin.plugin.serialization than 2.2.10 is available: 2.4.0"
+        errorLine1="kotlin = &quot;2.2.10&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="17"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of org.jetbrains.kotlinx:kotlinx-serialization-json than 1.9.0 is available: 1.11.0"
+        errorLine1="kotlinxSerialization = &quot;1.9.0&quot;"
+        errorLine2="                       ~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="20"
+            column="24"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of com.aallam.openai:openai-client than 4.0.1 is available: 4.1.0"
+        errorLine1="openai = &quot;4.0.1&quot;"
+        errorLine2="         ~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="26"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of io.ktor:ktor-client-cio than 3.0.0 is available: 3.5.0"
+        errorLine1="ktor = &quot;3.0.0&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="27"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="FlowOperatorInvokedInComposition"
+        message="Flow operator functions should not be invoked within composition"
+        errorLine1="        .map { it as Boolean? }"
+        errorLine2="         ~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/MyAppNavigation.kt"
+            line="67"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="LocalContextResourcesRead"
+        message="Reading Resources using LocalContext.current.resources"
+        errorLine1="                            resources = ctx.resources,"
+        errorLine2="                                        ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/MyAppNavigation.kt"
+            line="152"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="LocalContextResourcesRead"
+        message="Reading Resources using LocalContext.current.resources"
+        errorLine1="                            resources = ctx.resources,"
+        errorLine2="                                        ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/MyAppNavigation.kt"
+            line="180"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="LocalContextResourcesRead"
+        message="Reading Resources using LocalContext.current.resources"
+        errorLine1="                            resources = ctx.resources,"
+        errorLine2="                                        ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/MyAppNavigation.kt"
+            line="206"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="LocalContextResourcesRead"
+        message="Reading Resources using LocalContext.current.resources"
+        errorLine1="                            resources = ctx.resources,"
+        errorLine2="                                        ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/MyAppNavigation.kt"
+            line="246"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="LocalContextResourcesRead"
+        message="Reading Resources using LocalContext.current.resources"
+        errorLine1="                            resources = ctx.resources,"
+        errorLine2="                                        ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/MyAppNavigation.kt"
+            line="353"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="LocalContextResourcesRead"
+        message="Reading Resources using LocalContext.current.resources"
+        errorLine1="                            resources = ctx.resources,"
+        errorLine2="                                        ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/MyAppNavigation.kt"
+            line="396"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="LocalContextResourcesRead"
+        message="Reading Resources using LocalContext.current.resources"
+        errorLine1="                            resources = ctx.resources,"
+        errorLine2="                                        ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/MyAppNavigation.kt"
+            line="425"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="LocalContextResourcesRead"
+        message="Reading Resources using LocalContext.current.resources"
+        errorLine1="                            resources = ctx.resources,"
+        errorLine2="                                        ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/MyAppNavigation.kt"
+            line="452"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="LocalContextResourcesRead"
+        message="Reading Resources using LocalContext.current.resources"
+        errorLine1="                            resources = ctx.resources,"
+        errorLine2="                                        ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/MyAppNavigation.kt"
+            line="487"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="LocalContextResourcesRead"
+        message="Reading Resources using LocalContext.current.resources"
+        errorLine1="                            resources = ctx.resources,"
+        errorLine2="                                        ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/MyAppNavigation.kt"
+            line="543"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="ModifierParameter"
+        message="Modifier parameter should be the first optional parameter"
+        errorLine1="    modifier: Modifier = Modifier"
+        errorLine2="    ~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/CameraPreviewScreen.kt"
+            line="55"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ModifierParameter"
+        message="Modifier parameter should be the first optional parameter"
+        errorLine1="    modifier: Modifier = Modifier"
+        errorLine2="    ~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/HomeScreen.kt"
+            line="82"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ModifierParameter"
+        message="Modifier parameter should be the first optional parameter"
+        errorLine1="    modifier: Modifier = Modifier"
+        errorLine2="    ~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/LanguageSelectionScreen.kt"
+            line="50"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ModifierParameter"
+        message="Modifier parameter should be the first optional parameter"
+        errorLine1="    modifier: Modifier = Modifier"
+        errorLine2="    ~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/MemoriesScreen.kt"
+            line="63"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ModifierParameter"
+        message="Modifier parameter should be the first optional parameter"
+        errorLine1="    modifier: Modifier = Modifier"
+        errorLine2="    ~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/MemoryEditScreen.kt"
+            line="65"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ModifierParameter"
+        message="Modifier parameter should be the first optional parameter"
+        errorLine1="    modifier: Modifier = Modifier"
+        errorLine2="    ~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/MemoryPhotoSelectionScreen.kt"
+            line="65"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ModifierParameter"
+        message="Modifier parameter should be the first optional parameter"
+        errorLine1="    modifier: Modifier = Modifier"
+        errorLine2="    ~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/MemoryReflectionScreen.kt"
+            line="65"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ModifierParameter"
+        message="Modifier parameter should be the first optional parameter"
+        errorLine1="    modifier: Modifier = Modifier"
+        errorLine2="    ~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/MemoryTemplateScreen.kt"
+            line="57"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ModifierParameter"
+        message="Modifier parameter should be the first optional parameter"
+        errorLine1="    modifier: Modifier = Modifier"
+        errorLine2="    ~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/SpotExploreScreen.kt"
+            line="44"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ModifierParameter"
+        message="Modifier parameter should be the first optional parameter"
+        errorLine1="    modifier: Modifier = Modifier,"
+        errorLine2="    ~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/ui/components/UntitledIcon.kt"
+            line="18"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ModifierParameter"
+        message="Modifier parameter should be the first optional parameter"
+        errorLine1="    modifier: Modifier = Modifier"
+        errorLine2="    ~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/WelcomeScreen.kt"
+            line="44"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier(&quot;bar&quot;, &quot;foo&quot;, null)`)."
+        errorLine1="        resources.getIdentifier(name, &quot;drawable&quot;, &quot;com.mcis.memoir&quot;)"
+        errorLine2="                  ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/ui/artifact/ArtifactDetailViewModel.kt"
+            line="43"
+            column="19"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier(&quot;bar&quot;, &quot;foo&quot;, null)`)."
+        errorLine1="        resources.getIdentifier(name, &quot;drawable&quot;, &quot;com.mcis.memoir&quot;)"
+        errorLine2="                  ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/ui/artifact/ArtifactDiscoveryViewModel.kt"
+            line="59"
+            column="19"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier(&quot;bar&quot;, &quot;foo&quot;, null)`)."
+        errorLine1="                    heroDrawableRes = resources.getIdentifier(spot.heroImage, &quot;drawable&quot;, &quot;com.mcis.memoir&quot;)"
+        errorLine2="                                                ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/ui/memory/library/MemoriesViewModel.kt"
+            line="152"
+            column="49"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier(&quot;bar&quot;, &quot;foo&quot;, null)`)."
+        errorLine1="    heroDrawableRes = resources.getIdentifier(heroImage, &quot;drawable&quot;, &quot;com.mcis.memoir&quot;),"
+        errorLine2="                                ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/ui/home/RouteCard.kt"
+            line="19"
+            column="33"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier(&quot;bar&quot;, &quot;foo&quot;, null)`)."
+        errorLine1="            heroDrawableRes = resources.getIdentifier(route.heroImage, &quot;drawable&quot;, &quot;com.mcis.memoir&quot;),"
+        errorLine2="                                        ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/ui/route/RouteDetailViewModel.kt"
+            line="79"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier(&quot;bar&quot;, &quot;foo&quot;, null)`)."
+        errorLine1="        resources.getIdentifier(name, &quot;drawable&quot;, &quot;com.mcis.memoir&quot;)"
+        errorLine2="                  ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/ui/spot/SpotDetailViewModel.kt"
+            line="54"
+            column="19"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier(&quot;bar&quot;, &quot;foo&quot;, null)`)."
+        errorLine1="        resources.getIdentifier(name, &quot;drawable&quot;, &quot;com.mcis.memoir&quot;)"
+        errorLine2="                  ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/ui/spot/SpotIntroViewModel.kt"
+            line="59"
+            column="19"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;next_button_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;next_button_zh&quot;>下一步&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="6"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;save_button_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;save_button_zh&quot;>收藏&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="8"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;cancel_button_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;cancel_button_zh&quot;>取消&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="10"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;delete_button_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;delete_button_zh&quot;>刪除&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="12"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;back_button_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;back_button_zh&quot;>返回&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="14"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;discovery_mode_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;discovery_mode_zh&quot;>探索模式&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="18"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;discovery_found_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;discovery_found_zh&quot;>已找到&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="20"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;discovery_look_closer_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;discovery_look_closer_zh&quot;>仔細看&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="22"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;discovery_you_discovered_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;discovery_you_discovered_zh&quot;>您發現了&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="24"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;more_button_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;more_button_zh&quot;>更多&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="26"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;welcome_subtitle_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;welcome_subtitle_zh&quot;>歡迎來到台灣&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="34"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;welcome_headline_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;welcome_headline_zh&quot;>您的故事\n從這裡開始&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="35"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;welcome_description_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;welcome_description_zh&quot;>透過故事，而不僅是景點，發現台灣的靈魂。讓我們引導您的文化之旅。&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="36"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;begin_tour_button_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;begin_tour_button_zh&quot;>開始您的旅程&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="37"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;language_selection_subtitle_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;language_selection_subtitle_zh&quot;>個人化&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="45"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;language_selection_headline_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;language_selection_headline_zh&quot;>我們該如何溝通？&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="46"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;language_selection_description_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;language_selection_description_zh&quot;>選擇您的語言&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="47"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;culture_interest_subtitle_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;culture_interest_subtitle_zh&quot;>個人化&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="51"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;culture_interest_headline_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;culture_interest_headline_zh&quot;>什麼讓您興奮？&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="53"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;culture_temples_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;culture_temples_zh&quot;>宗教信仰&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="55"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;culture_old_streets_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;culture_old_streets_zh&quot;>老街與生活&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="57"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;culture_architecture_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;culture_architecture_zh&quot;>歷史建築&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="59"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;culture_trade_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;culture_trade_zh&quot;>商業與港口文化&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="61"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;culture_colonial_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;culture_colonial_zh&quot;>日治文化&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="63"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;culture_crafts_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;culture_crafts_zh&quot;>傳統工藝&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="65"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;skip_button_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;skip_button_zh&quot;>跳過&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="67"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;start_exploring_button_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;start_exploring_button_zh&quot;>開始探索&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="69"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;home_subtitle_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;home_subtitle_zh&quot;>探索&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="73"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;home_headline_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;home_headline_zh&quot;>文化路徑&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="75"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;home_search_placeholder_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;home_search_placeholder_zh&quot;>搜尋路徑...&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="77"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;home_category_all_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;home_category_all_zh&quot;>全部&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="79"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;home_category_temples_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;home_category_temples_zh&quot;>廟宇與民間信仰&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="81"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;home_category_old_streets_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;home_category_old_streets_zh&quot;>老街與在地生活&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="82"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;home_category_architecture_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;home_category_architecture_zh&quot;>歷史建築&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="83"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;home_category_trade_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;home_category_trade_zh&quot;>貿易與港口文化&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="84"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;home_category_colonial_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;home_category_colonial_zh&quot;>日治時期遺產&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="85"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;home_category_crafts_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;home_category_crafts_zh&quot;>傳統工藝&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="86"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;home_more_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;home_more_zh&quot;>更多&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="88"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;home_nav_home_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;home_nav_home_zh&quot;>首頁&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="90"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;home_nav_saved_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;home_nav_saved_zh&quot;>已收藏&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="92"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;home_nav_memories_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;home_nav_memories_zh&quot;>回憶&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="94"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;saved_headline_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;saved_headline_zh&quot;>我的旅遊計畫&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="99"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memories_headline_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memories_headline_zh&quot;>回憶&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="103"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memories_in_progress_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memories_in_progress_zh&quot;>編輯中&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="105"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memories_completed_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memories_completed_zh&quot;>已完成&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="107"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memories_create_button_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memories_create_button_zh&quot;>建立回憶&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="109"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memories_continue_editing_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memories_continue_editing_zh&quot;>繼續編輯&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="111"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memories_updated_on_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memories_updated_on_zh&quot;>更新於 %1$s&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="113"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memories_delete_confirm_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memories_delete_confirm_zh&quot;>您確定要刪除嗎？&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="115"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memories_menu_edit_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memories_menu_edit_zh&quot;>編輯回顧&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="117"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memories_menu_delete_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memories_menu_delete_zh&quot;>刪除回顧&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="119"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memories_menu_duplicate_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memories_menu_duplicate_zh&quot;>複製回顧&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="121"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memories_menu_share_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memories_menu_share_zh&quot;>分享回顧&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="123"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;spot_detail_duration_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;spot_detail_duration_zh&quot;>停留時間&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="132"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;spot_detail_why_matters_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;spot_detail_why_matters_zh&quot;>為什麼重要&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="134"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;spot_detail_historical_context_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;spot_detail_historical_context_zh&quot;>歷史背景&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="136"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;spot_detail_architectural_features_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;spot_detail_architectural_features_zh&quot;>建築特色&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="138"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;spot_detail_modern_use_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;spot_detail_modern_use_zh&quot;>現代用途&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="140"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;spot_detail_modern_use_preservation_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;spot_detail_modern_use_preservation_zh&quot;>現代用途與保護&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="142"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;spot_detail_map_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;spot_detail_map_zh&quot;>地圖&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="144"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;spot_detail_how_do_you_feel_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;spot_detail_how_do_you_feel_zh&quot;>您今天感覺如何？&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="146"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;spot_detail_how_make_feel_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;spot_detail_how_make_feel_zh&quot;>這個地方讓你感覺如何？&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="148"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;spot_detail_continue_exploring_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;spot_detail_continue_exploring_zh&quot;>繼續探索&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="150"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;spot_not_found_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;spot_not_found_zh&quot;>找不到景點&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="152"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;spot_explore_podcast_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;spot_explore_podcast_zh&quot;>播客&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="156"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;spot_explore_photography_tips_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;spot_explore_photography_tips_zh&quot;>攝影小撇步：&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="158"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;spot_explore_take_photo_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;spot_explore_take_photo_zh&quot;>拍照&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="160"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;spot_explore_info_content_description_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;spot_explore_info_content_description_zh&quot;>資訊圖示&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="162"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;spot_explore_share_content_description_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;spot_explore_share_content_description_zh&quot;>分享圖示&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="164"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memory_flow_choose_template_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memory_flow_choose_template_zh&quot;>選擇模板&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="174"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memory_flow_import_photos_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memory_flow_import_photos_zh&quot;>匯入相片&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="176"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memory_flow_photos_selected_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memory_flow_photos_selected_zh&quot;>已選擇 %1$d 張相片&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="178"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memory_flow_hold_to_reorder_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memory_flow_hold_to_reorder_zh&quot;>長按以重新排序&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="180"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memory_flow_add_photos_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memory_flow_add_photos_zh&quot;>新增相片&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="182"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memory_flow_demo_photos_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memory_flow_demo_photos_zh&quot;>示範相片&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="184"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memory_flow_preview_edit_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memory_flow_preview_edit_zh&quot;>預覽與編輯&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="186"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memory_flow_move_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memory_flow_move_zh&quot;>移動&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="188"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memory_flow_filters_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memory_flow_filters_zh&quot;>濾鏡&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="190"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memory_flow_stickers_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memory_flow_stickers_zh&quot;>貼紙&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="192"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memory_flow_fonts_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memory_flow_fonts_zh&quot;>字體&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="194"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memory_flow_stamps_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memory_flow_stamps_zh&quot;>印章&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="196"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memory_reflection_headline_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memory_reflection_headline_zh&quot;>旅遊心得&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="208"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memory_reflection_my_reflection_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memory_reflection_my_reflection_zh&quot;>我的心得&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="213"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memory_reflection_polish_ai_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memory_reflection_polish_ai_zh&quot;>AI 潤色&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="215"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memory_reflection_add_landmarks_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memory_reflection_add_landmarks_zh&quot;>加入地標&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="217"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memory_reflection_placeholder_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memory_reflection_placeholder_zh&quot;>請輸入您對這次旅行的感受。&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="219"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memory_reflection_regenerate_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memory_reflection_regenerate_zh&quot;>重新生成&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="221"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;memory_reflection_copy_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;memory_reflection_copy_zh&quot;>複製&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="223"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;route_detail_your_journey_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;route_detail_your_journey_zh&quot;>您的旅程&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="234"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;route_detail_save_place_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;route_detail_save_place_zh&quot;>收藏地點&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="237"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;route_not_found_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;route_not_found_zh&quot;>找不到路徑&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="239"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;route_sea_protection_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;route_sea_protection_zh&quot;>從海洋守護到城市信仰&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="242"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;route_sounds_of_temple_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;route_sounds_of_temple_zh&quot;>台南廟宇聲音路線&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="243"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;route_faith_hidden_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;route_faith_hidden_zh&quot;>巷弄中的信仰痕跡&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="244"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;route_layers_of_colonial_architecture_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;route_layers_of_colonial_architecture_zh&quot;>殖民時代建築路線&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="245"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;route_brick_arches_and_time_zh&quot; is not translated in &quot;zh&quot; (Chinese)"
+        errorLine1="    &lt;string name=&quot;route_brick_arches_and_time_zh&quot;>紅磚與拱廊路線&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="246"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="PluralsCandidate"
+        message="Formatting %d followed by words (&quot;Photos&quot;): This should probably be a plural rather than a string"
+        errorLine1="    &lt;string name=&quot;memory_flow_photos_selected&quot;>%1$d Photos Selected&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="177"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="PermissionImpliesUnsupportedChromeOsHardware"
+        message="Permission exists without corresponding hardware `&lt;uses-feature android:name=&quot;android.hardware.camera&quot; android:required=&quot;false&quot;>` tag"
+        errorLine1="    &lt;uses-permission android:name=&quot;android.permission.CAMERA&quot; />"
+        errorLine2="     ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="5"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.layout.activity_main` appears to be unused"
+        errorLine1="&lt;androidx.constraintlayout.widget.ConstraintLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/layout/activity_main.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.black` appears to be unused"
+        errorLine1="    &lt;color name=&quot;black&quot;>#FF000000&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="3"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.white` appears to be unused"
+        errorLine1="    &lt;color name=&quot;white&quot;>#FFFFFFFF&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="4"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.next_button_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;next_button_zh&quot;>下一步&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="6"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.save_button_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;save_button_zh&quot;>收藏&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="8"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.cancel_button_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;cancel_button_zh&quot;>取消&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="10"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.delete_button_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;delete_button_zh&quot;>刪除&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="12"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.discovery_mode_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;discovery_mode_zh&quot;>探索模式&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="18"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.discovery_found_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;discovery_found_zh&quot;>已找到&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="20"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.discovery_look_closer_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;discovery_look_closer_zh&quot;>仔細看&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="22"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.discovery_you_discovered_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;discovery_you_discovered_zh&quot;>您發現了&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="24"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.language_selection_subtitle_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;language_selection_subtitle_zh&quot;>個人化&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="45"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.language_selection_headline_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;language_selection_headline_zh&quot;>我們該如何溝通？&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="46"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.language_selection_description_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;language_selection_description_zh&quot;>選擇您的語言&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="47"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.culture_interest_subtitle_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;culture_interest_subtitle_zh&quot;>個人化&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="51"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.culture_interest_headline_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;culture_interest_headline_zh&quot;>什麼讓您興奮？&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="53"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.culture_temples_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;culture_temples_zh&quot;>宗教信仰&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="55"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.culture_old_streets_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;culture_old_streets_zh&quot;>老街與生活&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="57"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.culture_architecture_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;culture_architecture_zh&quot;>歷史建築&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="59"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.culture_trade_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;culture_trade_zh&quot;>商業與港口文化&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="61"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.culture_colonial_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;culture_colonial_zh&quot;>日治文化&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="63"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.culture_crafts_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;culture_crafts_zh&quot;>傳統工藝&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="65"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.skip_button_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;skip_button_zh&quot;>跳過&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="67"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.start_exploring_button_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;start_exploring_button_zh&quot;>開始探索&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="69"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.home_subtitle_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;home_subtitle_zh&quot;>探索&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="73"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.home_headline_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;home_headline_zh&quot;>文化路徑&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="75"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.home_search_placeholder_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;home_search_placeholder_zh&quot;>搜尋路徑...&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="77"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.home_category_all_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;home_category_all_zh&quot;>全部&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="79"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.home_category_temples_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;home_category_temples_zh&quot;>廟宇與民間信仰&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="81"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.home_category_old_streets_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;home_category_old_streets_zh&quot;>老街與在地生活&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="82"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.home_category_architecture_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;home_category_architecture_zh&quot;>歷史建築&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="83"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.home_category_trade_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;home_category_trade_zh&quot;>貿易與港口文化&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="84"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.home_category_colonial_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;home_category_colonial_zh&quot;>日治時期遺產&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="85"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.home_category_crafts_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;home_category_crafts_zh&quot;>傳統工藝&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="86"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.saved_headline_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;saved_headline_zh&quot;>我的旅遊計畫&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="99"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memories_headline_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memories_headline_zh&quot;>回憶&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="103"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memories_in_progress_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memories_in_progress_zh&quot;>編輯中&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="105"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memories_completed_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memories_completed_zh&quot;>已完成&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="107"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memories_create_button_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memories_create_button_zh&quot;>建立回憶&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="109"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memories_continue_editing_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memories_continue_editing_zh&quot;>繼續編輯&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="111"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memories_updated_on_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memories_updated_on_zh&quot;>更新於 %1$s&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="113"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memories_delete_confirm_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memories_delete_confirm_zh&quot;>您確定要刪除嗎？&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="115"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memories_menu_edit_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memories_menu_edit_zh&quot;>編輯回顧&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="117"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memories_menu_delete_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memories_menu_delete_zh&quot;>刪除回顧&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="119"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memories_menu_duplicate_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memories_menu_duplicate_zh&quot;>複製回顧&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="121"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memories_menu_share_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memories_menu_share_zh&quot;>分享回顧&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="123"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.spot_detail_duration` appears to be unused"
+        errorLine1="    &lt;string name=&quot;spot_detail_duration&quot;>DURATION&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="131"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.spot_detail_duration_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;spot_detail_duration_zh&quot;>停留時間&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="132"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.spot_detail_modern_use` appears to be unused"
+        errorLine1="    &lt;string name=&quot;spot_detail_modern_use&quot;>Modern use&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="139"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.spot_detail_modern_use_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;spot_detail_modern_use_zh&quot;>現代用途&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="140"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.spot_detail_how_do_you_feel` appears to be unused"
+        errorLine1="    &lt;string name=&quot;spot_detail_how_do_you_feel&quot;>How are you feeling today?&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="145"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.spot_detail_how_do_you_feel_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;spot_detail_how_do_you_feel_zh&quot;>您今天感覺如何？&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="146"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.spot_detail_continue_exploring` appears to be unused"
+        errorLine1="    &lt;string name=&quot;spot_detail_continue_exploring&quot;>Continue Exploring&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="149"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.spot_detail_continue_exploring_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;spot_detail_continue_exploring_zh&quot;>繼續探索&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="150"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_flow_choose_template_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_flow_choose_template_zh&quot;>選擇模板&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="174"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_flow_import_photos_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_flow_import_photos_zh&quot;>匯入相片&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="176"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_flow_photos_selected_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_flow_photos_selected_zh&quot;>已選擇 %1$d 張相片&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="178"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_flow_hold_to_reorder_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_flow_hold_to_reorder_zh&quot;>長按以重新排序&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="180"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_flow_add_photos_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_flow_add_photos_zh&quot;>新增相片&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="182"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_flow_demo_photos_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_flow_demo_photos_zh&quot;>示範相片&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="184"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_flow_preview_edit_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_flow_preview_edit_zh&quot;>預覽與編輯&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="186"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_flow_move_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_flow_move_zh&quot;>移動&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="188"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_flow_filters_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_flow_filters_zh&quot;>濾鏡&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="190"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_flow_stickers_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_flow_stickers_zh&quot;>貼紙&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="192"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_flow_fonts_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_flow_fonts_zh&quot;>字體&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="194"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_flow_stamps_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_flow_stamps_zh&quot;>印章&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="196"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_reflection_headline_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_reflection_headline_zh&quot;>旅遊心得&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="208"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_reflection_my_reflection` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_reflection_my_reflection&quot;>My Reflection&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="212"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_reflection_my_reflection_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_reflection_my_reflection_zh&quot;>我的心得&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="213"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_reflection_polish_ai_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_reflection_polish_ai_zh&quot;>AI 潤色&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="215"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_reflection_add_landmarks_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_reflection_add_landmarks_zh&quot;>加入地標&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="217"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_reflection_placeholder` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_reflection_placeholder&quot;>Please enter your feelings about this trip.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="218"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_reflection_placeholder_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_reflection_placeholder_zh&quot;>請輸入您對這次旅行的感受。&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="219"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_reflection_regenerate_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_reflection_regenerate_zh&quot;>重新生成&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="221"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_reflection_copy_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_reflection_copy_zh&quot;>複製&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="223"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.memory_reflection_generating` appears to be unused"
+        errorLine1="    &lt;string name=&quot;memory_reflection_generating&quot;>Generating…&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="224"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.route_detail_your_journey_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;route_detail_your_journey_zh&quot;>您的旅程&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="234"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.route_detail_save_place_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;route_detail_save_place_zh&quot;>收藏地點&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="237"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.route_not_found_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;route_not_found_zh&quot;>找不到路徑&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="239"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.route_sea_protection_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;route_sea_protection_zh&quot;>從海洋守護到城市信仰&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="242"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.route_sounds_of_temple_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;route_sounds_of_temple_zh&quot;>台南廟宇聲音路線&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="243"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.route_faith_hidden_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;route_faith_hidden_zh&quot;>巷弄中的信仰痕跡&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="244"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.route_layers_of_colonial_architecture_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;route_layers_of_colonial_architecture_zh&quot;>殖民時代建築路線&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="245"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.route_brick_arches_and_time_zh` appears to be unused"
+        errorLine1="    &lt;string name=&quot;route_brick_arches_and_time_zh&quot;>紅磚與拱廊路線&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="246"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;home_search_placeholder&quot;>搜尋路徑...&lt;/string>"
+        errorLine2="                                           ~~~~~~~">
+        <location
+            file="src/main/res/values-zh/strings.xml"
+            line="36"
+            column="44"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;home_search_placeholder&quot;>Search routes...&lt;/string>"
+        errorLine2="                                           ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="76"
+            column="44"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;home_search_placeholder_zh&quot;>搜尋路徑...&lt;/string>"
+        errorLine2="                                              ~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="77"
+            column="47"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;memory_reflection_feedback_label&quot;>回頭看...&lt;/string>"
+        errorLine2="                                                    ~~~~~~">
+        <location
+            file="src/main/res/values-zh/strings.xml"
+            line="103"
+            column="53"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;memory_reflection_feedback_label&quot;>Looking back...&lt;/string>"
+        errorLine2="                                                    ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="211"
+            column="53"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/anping_kaitai_tianhou_temple.jpg` in densityless folder">
+        <location
+            file="src/main/res/drawable/anping_kaitai_tianhou_temple.jpg"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/brick_arches_and_time.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/brick_arches_and_time.png"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/dragon_pillar.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/dragon_pillar.png"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/eg1.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/eg1.png"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/eg2.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/eg2.png"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/eg3.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/eg3.png"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/faith_hidden.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/faith_hidden.png"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/grand_mazu_temple.jpg` in densityless folder">
+        <location
+            file="src/main/res/drawable/grand_mazu_temple.jpg"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/grand_mazu_temple2.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/grand_mazu_temple2.png"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/hanfan.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/hanfan.png"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/layers_of_colonial.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/layers_of_colonial.png"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/mazu_statue.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/mazu_statue.png"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/memory_templete_1.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/memory_templete_1.png"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/memory_templete_1_mask.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/memory_templete_1_mask.png"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/memory_templete_2.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/memory_templete_2.png"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/memory_templete_2_mask.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/memory_templete_2_mask.png"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/memory_templete_3.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/memory_templete_3.png"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/memory_templete_3_mask.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/memory_templete_3_mask.png"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/memory_templete_4.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/memory_templete_4.png"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/memory_templete_4_mask.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/memory_templete_4_mask.png"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/sea_protection.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/sea_protection.png"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/sounds_of_temple.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/sounds_of_temple.png"/>
+    </issue>
+
+    <issue
+        id="IconDuplicates"
+        message="The following unrelated icon files have identical contents: memory_templete_1.png, memory_templete_3.png">
+        <location
+            file="src/main/res/drawable/memory_templete_3.png"/>
+        <location
+            file="src/main/res/drawable/memory_templete_1.png"/>
+    </issue>
+
+    <issue
+        id="IconDuplicates"
+        message="The following unrelated icon files have identical contents: memory_templete_1_mask.png, memory_templete_3_mask.png">
+        <location
+            file="src/main/res/drawable/memory_templete_3_mask.png"/>
+        <location
+            file="src/main/res/drawable/memory_templete_1_mask.png"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `String.toUri` instead?"
+        errorLine1="        Uri.parse(&quot;android.resource://${context.packageName}/$resId&quot;)"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mcis/memoir/ui/memory/photo/DemoPhotos.kt"
+            line="25"
+            column="9"/>
+    </issue>
+
+</issues>

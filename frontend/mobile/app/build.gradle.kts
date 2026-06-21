@@ -54,6 +54,11 @@ android {
         compose = true
         buildConfig = true
     }
+    lint {
+        // Snapshot of pre-existing lint errors so CI gates only NEW issues.
+        // Burn this down over time; regenerate with ./gradlew :app:updateLintBaseline.
+        baseline = file("lint-baseline.xml")
+    }
     sourceSets["main"].assets.srcDirs("src/main/assets", rootProject.file("../../data"))
 }
 
