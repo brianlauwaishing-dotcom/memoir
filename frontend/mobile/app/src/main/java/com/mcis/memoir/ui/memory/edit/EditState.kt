@@ -10,5 +10,8 @@ data class EditState(
     val templateMaskRes: Int = 0,
     val templateSlots: List<TemplateSlot> = emptyList(),
     val photoPaths: List<String> = emptyList(),
+    val isSpotDraft: Boolean = false,
+    val spotTitle: String = "",
+    val spotDescription: String = "",
     val error: String? = null
 )

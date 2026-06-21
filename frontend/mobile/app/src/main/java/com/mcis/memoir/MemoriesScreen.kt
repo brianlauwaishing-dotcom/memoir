@@ -59,7 +59,6 @@ fun MemoriesScreen(
     onNavigateToMemories: () -> Unit = {},
     onCreateMemoryClick: () -> Unit = {},
     onNavigateToWizard: (String, WizardEntry) -> Unit = { _, _ -> },
-    onNavigateToSpot: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -70,7 +69,6 @@ fun MemoriesScreen(
             when (effect) {
                 is MemoriesEffect.NavigateToWizard -> onNavigateToWizard(effect.memoryId, effect.entry)
                 MemoriesEffect.NavigateToCreate -> onCreateMemoryClick()
-                is MemoriesEffect.NavigateToSpot -> onNavigateToSpot(effect.spotId)
                 is MemoriesEffect.ShareMemory -> shareMemoryPhotos(context, effect.relativePaths, effect.title)
             }
         }
@@ -387,7 +385,8 @@ private fun TabLabel(label: String, selected: Boolean, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .width(IntrinsicSize.Min)
-            .clickable { onClick() },
+            .clickable { onClick() }
+            .padding(horizontal = 2.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(

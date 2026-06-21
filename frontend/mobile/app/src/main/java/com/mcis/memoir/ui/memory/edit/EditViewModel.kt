@@ -2,8 +2,10 @@ package com.mcis.memoir.ui.memory.edit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mcis.memoir.data.content.ContentRepository
 import com.mcis.memoir.data.memory.MemoryRepository
 import com.mcis.memoir.ui.memory.template.TemplateCatalog
+import java.util.Locale
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +17,9 @@ import kotlinx.coroutines.launch
 
 class EditViewModel(
     private val memoryId: String,
-    private val repo: MemoryRepository
+    private val repo: MemoryRepository,
+    private val contentRepo: ContentRepository,
+    private val localeProvider: () -> Locale
 ) : ViewModel() {
     private val _state = MutableStateFlow(EditState(memoryId = memoryId))
     val state: StateFlow<EditState> = _state.asStateFlow()
@@ -29,6 +33,8 @@ class EditViewModel(
                 .catch { e -> _state.update { it.copy(isLoading = false, error = e.message) } }
                 .collect { memory ->
                     val template = memory?.let { TemplateCatalog.byId(it.templateId) }
+                    val locale = localeProvider()
+                    val spot = memory?.spotId?.let { contentRepo.spot(it) }
                     _state.update {
                         it.copy(
                             isLoading = false,
@@ -38,6 +44,9 @@ class EditViewModel(
                             templateMaskRes = template?.maskRes ?: 0,
                             templateSlots = template?.slots.orEmpty(),
                             photoPaths = memory?.photoRelativePaths.orEmpty(),
+                            isSpotDraft = memory?.spotId != null,
+                            spotTitle = spot?.title?.get(locale).orEmpty(),
+                            spotDescription = spot?.whyItMatters?.get(locale).orEmpty(),
                             error = null
                         )
                     }

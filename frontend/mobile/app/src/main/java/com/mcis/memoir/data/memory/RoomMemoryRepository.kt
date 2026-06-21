@@ -44,6 +44,32 @@ class RoomMemoryRepository(
         id
     }
 
+    override suspend fun getOrCreateSpotDraft(
+        spotId: String,
+        templateId: String,
+        defaultTitle: String
+    ): String = withContext(ioDispatcher) {
+        dao.getLatestInProgressForSpot(spotId)?.id ?: run {
+            val id = UUID.randomUUID().toString()
+            val now = System.currentTimeMillis()
+            dao.upsert(
+                MemoryEntity(
+                    id = id,
+                    templateId = templateId,
+                    routeId = null,
+                    spotId = spotId,
+                    title = defaultTitle,
+                    status = MemoryStatus.IN_PROGRESS,
+                    createdAt = now,
+                    updatedAt = now,
+                    photoLocalPaths = "[]",
+                    spotNotes = "{}"
+                )
+            )
+            id
+        }
+    }
+
     override fun observe(id: String): Flow<Memory?> = dao.observe(id).map { it?.toDomain() }
 
     override fun observeAll(): Flow<List<Memory>> = dao.observeAll().map { rows -> rows.map { it.toDomain() } }
@@ -201,6 +227,7 @@ class RoomMemoryRepository(
         id = id,
         templateId = templateId,
         routeId = routeId,
+        spotId = spotId,
         title = title,
         status = status,
         createdAt = createdAt,

@@ -86,6 +86,40 @@ class ArtifactDiscoveryViewModelTest {
     }
 
     @Test
+    fun stateReflectsSpotBookmarkMembership() = runTest(mainDispatcher) {
+        val vm = viewModel(
+            artifactId = 7,
+            bookmarkedSpotIds = setOf("grand_mazu")
+        )
+
+        vm.state.test {
+            assertTrue(awaitItem().isLoading)
+            advanceUntilIdle()
+
+            val loaded = awaitItem()
+            assertTrue(loaded.isBookmarked)
+        }
+    }
+
+    @Test
+    fun bookmarkClickAddsCurrentSpotToMemoriesBookmarks() = runTest(mainDispatcher) {
+        val prefs = FakePrefs()
+        val vm = viewModel(artifactId = 7, prefs = prefs)
+
+        vm.state.test {
+            awaitItem()
+            advanceUntilIdle()
+            awaitItem()
+
+            vm.onBookmarkClick()
+            advanceUntilIdle()
+
+            assertTrue(awaitItem().isBookmarked)
+            assertEquals(setOf("grand_mazu"), prefs.bookmarkedSpotIds.value)
+        }
+    }
+
+    @Test
     fun nonSequentialArtifactIdKeepsStableNavigationId() = runTest(mainDispatcher) {
         val vm = viewModel(artifactId = 11)
 
@@ -116,29 +150,39 @@ class ArtifactDiscoveryViewModelTest {
     private fun TestScope.viewModel(
         artifactId: Int,
         locale: Locale = Locale.ENGLISH,
-        capturedArtifactKeys: Set<String> = emptySet()
+        capturedArtifactKeys: Set<String> = emptySet(),
+        bookmarkedSpotIds: Set<String> = emptySet(),
+        prefs: FakePrefs = FakePrefs(
+            capturedKeys = capturedArtifactKeys,
+            bookmarkedSpotIds = bookmarkedSpotIds
+        )
     ): ArtifactDiscoveryViewModel = ArtifactDiscoveryViewModel(
         spotId = "grand_mazu",
         artifactId = artifactId,
         contentRepo = ContentRepository(FakeContentAssetLoader(snapshot()), this),
-        prefsRepo = FakePrefs(capturedArtifactKeys),
+        prefsRepo = prefs,
         resources = resources(),
         localeProvider = { locale }
     )
 
     private class FakePrefs(
-        capturedKeys: Set<String>
+        capturedKeys: Set<String> = emptySet(),
+        bookmarkedSpotIds: Set<String> = emptySet()
     ) : UserPreferencesRepository {
         override val language: Flow<String> = MutableStateFlow("en")
         override val selectedInterests: Flow<Set<String>> = MutableStateFlow(emptySet())
         override val onboardingDone: Flow<Boolean> = MutableStateFlow(true)
         override val bookmarkedRouteIds: Flow<Set<String>> = MutableStateFlow(emptySet())
+        override val bookmarkedSpotIds: MutableStateFlow<Set<String>> = MutableStateFlow(bookmarkedSpotIds)
         override val capturedArtifactKeys: Flow<Set<String>> = MutableStateFlow(capturedKeys)
 
         override suspend fun setLanguage(tag: String) = Unit
         override suspend fun setInterests(set: Set<String>) = Unit
         override suspend fun markOnboardingDone() = Unit
         override suspend fun setBookmarkedRouteIds(set: Set<String>) = Unit
+        override suspend fun setBookmarkedSpotIds(set: Set<String>) {
+            bookmarkedSpotIds.value = set
+        }
         override suspend fun setCapturedArtifactKeys(set: Set<String>) = Unit
         override suspend fun persistedLanguageTag(): String? = null
     }

@@ -135,7 +135,9 @@ fun MemoryEditScreen(
                     .fillMaxWidth()
                     .background(Color.White)
             ) {
-                if (state.templateImageRes != 0) {
+                if (state.isSpotDraft) {
+                    SpotBookmarkCanvas(state)
+                } else if (state.templateImageRes != 0) {
                     TemplateCanvas(state)
                 }
             }
@@ -163,6 +165,63 @@ fun MemoryEditScreen(
                 onMemoriesClick = onNavigateToMemories,
                 currentDestination = "memories"
             )
+        }
+    }
+}
+
+@Composable
+private fun SpotBookmarkCanvas(state: EditState) {
+    val context = LocalContext.current
+    val firstPhoto = state.photoPaths.firstOrNull()
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        if (firstPhoto != null) {
+            FilePhoto(
+                relativePath = firstPhoto,
+                filesDir = context.filesDir,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0xFFE9E3DA))
+            )
+        }
+
+        if (state.spotTitle.isNotBlank() || state.spotDescription.isNotBlank()) {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .fillMaxWidth()
+                    .background(Color.Black.copy(alpha = 0.58f))
+                    .padding(horizontal = 24.dp, vertical = 18.dp)
+            ) {
+                if (state.spotTitle.isNotBlank()) {
+                    Text(
+                        text = state.spotTitle,
+                        style = TextStyle(
+                            fontFamily = inter,
+                            fontSize = 26.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    )
+                }
+                if (state.spotDescription.isNotBlank()) {
+                    Text(
+                        text = state.spotDescription,
+                        style = TextStyle(
+                            fontFamily = inter,
+                            fontSize = 16.sp,
+                            color = Color.White,
+                            lineHeight = 22.sp
+                        ),
+                        maxLines = 5
+                    )
+                }
+            }
         }
     }
 }

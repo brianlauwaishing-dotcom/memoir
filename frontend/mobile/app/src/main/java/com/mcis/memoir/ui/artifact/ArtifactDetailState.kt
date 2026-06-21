@@ -5,5 +5,6 @@ data class ArtifactDetailState(
     val label: String = "",
     val description: String = "",
     val imageDrawableRes: Int = 0,
+    val isBookmarked: Boolean = false,
     val error: String? = null
 )

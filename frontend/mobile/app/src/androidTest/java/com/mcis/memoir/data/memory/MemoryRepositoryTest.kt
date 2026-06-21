@@ -59,6 +59,18 @@ class MemoryRepositoryTest {
     }
 
     @Test
+    fun spotDraftsAreIndependentAndReuseLatestInProgressDraft() = runTest(dispatcher) {
+        val firstA = repo.getOrCreateSpotDraft("spot_a", "old_street", "Spot A")
+        val secondA = repo.getOrCreateSpotDraft("spot_a", "old_street", "Spot A")
+        val firstB = repo.getOrCreateSpotDraft("spot_b", "old_street", "Spot B")
+
+        assertEquals(firstA, secondA)
+        assertTrue(firstA != firstB)
+        assertEquals("spot_a", dao.getOnce(firstA)?.spotId)
+        assertEquals("spot_b", dao.getOnce(firstB)?.spotId)
+    }
+
+    @Test
     fun addAndRemovePhotoUpdatesFileAndJson() = runTest(dispatcher) {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val id = repo.startDraft("old_street", "Old Street Journal")

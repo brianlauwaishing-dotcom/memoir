@@ -37,7 +37,6 @@ class ReflectionViewModel(
     private val _effects = Channel<ReflectionEffect>(Channel.BUFFERED)
     val effects = _effects.receiveAsFlow()
 
-    private var completionConfirmed = false
     private val generateMutex = Mutex()
 
     @Volatile
@@ -143,7 +142,6 @@ class ReflectionViewModel(
                 repo.complete(memoryId)
             }.fold(
                 onSuccess = {
-                    completionConfirmed = true
                     _effects.send(ReflectionEffect.NavigateToMemoriesList)
                 },
                 onFailure = { e ->
@@ -152,13 +150,6 @@ class ReflectionViewModel(
                     _effects.send(ReflectionEffect.ShowError(message))
                 }
             )
-        }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        if (!completionConfirmed) {
-            repo.fireCancelDraftIfInProgress(memoryId)
         }
     }
 

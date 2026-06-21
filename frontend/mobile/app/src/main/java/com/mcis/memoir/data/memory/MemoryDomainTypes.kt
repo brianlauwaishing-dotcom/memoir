@@ -4,6 +4,7 @@ data class Memory(
     val id: String,
     val templateId: String,
     val routeId: String?,
+    val spotId: String?,
     val title: String,
     val status: String,
     val createdAt: Long,

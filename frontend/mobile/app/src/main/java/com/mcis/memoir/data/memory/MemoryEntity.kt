@@ -8,6 +8,7 @@ data class MemoryEntity(
     @PrimaryKey val id: String,
     val templateId: String,
     val routeId: String? = null,
+    val spotId: String? = null,
     val title: String,
     val status: String,
     val createdAt: Long,

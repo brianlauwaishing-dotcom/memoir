@@ -38,6 +38,7 @@ class JourneyInputAssemblerTest {
         id = "11111111-1111-4111-8111-111111111111",
         templateId = templateId,
         routeId = routeId,
+        spotId = null,
         title = "Title",
         status = MemoryStatus.COMPLETED,
         createdAt = 1L,

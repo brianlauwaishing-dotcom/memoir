@@ -11,7 +11,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class ArtifactDiscoveryViewModel(
     private val spotId: String,
@@ -23,6 +27,7 @@ class ArtifactDiscoveryViewModel(
 ) : ViewModel() {
     private val _state = MutableStateFlow(ArtifactDiscoveryState())
     val state: StateFlow<ArtifactDiscoveryState> = _state.asStateFlow()
+    private val bookmarkMutex = Mutex()
 
     init {
         viewModelScope.launch {
@@ -46,11 +51,29 @@ class ArtifactDiscoveryViewModel(
                 highlight = computeHighlight(question, label),
                 imageDrawableRes = drawable(artifact.image)
             )
-            prefsRepo.capturedArtifactKeys.collectLatest { capturedKeys ->
+            combine(
+                prefsRepo.capturedArtifactKeys,
+                prefsRepo.bookmarkedSpotIds
+            ) { capturedKeys, bookmarkedSpotIds ->
                 val capturedCount = spot.artifacts.count { artifact ->
                     artifactCaptureKey(spot.id, artifact.id) in capturedKeys
                 }
-                _state.value = baseState.copy(capturedArtifactsCount = capturedCount)
+                baseState.copy(
+                    capturedArtifactsCount = capturedCount,
+                    isBookmarked = spot.id in bookmarkedSpotIds
+                )
+            }.collectLatest { nextState ->
+                _state.value = nextState
+            }
+        }
+    }
+
+    fun onBookmarkClick() {
+        viewModelScope.launch {
+            bookmarkMutex.withLock {
+                val current = prefsRepo.bookmarkedSpotIds.first()
+                val next = if (spotId in current) current - spotId else current + spotId
+                prefsRepo.setBookmarkedSpotIds(next)
             }
         }
     }

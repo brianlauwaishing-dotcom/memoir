@@ -3,6 +3,7 @@ package com.mcis.memoir
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -58,6 +59,7 @@ fun ArtifactDetailScreen(
         state = state,
         onBackClick = onBackClick,
         onInfoClick = onInfoClick,
+        onBookmarkClick = viewModel::onBookmarkClick,
         onCameraClick = onCameraClick,
         onNavigateToHome = onNavigateToHome,
         onNavigateToSaved = onNavigateToSaved,
@@ -71,6 +73,7 @@ private fun ArtifactDetailContent(
     state: ArtifactDetailState,
     onBackClick: () -> Unit,
     onInfoClick: () -> Unit,
+    onBookmarkClick: () -> Unit,
     onCameraClick: () -> Unit,
     onNavigateToHome: () -> Unit,
     onNavigateToSaved: () -> Unit,
@@ -160,16 +163,34 @@ private fun ArtifactDetailContent(
 
                         Spacer(modifier = Modifier.weight(1f))
 
-                        UntitledIcon(
-                            imageVector = UntitledIcons.InfoIcon,
-                            contentDescription = stringResource(R.string.spot_explore_info_content_description),
-                            tint = Color.White,
-                            size = 38.dp,
-                            modifier = Modifier
-                                .offset(x = 26.dp, y = (-7).dp)
-                                .clip(CircleShape)
-                                .clickable { onInfoClick() }
-                        )
+                        Row(
+                            modifier = Modifier.offset(x = 26.dp, y = (-7).dp),
+                            horizontalArrangement = Arrangement.spacedBy(14.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            UntitledIcon(
+                                imageVector = if (state.isBookmarked) {
+                                    UntitledIcons.BookmarkFilled
+                                } else {
+                                    UntitledIcons.BookmarkIcon
+                                },
+                                contentDescription = stringResource(R.string.artifact_bookmark_content_description),
+                                tint = Color.White,
+                                size = 34.dp,
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .clickable { onBookmarkClick() }
+                            )
+                            UntitledIcon(
+                                imageVector = UntitledIcons.InfoIcon,
+                                contentDescription = stringResource(R.string.spot_explore_info_content_description),
+                                tint = Color.White,
+                                size = 38.dp,
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .clickable { onInfoClick() }
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(54.dp))
@@ -245,6 +266,7 @@ fun ArtifactDetailScreenPreview() {
             ),
             onBackClick = {},
             onInfoClick = {},
+            onBookmarkClick = {},
             onCameraClick = {},
             onNavigateToHome = {},
             onNavigateToSaved = {},

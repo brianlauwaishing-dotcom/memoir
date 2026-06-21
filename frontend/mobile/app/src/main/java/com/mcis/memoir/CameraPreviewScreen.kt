@@ -3,6 +3,7 @@ package com.mcis.memoir
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
@@ -51,7 +52,7 @@ import kotlin.coroutines.suspendCoroutine
 @Composable
 fun CameraPreviewScreen(
     onBackClick: () -> Unit = {},
-    onCaptureClick: () -> Unit = {},
+    onCaptureClick: (Uri) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -172,7 +173,7 @@ fun CameraPreviewScreen(
                             val executor = ContextCompat.getMainExecutor(context)
                             val capturer = CameraCapturer(ImageCaptureSink(readyImageCapture, executor))
                             when (val result = capturer.capture(context.contentResolver)) {
-                                is CaptureResult.Success -> onCaptureClick()
+                                is CaptureResult.Success -> onCaptureClick(result.uri)
                                 is CaptureResult.Failure -> {
                                     errorMessage = result.cause.localizedMessage
                                         ?: context.getString(R.string.camera_capture_failed)

@@ -9,6 +9,7 @@ import com.mcis.memoir.data.memory.Memory
 import com.mcis.memoir.data.memory.MemoryRepository
 import com.mcis.memoir.data.memory.MemoryStatus
 import com.mcis.memoir.data.prefs.UserPreferencesRepository
+import com.mcis.memoir.ui.memory.template.TemplateCatalog
 import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
@@ -45,6 +46,7 @@ class MemoriesViewModel(
     // Latest memory rows keyed by id, kept so Share can read photo paths without a second repo read.
     @Volatile
     private var latestMemories: Map<String, Memory> = emptyMap()
+    private var latestBookmarkedSpots: Map<String, BookmarkSpotCard> = emptyMap()
 
     val state: StateFlow<MemoriesState> = combine(
         repo.observeByStatus(MemoryStatus.IN_PROGRESS),
@@ -55,11 +57,13 @@ class MemoriesViewModel(
     ) { inProgress, completed, spots, bookmarkedIds, ui ->
         latestMemories = (inProgress + completed).associateBy { it.id }
         val locale = localeProvider()
+        val bookmarkedSpots = spots.toBookmarkCards(bookmarkedIds, locale, ui.bookmarkSearchQuery)
+        latestBookmarkedSpots = bookmarkedSpots.associateBy { it.id }
         MemoriesState(
             selectedTab = ui.selectedTab,
-            inProgress = inProgress.map { it.toCard(locale) },
-            completed = completed.map { it.toCard(locale) },
-            bookmarkedSpots = spots.toBookmarkCards(bookmarkedIds, locale, ui.bookmarkSearchQuery),
+            inProgress = inProgress.filter { it.spotId == null }.map { it.toCard(locale) },
+            completed = completed.filter { it.spotId == null }.map { it.toCard(locale) },
+            bookmarkedSpots = bookmarkedSpots,
             bookmarkSearchQuery = ui.bookmarkSearchQuery,
             isLoading = false,
             activeMenuMemoryId = ui.activeMenuMemoryId,
@@ -77,7 +81,15 @@ class MemoriesViewModel(
                 _ui.update { it.copy(selectedTab = intent.tab) }
             is MemoriesIntent.BookmarkSearchChanged ->
                 _ui.update { it.copy(bookmarkSearchQuery = intent.query) }
-            is MemoriesIntent.BookmarkSpotClicked -> emit(MemoriesEffect.NavigateToSpot(intent.spotId))
+            is MemoriesIntent.BookmarkSpotClicked -> viewModelScope.launch {
+                val title = latestBookmarkedSpots[intent.spotId]?.title ?: intent.spotId
+                val memoryId = repo.getOrCreateSpotDraft(
+                    spotId = intent.spotId,
+                    templateId = TemplateCatalog.all.first().id,
+                    defaultTitle = title
+                )
+                _effects.send(MemoriesEffect.NavigateToWizard(memoryId, WizardEntry.EDIT))
+            }
             is MemoriesIntent.MoreClicked ->
                 _ui.update { it.copy(activeMenuMemoryId = intent.memoryId) }
             MemoriesIntent.MenuDismissed ->

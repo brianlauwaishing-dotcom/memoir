@@ -16,6 +16,9 @@ interface MemoryDao {
     @Query("SELECT * FROM memories WHERE id = :id")
     suspend fun getOnce(id: String): MemoryEntity?
 
+    @Query("SELECT * FROM memories WHERE spotId = :spotId AND status = 'IN_PROGRESS' ORDER BY updatedAt DESC LIMIT 1")
+    suspend fun getLatestInProgressForSpot(spotId: String): MemoryEntity?
+
     @Query("SELECT * FROM memories WHERE id = :id")
     fun observe(id: String): Flow<MemoryEntity?>
 

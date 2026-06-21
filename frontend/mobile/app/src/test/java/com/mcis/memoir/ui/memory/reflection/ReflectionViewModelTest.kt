@@ -102,6 +102,20 @@ class ReflectionViewModelTest {
         }
     }
 
+    @Test
+    fun backingOutOfReflectionKeepsDraftPhotosForEdit() = runTest(mainDispatcher) {
+        val repo = mockk<MemoryRepository>(relaxed = true)
+        every { repo.observe(memoryId) } returns MutableStateFlow(
+            memory(listOf("memories/$memoryId/photo_0.jpg"), spotId = "spot-a")
+        )
+        val vm = reflectionVm(repo)
+        advanceUntilIdle()
+
+        vm.clearForTest()
+
+        verify(exactly = 0) { repo.fireCancelDraftIfInProgress(memoryId) }
+    }
+
     private fun viewModel(): ReflectionViewModel {
         val repo = mockk<MemoryRepository>(relaxed = true)
         every { repo.observe(memoryId) } returns MutableStateFlow(memory(emptyList()))

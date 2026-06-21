@@ -160,6 +160,7 @@
     <string name="spot_explore_take_photo_zh">拍照</string>
     <string name="spot_explore_info_content_description">Info icon</string>
     <string name="spot_explore_info_content_description_zh">資訊圖示</string>
+    <string name="artifact_bookmark_content_description">Bookmark spot</string>
     <string name="spot_explore_share_content_description">Share icon</string>
     <string name="spot_explore_share_content_description_zh">分享圖示</string>
 

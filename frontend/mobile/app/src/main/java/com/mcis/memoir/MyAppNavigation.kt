@@ -40,6 +40,7 @@ import com.mcis.memoir.ui.memory.reflection.ReflectionViewModel
 import com.mcis.memoir.ui.memory.reflection.ReflectionViewModelFactory
 import com.mcis.memoir.ui.memory.template.MemoryTemplateViewModel
 import com.mcis.memoir.ui.memory.template.MemoryTemplateViewModelFactory
+import com.mcis.memoir.ui.memory.template.TemplateCatalog
 import com.mcis.memoir.ui.artifact.ArtifactDetailViewModel
 import com.mcis.memoir.ui.artifact.ArtifactDetailViewModelFactory
 import com.mcis.memoir.ui.artifact.ArtifactDiscoveryViewModel
@@ -231,9 +232,6 @@ fun MyAppNavigation() {
                                 WizardEntry.EDIT ->
                                     backStack.add(MemoryEditDestination(memoryId))
                             }
-                        },
-                        onNavigateToSpot = { spotId ->
-                            backStack.add(SpotDetailDestination(spotId))
                         }
                     )
                 }
@@ -308,11 +306,14 @@ fun MyAppNavigation() {
                     )
                 }
                 is MemoryEditDestination -> NavEntry(key) {
+                    val currentLocale = LocaleController.currentLocale()
                     val vm: EditViewModel = viewModel(
                         key = key.memoryId,
                         factory = EditViewModelFactory(
                             memoryId = key.memoryId,
-                            repo = MemoirApplication.memoryRepo
+                            repo = MemoirApplication.memoryRepo,
+                            contentRepo = MemoirApplication.content,
+                            localeProvider = { currentLocale }
                         )
                     )
                     MemoryEditScreen(
@@ -484,6 +485,7 @@ fun MyAppNavigation() {
                             spotId = key.spotId,
                             artifactId = key.artifactId,
                             content = MemoirApplication.content,
+                            prefs = MemoirApplication.prefs,
                             resources = ctx.resources,
                             localeProvider = { currentLocale }
                         )
@@ -518,15 +520,24 @@ fun MyAppNavigation() {
                     )
                 }
                 is CameraPreviewDestination -> NavEntry(key) {
+                    val ctx = LocalContext.current
+                    val currentLocale = LocaleController.currentLocale()
                     CameraPreviewScreen(
                         onBackClick = {
                             backStack.removeLastOrNull()
                         },
-                        onCaptureClick = {
+                        onCaptureClick = { uri ->
                             coroutineScope.launch {
                                 val captureKey = artifactCaptureKey(key.spotId, key.artifactId)
                                 val current = prefsRepo.capturedArtifactKeys.first()
                                 prefsRepo.setCapturedArtifactKeys(current + captureKey)
+                                val spot = MemoirApplication.content.spot(key.spotId)
+                                val memoryId = MemoirApplication.memoryRepo.getOrCreateSpotDraft(
+                                    spotId = key.spotId,
+                                    templateId = TemplateCatalog.all.first().id,
+                                    defaultTitle = spot?.title?.get(currentLocale) ?: key.spotId
+                                )
+                                MemoirApplication.memoryRepo.addPhoto(memoryId, uri, ctx.contentResolver)
                                 backStack.removeLastOrNull()
                             }
                         }

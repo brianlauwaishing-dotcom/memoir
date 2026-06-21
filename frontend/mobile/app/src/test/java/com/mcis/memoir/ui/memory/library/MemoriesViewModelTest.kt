@@ -60,11 +60,20 @@ class MemoriesViewModelTest {
                     MemoryStatus.IN_PROGRESS,
                     photos = listOf("memories/ip2/photo_0.jpg"),
                     insights = "Loved it"
+                ),
+                memory(
+                    "spot1",
+                    MemoryStatus.IN_PROGRESS,
+                    photos = listOf("memories/spot1/photo_0.jpg"),
+                    spotId = "a"
                 )
             )
         )
         val completed = MutableStateFlow(
-            listOf(memory("c1", MemoryStatus.COMPLETED, photos = listOf("memories/c1/photo_0.jpg")))
+            listOf(
+                memory("c1", MemoryStatus.COMPLETED, photos = listOf("memories/c1/photo_0.jpg")),
+                memory("spot2", MemoryStatus.COMPLETED, photos = listOf("memories/spot2/photo_0.jpg"), spotId = "b")
+            )
         )
         val vm = viewModel(inProgress = inProgress, completed = completed)
 
@@ -130,14 +139,23 @@ class MemoriesViewModelTest {
     }
 
     @Test
-    fun bookmarkClickEmitsNavigateToSpot() = runTest(mainDispatcher) {
-        val vm = viewModel()
+    fun bookmarkClickOpensSpotDraftForPreviewEdit() = runTest(mainDispatcher) {
+        val repo = FakeMemoryRepository(
+            inProgress = MutableStateFlow(emptyList()),
+            completed = MutableStateFlow(emptyList())
+        )
+        val vm = viewModel(repo = repo)
         subscribeState(vm)
 
         vm.effects.test {
             vm.onIntent(MemoriesIntent.BookmarkSpotClicked("a"))
             advanceUntilIdle()
-            assertEquals(MemoriesEffect.NavigateToSpot("a"), awaitItem())
+
+            assertEquals(
+                MemoriesEffect.NavigateToWizard("spot-draft-a", WizardEntry.EDIT),
+                awaitItem()
+            )
+            assertEquals(listOf("a"), repo.spotDraftRequests)
         }
     }
 
@@ -237,11 +255,13 @@ class MemoriesViewModelTest {
         id: String,
         status: String,
         photos: List<String> = emptyList(),
-        insights: String = ""
+        insights: String = "",
+        spotId: String? = null
     ): Memory = Memory(
         id = id,
         templateId = "old_street",
         routeId = null,
+        spotId = spotId,
         title = "Memory $id",
         status = status,
         createdAt = 1_000L,
@@ -305,6 +325,7 @@ class MemoriesViewModelTest {
     ) : MemoryRepository {
         val deletedIds = mutableListOf<String>()
         val duplicatedIds = mutableListOf<String>()
+        val spotDraftRequests = mutableListOf<String>()
 
         override fun observeByStatus(status: String): Flow<List<Memory>> =
             if (status == MemoryStatus.IN_PROGRESS) inProgress else completed
@@ -319,6 +340,14 @@ class MemoriesViewModelTest {
         }
 
         override suspend fun startDraft(templateId: String, defaultTitle: String): String = ""
+        override suspend fun getOrCreateSpotDraft(
+            spotId: String,
+            templateId: String,
+            defaultTitle: String
+        ): String {
+            spotDraftRequests.add(spotId)
+            return "spot-draft-$spotId"
+        }
         override fun observe(id: String): Flow<Memory?> = flowOf(null)
         override fun observeAll(): Flow<List<Memory>> = flowOf(emptyList())
         override suspend fun addPhoto(

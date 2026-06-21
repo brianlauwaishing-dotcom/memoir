@@ -62,6 +62,7 @@ fun ArtifactDiscoveryScreen(
         state = state,
         onBackClick = onBackClick,
         onInfoClick = onInfoClick,
+        onBookmarkClick = viewModel::onBookmarkClick,
         onMoreClick = onMoreClick,
         onCameraClick = onCameraClick,
         modifier = modifier
@@ -73,6 +74,7 @@ private fun ArtifactDiscoveryContent(
     state: ArtifactDiscoveryState,
     onBackClick: () -> Unit,
     onInfoClick: (String) -> Unit,
+    onBookmarkClick: () -> Unit,
     onMoreClick: (String, Int) -> Unit,
     onCameraClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -159,20 +161,42 @@ private fun ArtifactDiscoveryContent(
 
                     Spacer(modifier = Modifier.weight(1f))
 
-                    Box(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .background(Color.Black.copy(alpha = 0.38f), CircleShape)
-                            .clip(CircleShape)
-                            .clickable { state.spotId?.let(onInfoClick) },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        UntitledIcon(
-                            imageVector = UntitledIcons.InfoIcon,
-                            contentDescription = stringResource(R.string.spot_explore_info_content_description),
-                            tint = Color.White,
-                            size = 30.dp
-                        )
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .background(Color.Black.copy(alpha = 0.38f), CircleShape)
+                                .clip(CircleShape)
+                                .clickable { onBookmarkClick() },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            UntitledIcon(
+                                imageVector = if (state.isBookmarked) {
+                                    UntitledIcons.BookmarkFilled
+                                } else {
+                                    UntitledIcons.BookmarkIcon
+                                },
+                                contentDescription = stringResource(R.string.artifact_bookmark_content_description),
+                                tint = Color.White,
+                                size = 26.dp
+                            )
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .background(Color.Black.copy(alpha = 0.38f), CircleShape)
+                                .clip(CircleShape)
+                                .clickable { state.spotId?.let(onInfoClick) },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            UntitledIcon(
+                                imageVector = UntitledIcons.InfoIcon,
+                                contentDescription = stringResource(R.string.spot_explore_info_content_description),
+                                tint = Color.White,
+                                size = 30.dp
+                            )
+                        }
                     }
                 }
 
@@ -287,6 +311,7 @@ fun ArtifactDiscoveryScreenPreview() {
             ),
             onBackClick = {},
             onInfoClick = {},
+            onBookmarkClick = {},
             onMoreClick = { _, _ -> },
             onCameraClick = {}
         )

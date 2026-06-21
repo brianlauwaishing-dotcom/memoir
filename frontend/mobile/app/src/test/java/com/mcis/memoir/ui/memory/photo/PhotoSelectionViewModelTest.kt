@@ -100,10 +100,11 @@ class PhotoSelectionViewModelTest {
     }
 }
 
-fun memory(paths: List<String>): Memory = Memory(
+fun memory(paths: List<String>, spotId: String? = null): Memory = Memory(
     id = "11111111-1111-4111-8111-111111111111",
     templateId = "old_street",
     routeId = null,
+    spotId = spotId,
     title = "Old Street Journal",
     status = MemoryStatus.IN_PROGRESS,
     createdAt = 1L,
