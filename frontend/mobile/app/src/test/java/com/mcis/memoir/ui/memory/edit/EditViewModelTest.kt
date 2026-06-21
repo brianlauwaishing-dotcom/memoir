@@ -56,7 +56,9 @@ class EditViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
 
+        // Clearing the ViewModel (e.g. on forward navigation to Reflection) must NOT delete the
+        // draft; ReflectionViewModel finalizes it via repo.complete().
         vm.clearForTest()
-        verify(exactly = 1) { repo.fireCancelDraftIfInProgress(memoryId) }
+        verify(exactly = 0) { repo.fireCancelDraftIfInProgress(memoryId) }
     }
 }

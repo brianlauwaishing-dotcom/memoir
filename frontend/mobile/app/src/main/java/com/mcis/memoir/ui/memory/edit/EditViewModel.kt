@@ -53,8 +53,7 @@ class EditViewModel(
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        repo.fireCancelDraftIfInProgress(memoryId)
-    }
+    // See PhotoSelectionViewModel: the draft is intentionally NOT cancelled on clear, otherwise
+    // navigating forward (Edit -> Reflection) would delete the IN_PROGRESS memory before it is
+    // completed. ReflectionViewModel finalizes the draft via repo.complete().
 }

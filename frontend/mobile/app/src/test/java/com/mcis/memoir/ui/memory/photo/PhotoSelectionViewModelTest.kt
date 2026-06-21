@@ -74,7 +74,7 @@ class PhotoSelectionViewModelTest {
     }
 
     @Test
-    fun nextClickedDoesNotNavigateWithoutPhotosAndOnClearedCleansUp() = runTest(mainDispatcher) {
+    fun nextClickedDoesNotNavigateWithoutPhotosAndClearDoesNotCancelDraft() = runTest(mainDispatcher) {
         val repo = mockk<MemoryRepository>(relaxed = true)
         every { repo.observe(memoryId) } returns MutableStateFlow(memory(paths = emptyList()))
         val vm = PhotoSelectionViewModel(memoryId, repo, mockk<ContentResolver>())
@@ -87,8 +87,10 @@ class PhotoSelectionViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
 
+        // Clearing the ViewModel (e.g. on forward navigation to Edit) must NOT delete the draft,
+        // or the next wizard step would lose the in-progress memory.
         vm.clearForTest()
-        verify(exactly = 1) { repo.fireCancelDraftIfInProgress(memoryId) }
+        verify(exactly = 0) { repo.fireCancelDraftIfInProgress(memoryId) }
     }
 
     private fun viewModel(paths: List<String>): PhotoSelectionViewModel {
@@ -116,7 +118,14 @@ fun memory(paths: List<String>): Memory = Memory(
 )
 
 fun ViewModel.clearForTest() {
-    val method = javaClass.getDeclaredMethod("onCleared")
-    method.isAccessible = true
-    method.invoke(this)
+    var clazz: Class<*>? = javaClass
+    while (clazz != null) {
+        val method = clazz.declaredMethods.firstOrNull { it.name == "onCleared" }
+        if (method != null) {
+            method.isAccessible = true
+            method.invoke(this)
+            return
+        }
+        clazz = clazz.superclass
+    }
 }

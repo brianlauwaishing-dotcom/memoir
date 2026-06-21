@@ -3,6 +3,7 @@ package com.mcis.memoir
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +16,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
@@ -34,6 +37,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +48,7 @@ import com.mcis.memoir.ui.components.BottomNavigationBar
 import com.mcis.memoir.ui.components.UntitledIcon
 import com.mcis.memoir.ui.icons.*
 import com.mcis.memoir.ui.memory.components.FilePhoto
+import com.mcis.memoir.ui.memory.photo.DemoPhotos
 import com.mcis.memoir.ui.memory.photo.PhotoSelectionEffect
 import com.mcis.memoir.ui.memory.photo.PhotoSelectionIntent
 import com.mcis.memoir.ui.memory.photo.PhotoSelectionViewModel
@@ -160,7 +165,16 @@ fun MemoryPhotoSelectionScreen(
                     )
                 )
 
-                Spacer(modifier = Modifier.height(33.dp))
+                Spacer(modifier = Modifier.height(20.dp))
+
+                DemoPhotosRow(
+                    onDemoPhotoClick = { resId ->
+                        val uri = DemoPhotos.uriFor(context, resId)
+                        viewModel.onIntent(PhotoSelectionIntent.PhotosPicked(listOf(uri)))
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
 
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
@@ -235,6 +249,37 @@ private fun SelectedFilePhotoItem(
                     color = Color.White
                 )
             )
+        }
+    }
+}
+
+@Composable
+private fun DemoPhotosRow(onDemoPhotoClick: (Int) -> Unit) {
+    Column {
+        Text(
+            text = stringResource(R.string.memory_flow_demo_photos),
+            style = TextStyle(
+                fontFamily = inter,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF868782)
+            )
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            items(DemoPhotos.resIds) { resId ->
+                Image(
+                    painter = painterResource(resId),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(72.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable { onDemoPhotoClick(resId) }
+                )
+            }
         }
     }
 }

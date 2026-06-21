@@ -82,6 +82,7 @@
     <string name="memory_flow_photos_selected">已選擇 %1$d 張相片</string>
     <string name="memory_flow_hold_to_reorder">長按以重新排序</string>
     <string name="memory_flow_add_photos">新增相片</string>
+    <string name="memory_flow_demo_photos">示範相片</string>
     <string name="memory_flow_preview_edit">預覽與編輯</string>
     <string name="memory_flow_move">移動</string>
     <string name="memory_flow_filters">濾鏡</string>

@@ -180,6 +180,8 @@
     <string name="memory_flow_hold_to_reorder_zh">長按以重新排序</string>
     <string name="memory_flow_add_photos">Add Photos</string>
     <string name="memory_flow_add_photos_zh">新增相片</string>
+    <string name="memory_flow_demo_photos">Demo Photos</string>
+    <string name="memory_flow_demo_photos_zh">示範相片</string>
     <string name="memory_flow_preview_edit">Preview &amp; Edit</string>
     <string name="memory_flow_preview_edit_zh">預覽與編輯</string>
     <string name="memory_flow_move">Move</string>

@@ -68,8 +68,9 @@ class PhotoSelectionViewModel(
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        repo.fireCancelDraftIfInProgress(memoryId)
-    }
+    // Note: the in-progress draft is intentionally NOT cancelled when this ViewModel is cleared.
+    // Navigation3 clears a step's ViewModel on forward navigation (Photo -> Edit) as well as on
+    // back-out, so cancelling here would delete the draft the next wizard step still needs.
+    // Drafts persist as resumable IN_PROGRESS memories ("Continue editing") and stale ones are
+    // removed by MemoryRepository.sweepOrphans() on app start.
 }
