@@ -185,37 +185,7 @@ fun MemoryReflectionScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(83.dp)
-                        .shadow(12.dp, RoundedCornerShape(15.dp))
-                        .background(DesignTokens.colorLanguageSelectionBackground, RoundedCornerShape(15.dp))
-                        .clickable { Log.w("memory-creation-flow", "Add to landmarks deferred") }
-                        .padding(horizontal = 20.dp),
-                    contentAlignment = Alignment.CenterStart
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                        UntitledIcon(UntitledIcons.LandmarkIcon, null, size = 44.dp, tint = Color.Black)
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = stringResource(R.string.memory_reflection_add_landmarks),
-                            style = TextStyle(
-                                fontFamily = inter,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                        Box(
-                            modifier = Modifier
-                                .size(24.dp)
-                                .border(2.dp, Color.Gray, RoundedCornerShape(4.dp))
-                        )
-                    }
-                }
 
-                Spacer(modifier = Modifier.height(24.dp))
             }
 
             BottomNavigationBar(
