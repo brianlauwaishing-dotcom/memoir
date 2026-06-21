@@ -27,10 +27,7 @@ class DeepSeekReflectionClient(private val openAI: OpenAI) : ReflectionClient {
                 if (text.isBlank()) ReflectionResult.Failure(ReflectionError.Unexpected)
                 else ReflectionResult.Success(text)
             },
-            onFailure = { e ->
-                android.util.Log.w("ai-debug", "DeepSeek generate failed: ${e::class.java.name}: ${e.message}", e)
-                ReflectionResult.Failure(mapError(e), e)
-            }
+            onFailure = { e -> ReflectionResult.Failure(mapError(e), e) }
         )
     }
 
