@@ -1,9 +1,13 @@
 package com.mcis.memoir
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,17 +21,23 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -37,10 +47,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mcis.memoir.ui.components.BottomNavigationBar
 import com.mcis.memoir.ui.components.UntitledIcon
 import com.mcis.memoir.ui.icons.*
+import com.mcis.memoir.ui.memory.reflection.AiState
 import com.mcis.memoir.ui.memory.reflection.ReflectionEffect
 import com.mcis.memoir.ui.memory.reflection.ReflectionIntent
 import com.mcis.memoir.ui.memory.reflection.ReflectionViewModel
 import com.mcis.memoir.ui.theme.inter
+import kotlinx.coroutines.delay
 
 @Composable
 fun MemoryReflectionScreen(
@@ -54,12 +66,28 @@ fun MemoryReflectionScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val isChinese = LocalConfiguration.current.locales[0].language == "zh"
+    val context = LocalContext.current
+
+    var copiedAt by remember { mutableLongStateOf(0L) }
+    var showCopied by remember { mutableStateOf(false) }
+    LaunchedEffect(copiedAt) {
+        if (copiedAt > 0L) {
+            showCopied = true
+            delay(1500)
+            showCopied = false
+        }
+    }
 
     LaunchedEffect(viewModel) {
         viewModel.effects.collect { effect ->
             when (effect) {
                 ReflectionEffect.NavigateToMemoriesList -> onNavigateToMemoriesList()
                 is ReflectionEffect.ShowError -> Unit
+                is ReflectionEffect.CopyToClipboard -> {
+                    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    clipboard.setPrimaryClip(ClipData.newPlainText("memoir-reflection", effect.text))
+                    copiedAt = System.currentTimeMillis()
+                }
             }
         }
     }
@@ -146,26 +174,14 @@ fun MemoryReflectionScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(72.dp)
-                        .shadow(12.dp, RoundedCornerShape(15.dp))
-                        .background(Color(0xFFFCE4D9), RoundedCornerShape(15.dp))
-                        .clickable { Log.w("memory-creation-flow", "AI polish coming in change #8") }
-                        .padding(horizontal = 20.dp),
-                    contentAlignment = Alignment.CenterStart
-                ) {
-                    Text(
-                        text = stringResource(R.string.memory_reflection_polish_ai),
-                        style = TextStyle(
-                            fontFamily = inter,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black
-                        )
-                    )
-                }
+                AiReflectionSection(
+                    aiState = state.aiState,
+                    showCopied = showCopied,
+                    onPolish = { viewModel.onIntent(ReflectionIntent.PolishClicked) },
+                    onRegenerate = { viewModel.onIntent(ReflectionIntent.RegenerateClicked) },
+                    onCopy = { viewModel.onIntent(ReflectionIntent.CopyClicked) },
+                    onDismissError = { viewModel.onIntent(ReflectionIntent.DismissAiError) }
+                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -230,4 +246,149 @@ private fun ReflectionField(
         singleLine = singleLine,
         textStyle = TextStyle(fontFamily = inter, fontSize = 14.sp, color = Color.Black)
     )
+}
+
+@Composable
+private fun AiReflectionSection(
+    aiState: AiState,
+    showCopied: Boolean,
+    onPolish: () -> Unit,
+    onRegenerate: () -> Unit,
+    onCopy: () -> Unit,
+    onDismissError: () -> Unit
+) {
+    when (aiState) {
+        is AiState.Idle -> PolishButton(enabled = true, showSpinner = false, onClick = onPolish)
+        is AiState.Generating -> PolishButton(enabled = false, showSpinner = true, onClick = {})
+        is AiState.Ready -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .shadow(12.dp, RoundedCornerShape(15.dp))
+                    .background(Color.White, RoundedCornerShape(15.dp))
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = aiState.text,
+                    style = TextStyle(fontFamily = inter, fontSize = 15.sp, color = Color.Black)
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp)
+                        .background(Color(0xFFFCE4D9), RoundedCornerShape(12.dp))
+                        .clickable { onCopy() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.memory_reflection_copy),
+                        style = TextStyle(fontFamily = inter, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp)
+                        .background(DesignTokens.colorMaroon, RoundedCornerShape(12.dp))
+                        .clickable { onRegenerate() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.memory_reflection_regenerate),
+                        style = TextStyle(
+                            fontFamily = inter,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    )
+                }
+            }
+            if (showCopied) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(R.string.memory_reflection_copied),
+                    style = TextStyle(fontFamily = inter, fontSize = 13.sp, color = DesignTokens.colorMaroon)
+                )
+            }
+        }
+        is AiState.Error -> {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFFFDECEA), RoundedCornerShape(12.dp))
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = aiState.message,
+                    modifier = Modifier.weight(1f),
+                    style = TextStyle(fontFamily = inter, fontSize = 14.sp, color = Color(0xFFB00020))
+                )
+                Text(
+                    text = stringResource(R.string.memory_reflection_regenerate),
+                    modifier = Modifier
+                        .clickable { onPolish() }
+                        .padding(horizontal = 8.dp),
+                    style = TextStyle(
+                        fontFamily = inter,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = DesignTokens.colorMaroon
+                    )
+                )
+                Text(
+                    text = "✕",
+                    modifier = Modifier
+                        .clickable { onDismissError() }
+                        .padding(start = 8.dp),
+                    style = TextStyle(fontFamily = inter, fontSize = 14.sp, color = Color.Gray)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun PolishButton(
+    enabled: Boolean,
+    showSpinner: Boolean,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(72.dp)
+            .shadow(12.dp, RoundedCornerShape(15.dp))
+            .background(Color(0xFFFCE4D9), RoundedCornerShape(15.dp))
+            .then(if (enabled) Modifier.clickable { onClick() } else Modifier)
+            .padding(horizontal = 20.dp),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Text(
+            text = stringResource(R.string.memory_reflection_polish_ai),
+            style = TextStyle(
+                fontFamily = inter,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+        )
+        if (showSpinner) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .size(24.dp),
+                color = DesignTokens.colorMaroon,
+                strokeWidth = 2.dp
+            )
+        }
+    }
 }

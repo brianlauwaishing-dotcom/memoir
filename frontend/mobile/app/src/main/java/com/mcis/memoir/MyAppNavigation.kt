@@ -31,6 +31,9 @@ import com.mcis.memoir.ui.home.HomeViewModelFactory
 import com.mcis.memoir.ui.language.LanguageSelectionViewModel
 import com.mcis.memoir.ui.memory.edit.EditViewModel
 import com.mcis.memoir.ui.memory.edit.EditViewModelFactory
+import com.mcis.memoir.ui.memory.library.MemoriesViewModel
+import com.mcis.memoir.ui.memory.library.MemoriesViewModelFactory
+import com.mcis.memoir.ui.memory.library.WizardEntry
 import com.mcis.memoir.ui.memory.photo.PhotoSelectionViewModel
 import com.mcis.memoir.ui.memory.photo.PhotoSelectionViewModelFactory
 import com.mcis.memoir.ui.memory.reflection.ReflectionViewModel
@@ -45,6 +48,8 @@ import com.mcis.memoir.ui.route.RouteDetailViewModel
 import com.mcis.memoir.ui.route.RouteDetailViewModelFactory
 import com.mcis.memoir.ui.saved.SavedViewModel
 import com.mcis.memoir.ui.saved.SavedViewModelFactory
+import com.mcis.memoir.ui.spot.SpotDetailViewModel
+import com.mcis.memoir.ui.spot.SpotDetailViewModelFactory
 import com.mcis.memoir.ui.spot.SpotIntroViewModel
 import com.mcis.memoir.ui.spot.SpotIntroViewModelFactory
 import com.mcis.memoir.data.prefs.artifactCaptureKey
@@ -191,8 +196,19 @@ fun MyAppNavigation() {
                     )
                 }
                 is MemoriesDestination -> NavEntry(key) {
+                    val ctx = LocalContext.current
+                    val currentLocale = LocaleController.currentLocale()
+                    val vm: MemoriesViewModel = viewModel(
+                        factory = MemoriesViewModelFactory(
+                            repo = MemoirApplication.memoryRepo,
+                            contentRepo = MemoirApplication.content,
+                            prefsRepo = MemoirApplication.prefs,
+                            resources = ctx.resources,
+                            localeProvider = { currentLocale }
+                        )
+                    )
                     MemoriesScreen(
-                        selectedLanguage = selectedLanguage,
+                        viewModel = vm,
                         onNavigateToHome = {
                             backStack.clear()
                             backStack.add(HomeDestination)
@@ -208,8 +224,16 @@ fun MyAppNavigation() {
                         onCreateMemoryClick = {
                             backStack.add(MemoryTemplateDestination)
                         },
-                        onSpotClick = { spotId ->
-                            backStack.add(MemoryPhotoSelectionDestination(spotId))
+                        onNavigateToWizard = { memoryId, entry ->
+                            when (entry) {
+                                WizardEntry.PHOTO_SELECTION ->
+                                    backStack.add(MemoryPhotoSelectionDestination(memoryId))
+                                WizardEntry.EDIT ->
+                                    backStack.add(MemoryEditDestination(memoryId))
+                            }
+                        },
+                        onNavigateToSpot = { spotId ->
+                            backStack.add(SpotDetailDestination(spotId))
                         }
                     )
                 }
@@ -317,11 +341,17 @@ fun MyAppNavigation() {
                     )
                 }
                 is MemoryReflectionDestination -> NavEntry(key) {
+                    val ctx = LocalContext.current
+                    val currentLocale = LocaleController.currentLocale()
                     val vm: ReflectionViewModel = viewModel(
                         key = key.memoryId,
                         factory = ReflectionViewModelFactory(
                             memoryId = key.memoryId,
-                            repo = MemoirApplication.memoryRepo
+                            repo = MemoirApplication.memoryRepo,
+                            reflectionClient = MemoirApplication.reflectionClient,
+                            contentRepo = MemoirApplication.content,
+                            resources = ctx.resources,
+                            localeProvider = { currentLocale }
                         )
                     )
                     MemoryReflectionScreen(
@@ -503,9 +533,19 @@ fun MyAppNavigation() {
                     )
                 }
                 is SpotDetailDestination -> NavEntry(key) {
+                    val ctx = LocalContext.current
+                    val currentLocale = LocaleController.currentLocale()
+                    val vm: SpotDetailViewModel = viewModel(
+                        key = key.spotId,
+                        factory = SpotDetailViewModelFactory(
+                            spotId = key.spotId,
+                            content = MemoirApplication.content,
+                            resources = ctx.resources,
+                            localeProvider = { currentLocale }
+                        )
+                    )
                     SpotDetailScreen(
-                        selectedLanguage = selectedLanguage,
-                        spotId = key.spotId,
+                        viewModel = vm,
                         onBackClick = {
                             backStack.removeLastOrNull()
                         },

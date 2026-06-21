@@ -52,6 +52,11 @@
     <string name="memories_menu_delete">刪除回顧</string>
     <string name="memories_menu_duplicate">複製回顧</string>
     <string name="memories_menu_share">分享回顧</string>
+    <string name="memories_route_tab">行程</string>
+    <string name="memories_bookmark_tab">書籤</string>
+    <string name="memories_search_bookmarks">搜尋書籤</string>
+    <string name="memories_choose_bookmarks">選擇書籤</string>
+    <string name="memories_empty_bookmarks">尚無收藏書籤</string>
     <string name="spot_detail_duration">停留時間</string>
     <string name="spot_detail_why_matters">為什麼重要</string>
     <string name="spot_detail_historical_context">歷史背景</string>
@@ -101,6 +106,13 @@
     <string name="memory_reflection_placeholder">請輸入您對這次旅行的感受。</string>
     <string name="memory_reflection_regenerate">重新生成</string>
     <string name="memory_reflection_copy">複製</string>
+    <string name="memory_reflection_generating">生成中…</string>
+    <string name="memory_reflection_copied">已複製！</string>
+    <string name="error_network">網路錯誤，請檢查連線</string>
+    <string name="error_invalid_api_key">API 金鑰無效，請聯絡開發者</string>
+    <string name="error_rate_limited">請求過於頻繁，請等候 30 秒</string>
+    <string name="error_service_unavailable">服務暫時無法使用，請稍後再試</string>
+    <string name="error_unexpected">發生未預期錯誤，請再試一次</string>
     <string name="route_detail_your_journey">您的旅程</string>
     <string name="route_detail_save_place">收藏地點</string>
     <string name="route_not_found">找不到路徑</string>

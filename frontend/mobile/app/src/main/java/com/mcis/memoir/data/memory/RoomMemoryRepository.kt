@@ -120,6 +120,16 @@ class RoomMemoryRepository(
         )
     }
 
+    override suspend fun updateGeneratedReflection(memoryId: String, text: String) = withContext(ioDispatcher) {
+        val row = dao.getOnce(memoryId) ?: return@withContext
+        dao.upsert(
+            row.copy(
+                generatedReflection = text,
+                updatedAt = System.currentTimeMillis()
+            )
+        )
+    }
+
     override suspend fun complete(memoryId: String) = withContext(ioDispatcher) {
         val current = dao.getOnce(memoryId) ?: error("memory not found: $memoryId")
         dao.upsert(
@@ -140,6 +150,43 @@ class RoomMemoryRepository(
 
     override fun fireCancelDraftIfInProgress(memoryId: String) {
         cleanupScope.launch { cancelDraftIfInProgress(memoryId) }
+    }
+
+    override suspend fun deleteMemory(memoryId: String) = withContext(ioDispatcher) {
+        if (!memoryId.isValidUuid()) return@withContext
+        deleteMemoryDirectory(memoryId)
+        dao.delete(memoryId)
+    }
+
+    override suspend fun duplicateMemory(memoryId: String): Result<String> = withContext(ioDispatcher) {
+        var allocatedNewId: String? = null
+        runCatching {
+            require(memoryId.isValidUuid()) { "memoryId must be a UUID" }
+            val source = dao.getOnce(memoryId) ?: error("memory not found: $memoryId")
+            val newId = UUID.randomUUID().toString()
+            allocatedNewId = newId
+            val sourcePaths = source.photoPaths()
+            val copiedPaths = sourcePaths.mapIndexed { index, sourcePath ->
+                val sourceFile = File(filesDir, sourcePath)
+                val destPath = "memories/$newId/photo_$index.jpg"
+                val destFile = File(filesDir, destPath)
+                destFile.parentFile?.mkdirs()
+                sourceFile.copyTo(destFile, overwrite = true)
+                destPath
+            }
+            val now = System.currentTimeMillis()
+            dao.upsert(
+                source.copy(
+                    id = newId,
+                    createdAt = now,
+                    updatedAt = now,
+                    photoLocalPaths = json.encodeToString(copiedPaths)
+                )
+            )
+            newId
+        }.onFailure {
+            allocatedNewId?.let { deleteMemoryDirectory(it) }
+        }
     }
 
     override suspend fun sweepOrphans() = withContext(ioDispatcher) {

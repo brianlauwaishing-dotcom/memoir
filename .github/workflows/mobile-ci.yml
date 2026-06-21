@@ -1,0 +1,33 @@
+name: mobile-ci
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '11'
+
+      # Pre-create local.properties so the DEEPSEEK_API_KEY BuildConfig read resolves.
+      # The dummy key is by design — any test accidentally hitting DeepSeek 401s fast.
+      # NEVER write a real key to CI.
+      - name: Seed local.properties with dummy DeepSeek key
+        run: echo "DEEPSEEK_API_KEY=dummy-ci-key" >> frontend/mobile/local.properties
+
+      - name: Assemble debug
+        run: cd frontend/mobile && ./gradlew :app:assembleDebug
+
+      - name: Unit tests
+        run: cd frontend/mobile && ./gradlew :app:testDebugUnitTest
+
+      - name: Lint
+        run: cd frontend/mobile && ./gradlew :app:lintDebug

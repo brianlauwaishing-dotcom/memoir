@@ -1,5 +1,6 @@
 package com.mcis.memoir.ui.memory.reflection
 
+import android.content.res.Resources
 import app.cash.turbine.test
 import com.mcis.memoir.data.memory.MemoryRepository
 import com.mcis.memoir.ui.memory.photo.clearForTest
@@ -9,6 +10,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -62,7 +64,7 @@ class ReflectionViewModelTest {
         every { repo.observe(memoryId) } returns MutableStateFlow(memory(emptyList()))
         coEvery { repo.updateReflection(any(), any(), any(), any()) } returns Unit
         coEvery { repo.complete(memoryId) } returns Unit
-        val vm = ReflectionViewModel(memoryId, repo)
+        val vm = reflectionVm(repo)
         advanceUntilIdle()
 
         vm.onIntent(ReflectionIntent.MoodChanged(""))
@@ -88,7 +90,7 @@ class ReflectionViewModelTest {
         val repo = mockk<MemoryRepository>(relaxed = true)
         every { repo.observe(memoryId) } returns MutableStateFlow(memory(emptyList()))
         coEvery { repo.updateReflection(any(), any(), any(), any()) } throws IllegalStateException("nope")
-        val vm = ReflectionViewModel(memoryId, repo)
+        val vm = reflectionVm(repo)
         advanceUntilIdle()
 
         vm.effects.test {
@@ -103,6 +105,16 @@ class ReflectionViewModelTest {
     private fun viewModel(): ReflectionViewModel {
         val repo = mockk<MemoryRepository>(relaxed = true)
         every { repo.observe(memoryId) } returns MutableStateFlow(memory(emptyList()))
-        return ReflectionViewModel(memoryId, repo)
+        return reflectionVm(repo)
     }
+
+    private fun reflectionVm(repo: MemoryRepository): ReflectionViewModel =
+        ReflectionViewModel(
+            memoryId = memoryId,
+            repo = repo,
+            reflectionClient = mockk(relaxed = true),
+            contentRepo = mockk(relaxed = true),
+            resources = mockk<Resources>(relaxed = true),
+            localeProvider = { Locale.ENGLISH }
+        )
 }

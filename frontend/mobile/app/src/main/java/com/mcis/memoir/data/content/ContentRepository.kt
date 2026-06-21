@@ -20,6 +20,10 @@ class ContentRepository(
         emit(snapshot.await().routes.values.toList())
     }
 
+    fun spots(): Flow<List<Spot>> = flow {
+        emit(snapshot.await().spots.values.toList())
+    }
+
     suspend fun route(id: String): Route? = snapshot.await().routes[id]
 
     suspend fun spot(id: String): Spot? = snapshot.await().spots[id]

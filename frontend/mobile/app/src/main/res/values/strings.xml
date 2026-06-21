@@ -121,6 +121,11 @@
     <string name="memories_menu_duplicate_zh">複製回顧</string>
     <string name="memories_menu_share">Share Memory</string>
     <string name="memories_menu_share_zh">分享回顧</string>
+    <string name="memories_route_tab">Route</string>
+    <string name="memories_bookmark_tab">Bookmark</string>
+    <string name="memories_search_bookmarks">Search Bookmarks</string>
+    <string name="memories_choose_bookmarks">Choose Bookmarks</string>
+    <string name="memories_empty_bookmarks">No saved bookmarks yet</string>
 
     <!-- Spot Detail Screen -->
     <string name="spot_detail_duration">DURATION</string>
@@ -214,6 +219,13 @@
     <string name="memory_reflection_regenerate_zh">重新生成</string>
     <string name="memory_reflection_copy">copy</string>
     <string name="memory_reflection_copy_zh">複製</string>
+    <string name="memory_reflection_generating">Generating…</string>
+    <string name="memory_reflection_copied">Copied!</string>
+    <string name="error_network">Network error. Check your connection.</string>
+    <string name="error_invalid_api_key">API key invalid — contact dev.</string>
+    <string name="error_rate_limited">Too many requests. Wait 30 seconds.</string>
+    <string name="error_service_unavailable">Service unavailable. Try again later.</string>
+    <string name="error_unexpected">Something went wrong. Try again.</string>
 
     <!-- Route Detail Screen -->
     <string name="route_detail_your_journey">YOUR JOURNEY</string>

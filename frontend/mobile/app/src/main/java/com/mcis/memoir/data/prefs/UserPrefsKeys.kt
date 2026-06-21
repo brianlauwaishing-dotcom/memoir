@@ -9,5 +9,6 @@ internal object UserPrefsKeys {
     val INTERESTS = stringSetPreferencesKey("user_interests")
     val ONBOARDING_DONE = booleanPreferencesKey("onboarding_completed")
     val BOOKMARKED_ROUTES = stringSetPreferencesKey("saved_route_ids")
+    val BOOKMARKED_SPOTS = stringSetPreferencesKey("saved_spot_ids")
     val CAPTURED_ARTIFACTS = stringSetPreferencesKey("captured_artifact_keys")
 }

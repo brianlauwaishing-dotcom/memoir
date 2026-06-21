@@ -12,8 +12,11 @@ interface MemoryRepository {
     suspend fun addPhoto(memoryId: String, sourceUri: Uri, contentResolver: ContentResolver): Result<String>
     suspend fun removePhoto(memoryId: String, index: Int): Result<Unit>
     suspend fun updateReflection(memoryId: String, mood: String?, insights: String, feedback: String?)
+    suspend fun updateGeneratedReflection(memoryId: String, text: String)
     suspend fun complete(memoryId: String)
     suspend fun cancelDraftIfInProgress(memoryId: String)
     fun fireCancelDraftIfInProgress(memoryId: String)
+    suspend fun deleteMemory(memoryId: String)
+    suspend fun duplicateMemory(memoryId: String): Result<String>
     suspend fun sweepOrphans()
 }

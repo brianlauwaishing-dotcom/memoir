@@ -6,5 +6,6 @@ data class ReflectionState(
     val userInsights: String = "",
     val postTripFeedback: String = "",
     val isSaving: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val aiState: AiState = AiState.Idle
 )

@@ -9,6 +9,8 @@ interface UserPreferencesRepository {
     val selectedInterests: Flow<Set<String>>
     val onboardingDone: Flow<Boolean>
     val bookmarkedRouteIds: Flow<Set<String>>
+    val bookmarkedSpotIds: Flow<Set<String>>
+        get() = flowOf(emptySet())
     val capturedArtifactKeys: Flow<Set<String>>
         get() = flowOf(emptySet())
 
@@ -16,6 +18,7 @@ interface UserPreferencesRepository {
     suspend fun setInterests(set: Set<String>)
     suspend fun markOnboardingDone()
     suspend fun setBookmarkedRouteIds(set: Set<String>)
+    suspend fun setBookmarkedSpotIds(set: Set<String>) = Unit
     suspend fun setCapturedArtifactKeys(set: Set<String>) = Unit
     suspend fun persistedLanguageTag(): String?
 }

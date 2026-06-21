@@ -1,0 +1,4 @@
+# Memoir DeepSeek API key. Copy this file to `local.properties` and replace the value.
+# ROTATION: If the release APK leaks publicly, rotate this key at the DeepSeek dashboard
+# and update local builds. Per umbrella §5.3 this is acceptable risk for the academic-MVP demo.
+DEEPSEEK_API_KEY=replace-me-with-real-key

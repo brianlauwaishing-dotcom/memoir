@@ -1,6 +1,7 @@
 package com.mcis.memoir
 
-import androidx.compose.foundation.Image
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -20,50 +21,83 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.mcis.memoir.data.MemoryData
-import com.mcis.memoir.data.MemoryStatus
-import com.mcis.memoir.data.MockData
+import androidx.core.content.FileProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mcis.memoir.i18n.LocaleController
 import com.mcis.memoir.ui.components.BottomNavigationBar
 import com.mcis.memoir.ui.components.UntitledIcon
 import com.mcis.memoir.ui.icons.*
-import com.mcis.memoir.ui.theme.AppTheme
+import com.mcis.memoir.ui.memory.components.FilePhoto
+import com.mcis.memoir.ui.memory.library.BookmarkSpotCard
+import com.mcis.memoir.ui.memory.library.MemoriesEffect
+import com.mcis.memoir.ui.memory.library.MemoriesIntent
+import com.mcis.memoir.ui.memory.library.MemoriesState
+import com.mcis.memoir.ui.memory.library.MemoriesTab
+import com.mcis.memoir.ui.memory.library.MemoriesViewModel
+import com.mcis.memoir.ui.memory.library.MemoryCard
+import com.mcis.memoir.ui.memory.library.WizardEntry
 import com.mcis.memoir.ui.theme.inter
+import java.io.File
 
 /**
- * Screen displaying the user's past journey memories with "In Progress" and "Completed" sections.
- * Optimized with a fixed action button that doesn't block content.
+ * Screen displaying the user's memory library (Route tab) and saved spots (Bookmark tab),
+ * backed live by [MemoriesViewModel].
  */
 @Composable
 fun MemoriesScreen(
-    selectedLanguage: String = "en",
+    viewModel: MemoriesViewModel,
     onNavigateToHome: () -> Unit = {},
     onNavigateToSaved: () -> Unit = {},
     onNavigateToMemories: () -> Unit = {},
     onCreateMemoryClick: () -> Unit = {},
-    onRouteClick: (String) -> Unit = {},
-    onSpotClick: (String) -> Unit = {},
+    onNavigateToWizard: (String, WizardEntry) -> Unit = { _, _ -> },
+    onNavigateToSpot: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val isChinese = selectedLanguage == "zh"
-    val allMemories = remember { MockData.memories }
-    val inProgressMemories = allMemories.filter { it.status == MemoryStatus.IN_PROGRESS }
-    val completedMemories = allMemories.filter { it.status == MemoryStatus.COMPLETED }
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
-    var activeMenuMemoryId by remember { mutableStateOf<String?>(null) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
-    var selectedTab by remember { mutableStateOf("route") }
+    LaunchedEffect(viewModel) {
+        viewModel.effects.collect { effect ->
+            when (effect) {
+                is MemoriesEffect.NavigateToWizard -> onNavigateToWizard(effect.memoryId, effect.entry)
+                MemoriesEffect.NavigateToCreate -> onCreateMemoryClick()
+                is MemoriesEffect.NavigateToSpot -> onNavigateToSpot(effect.spotId)
+                is MemoriesEffect.ShareMemory -> shareMemoryPhotos(context, effect.relativePaths, effect.title)
+            }
+        }
+    }
 
-    // 儲存的書籤 ID (Mock)
-    val savedSpotIds = remember { mutableStateListOf("grand_mazu_temple_datianhougong", "grand_wumiao_temple_sidian_wumiao") }
+    MemoriesContent(
+        state = state,
+        onIntent = viewModel::onIntent,
+        onNavigateToHome = onNavigateToHome,
+        onNavigateToSaved = onNavigateToSaved,
+        onNavigateToMemories = onNavigateToMemories,
+        modifier = modifier
+    )
+}
+
+@Composable
+private fun MemoriesContent(
+    state: MemoriesState,
+    onIntent: (MemoriesIntent) -> Unit,
+    onNavigateToHome: () -> Unit,
+    onNavigateToSaved: () -> Unit,
+    onNavigateToMemories: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val isChinese = LocaleController.currentLocale().language == "zh"
+    val context = LocalContext.current
+    val filesDir = remember(context) { context.filesDir }
 
     Box(
         modifier = modifier
@@ -81,7 +115,7 @@ fun MemoriesScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = if (isChinese) stringResource(R.string.memories_headline_zh) else stringResource(R.string.memories_headline),
+                    text = stringResource(R.string.memories_headline),
                     style = TextStyle(
                         fontFamily = inter,
                         fontSize = 24.sp,
@@ -91,7 +125,7 @@ fun MemoriesScreen(
                 )
             }
 
-            // Route / Bookmark selector (更新為新版底線設計)
+            // Route / Bookmark selector
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -100,61 +134,20 @@ fun MemoriesScreen(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.Bottom
             ) {
-                // Route Tab
-                Column(
-                    modifier = Modifier
-                        .width(IntrinsicSize.Min)
-                        .clickable { selectedTab = "route" },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = if (isChinese) "行程" else "Route",
-                        style = TextStyle(
-                            fontFamily = inter,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black
-                        )
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Box(
-                        modifier = Modifier
-                            .height(2.dp)
-                            .fillMaxWidth()
-                            .background(if (selectedTab == "route") DesignTokens.colorMaroon else Color.Transparent)
-                    )
-                }
-
+                TabLabel(
+                    label = stringResource(R.string.memories_route_tab),
+                    selected = state.selectedTab == MemoriesTab.ROUTE,
+                    onClick = { onIntent(MemoriesIntent.TabSelected(MemoriesTab.ROUTE)) }
+                )
                 Spacer(modifier = Modifier.width(24.dp))
-
-                // Bookmark Tab
-                Column(
-                    modifier = Modifier
-                        .width(IntrinsicSize.Min)
-                        .clickable { selectedTab = "bookmark" },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = if (isChinese) "書籤" else "Bookmark",
-                        style = TextStyle(
-                            fontFamily = inter,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black
-                        )
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Box(
-                        modifier = Modifier
-                            .height(2.dp)
-                            .fillMaxWidth()
-                            .background(if (selectedTab == "bookmark") DesignTokens.colorMaroon else Color.Transparent)
-                    )
-                }
+                TabLabel(
+                    label = stringResource(R.string.memories_bookmark_tab),
+                    selected = state.selectedTab == MemoriesTab.BOOKMARK,
+                    onClick = { onIntent(MemoriesIntent.TabSelected(MemoriesTab.BOOKMARK)) }
+                )
             }
 
-            if (selectedTab == "route") {
-                // Scrollable Content for Route
+            if (state.selectedTab == MemoriesTab.ROUTE) {
                 LazyColumn(
                     modifier = Modifier
                         .weight(1f)
@@ -162,49 +155,30 @@ fun MemoriesScreen(
                     contentPadding = PaddingValues(horizontal = 12.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // In Progress Section
-                    if (inProgressMemories.isNotEmpty()) {
+                    if (state.inProgress.isNotEmpty()) {
                         item {
-                            Text(
-                                text = if (isChinese) stringResource(R.string.memories_in_progress_zh) else stringResource(R.string.memories_in_progress),
-                                style = TextStyle(
-                                    fontFamily = inter,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.Black
-                                ),
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
+                            SectionHeader(stringResource(R.string.memories_in_progress))
                         }
-                        items(inProgressMemories) { memory ->
+                        items(state.inProgress, key = { it.id }) { card ->
                             InProgressMemoryCard(
-                                memory = memory,
-                                isChinese = isChinese,
-                                onMoreClick = { activeMenuMemoryId = it.id }
+                                card = card,
+                                filesDir = filesDir,
+                                onBodyClick = { onIntent(MemoriesIntent.ContinueEditingClicked(card.id)) },
+                                onMoreClick = { onIntent(MemoriesIntent.MoreClicked(card.id)) }
                             )
                         }
                     }
 
-                    // Completed Section
-                    if (completedMemories.isNotEmpty()) {
+                    if (state.completed.isNotEmpty()) {
                         item {
                             Spacer(modifier = Modifier.height(16.dp))
-                            Text(
-                                text = if (isChinese) stringResource(R.string.memories_completed_zh) else stringResource(R.string.memories_completed),
-                                style = TextStyle(
-                                    fontFamily = inter,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.Black
-                                ),
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
+                            SectionHeader(stringResource(R.string.memories_completed))
                         }
-                        items(completedMemories) { memory ->
+                        items(state.completed, key = { it.id }) { card ->
                             CompletedMemoryCard(
-                                memory = memory,
-                                isChinese = isChinese,
-                                onMoreClick = { activeMenuMemoryId = it.id }
+                                card = card,
+                                filesDir = filesDir,
+                                onMoreClick = { onIntent(MemoriesIntent.MoreClicked(card.id)) }
                             )
                         }
                     }
@@ -228,7 +202,7 @@ fun MemoriesScreen(
                             .height(76.dp)
                             .background(DesignTokens.colorMaroon, buttonShape)
                             .clip(buttonShape)
-                            .clickable { onCreateMemoryClick() },
+                            .clickable { onIntent(MemoriesIntent.CreateMemoryClicked) },
                         contentAlignment = Alignment.Center
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -240,7 +214,7 @@ fun MemoriesScreen(
                             )
                             Spacer(modifier = Modifier.width(16.dp))
                             Text(
-                                text = if (isChinese) stringResource(R.string.memories_create_button_zh) else stringResource(R.string.memories_create_button),
+                                text = stringResource(R.string.memories_create_button),
                                 style = TextStyle(
                                     fontFamily = inter,
                                     fontSize = 24.sp,
@@ -252,7 +226,7 @@ fun MemoriesScreen(
                     }
                 }
             } else {
-                // Bookmark Content (全新設計)
+                // Bookmark Content
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -260,7 +234,6 @@ fun MemoriesScreen(
                         .padding(horizontal = 24.dp)
                 ) {
                     // Search Bar
-                    var searchText by remember { mutableStateOf("") }
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -276,17 +249,17 @@ fun MemoriesScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         BasicTextField(
-                            value = searchText,
-                            onValueChange = { searchText = it },
+                            value = state.bookmarkSearchQuery,
+                            onValueChange = { onIntent(MemoriesIntent.BookmarkSearchChanged(it)) },
                             textStyle = TextStyle(
                                 fontFamily = inter,
                                 fontSize = 16.sp,
                                 color = Color.Black
                             ),
                             decorationBox = { innerTextField ->
-                                if (searchText.isEmpty()) {
+                                if (state.bookmarkSearchQuery.isEmpty()) {
                                     Text(
-                                        text = if (isChinese) "搜尋書籤" else "Search Bookmarks",
+                                        text = stringResource(R.string.memories_search_bookmarks),
                                         style = TextStyle(
                                             fontFamily = inter,
                                             fontSize = 16.sp,
@@ -303,7 +276,7 @@ fun MemoriesScreen(
                     Spacer(modifier = Modifier.height(32.dp))
 
                     Text(
-                        text = if (isChinese) "選擇書籤" else "Choose Bookmarks",
+                        text = stringResource(R.string.memories_choose_bookmarks),
                         style = TextStyle(
                             fontFamily = inter,
                             fontSize = 16.sp,
@@ -314,29 +287,27 @@ fun MemoriesScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Bookmark List
-                    LazyColumn(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        contentPadding = PaddingValues(bottom = 24.dp)
-                    ) {
-                        val spotsToRender = MockData.spots.filter { it.id in savedSpotIds }
-                        // 搜尋過濾邏輯
-                        val filteredSpots = if (searchText.isEmpty()) {
-                            spotsToRender
-                        } else {
-                            spotsToRender.filter {
-                                it.titleEn.contains(searchText, ignoreCase = true) ||
-                                        it.titleZh.contains(searchText, ignoreCase = true)
-                            }
-                        }
-
-                        items(filteredSpots, key = { it.id }) { spot ->
-                            SimpleBookmarkCard(
-                                spot = spot,
-                                isChinese = isChinese,
-                                onClick = { onSpotClick(spot.id) }
+                    if (state.bookmarkedSpots.isEmpty()) {
+                        Text(
+                            text = stringResource(R.string.memories_empty_bookmarks),
+                            style = TextStyle(
+                                fontFamily = inter,
+                                fontSize = 14.sp,
+                                color = Color.Gray
                             )
+                        )
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            contentPadding = PaddingValues(bottom = 24.dp)
+                        ) {
+                            items(state.bookmarkedSpots, key = { it.id }) { spot ->
+                                BookmarkSpotCardItem(
+                                    card = spot,
+                                    onClick = { onIntent(MemoriesIntent.BookmarkSpotClicked(spot.id)) }
+                                )
+                            }
                         }
                     }
                 }
@@ -353,11 +324,13 @@ fun MemoriesScreen(
         }
 
         // Action Menu Dropdown (Overlay)
-        if (activeMenuMemoryId != null) {
+        val activeId = state.activeMenuMemoryId
+        if (activeId != null && !state.showDeleteDialog) {
+            val activeCard = (state.inProgress + state.completed).firstOrNull { it.id == activeId }
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .clickable { activeMenuMemoryId = null }
+                    .clickable { onIntent(MemoriesIntent.MenuDismissed) }
             ) {
                 Box(
                     modifier = Modifier
@@ -365,41 +338,97 @@ fun MemoriesScreen(
                         .align(Alignment.TopEnd)
                 ) {
                     MemoryActionMenu(
-                        isChinese = isChinese,
-                        onDeleteClick = {
-                            showDeleteDialog = true
-                        }
+                        shareEnabled = activeCard?.coverRelativePath != null,
+                        onEditClick = { onIntent(MemoriesIntent.EditClicked(activeId)) },
+                        onDeleteClick = { onIntent(MemoriesIntent.DeleteClicked(activeId)) },
+                        onDuplicateClick = { onIntent(MemoriesIntent.DuplicateClicked(activeId)) },
+                        onShareClick = { onIntent(MemoriesIntent.ShareClicked(activeId)) }
                     )
                 }
             }
         }
 
         // Delete Confirmation Dialog
-        if (showDeleteDialog) {
+        if (state.showDeleteDialog) {
             DeleteConfirmationDialog(
-                isChinese = isChinese,
-                onCancel = { showDeleteDialog = false },
-                onDelete = {
-                    showDeleteDialog = false
-                    activeMenuMemoryId = null
-                }
+                onCancel = { onIntent(MemoriesIntent.DeleteCancelled) },
+                onDelete = { onIntent(MemoriesIntent.DeleteConfirmed) }
             )
         }
     }
 }
 
-// -------------------------------------------------------------
-// 全新的書籤卡片設計 (對應 Figma)
-// -------------------------------------------------------------
+private fun shareMemoryPhotos(context: Context, relativePaths: List<String>, title: String) {
+    if (relativePaths.isEmpty()) return
+    val authority = "${context.packageName}.fileprovider"
+    val uris = relativePaths.map { path ->
+        FileProvider.getUriForFile(context, authority, File(context.filesDir, path))
+    }
+    val intent = if (uris.size == 1) {
+        Intent(Intent.ACTION_SEND).apply {
+            type = "image/jpeg"
+            putExtra(Intent.EXTRA_STREAM, uris.first())
+            putExtra(Intent.EXTRA_TEXT, title)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+    } else {
+        Intent(Intent.ACTION_SEND_MULTIPLE).apply {
+            type = "image/jpeg"
+            putParcelableArrayListExtra(Intent.EXTRA_STREAM, ArrayList(uris))
+            putExtra(Intent.EXTRA_TEXT, title)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+    }
+    context.startActivity(Intent.createChooser(intent, title).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+}
+
 @Composable
-fun SimpleBookmarkCard(
-    spot: com.mcis.memoir.data.SpotData,
-    isChinese: Boolean,
+private fun TabLabel(label: String, selected: Boolean, onClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .width(IntrinsicSize.Min)
+            .clickable { onClick() },
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = label,
+            style = TextStyle(
+                fontFamily = inter,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Box(
+            modifier = Modifier
+                .height(2.dp)
+                .fillMaxWidth()
+                .background(if (selected) DesignTokens.colorMaroon else Color.Transparent)
+        )
+    }
+}
+
+@Composable
+private fun SectionHeader(text: String) {
+    Text(
+        text = text,
+        style = TextStyle(
+            fontFamily = inter,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
+        ),
+        modifier = Modifier.padding(bottom = 8.dp)
+    )
+}
+
+@Composable
+fun BookmarkSpotCardItem(
+    card: BookmarkSpotCard,
     onClick: () -> Unit
 ) {
-    val title = if (isChinese) spot.titleZh else spot.titleEn
     val cardShape = RoundedCornerShape(12.dp)
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -413,21 +442,28 @@ fun SimpleBookmarkCard(
             modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Image
-            Image(
-                painter = painterResource(spot.imageRes),
-                contentDescription = title,
-                modifier = Modifier
-                    .width(100.dp)
-                    .fillMaxHeight(),
-                contentScale = ContentScale.Crop
-            )
+            if (card.heroDrawableRes != 0) {
+                androidx.compose.foundation.Image(
+                    painter = androidx.compose.ui.res.painterResource(card.heroDrawableRes),
+                    contentDescription = card.title,
+                    modifier = Modifier
+                        .width(100.dp)
+                        .fillMaxHeight(),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .width(100.dp)
+                        .fillMaxHeight()
+                        .background(Color.LightGray)
+                )
+            }
 
             Spacer(modifier = Modifier.width(24.dp))
 
-            // Title
             Text(
-                text = title,
+                text = card.title,
                 style = TextStyle(
                     fontFamily = inter,
                     fontSize = 18.sp,
@@ -437,7 +473,6 @@ fun SimpleBookmarkCard(
                 modifier = Modifier.weight(1f)
             )
 
-            // Bookmark Icon
             UntitledIcon(
                 imageVector = UntitledIcons.SavedFilled,
                 contentDescription = "Bookmark",
@@ -449,13 +484,14 @@ fun SimpleBookmarkCard(
     }
 }
 
-
-// -------------------------------------------------------------
-// 原有的 UI 元件 (無更動)
-// -------------------------------------------------------------
-
 @Composable
-fun MemoryActionMenu(isChinese: Boolean, onDeleteClick: () -> Unit) {
+fun MemoryActionMenu(
+    shareEnabled: Boolean,
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    onDuplicateClick: () -> Unit,
+    onShareClick: () -> Unit
+) {
     val menuShape = RoundedCornerShape(15.dp)
     Column(
         modifier = Modifier
@@ -464,29 +500,40 @@ fun MemoryActionMenu(isChinese: Boolean, onDeleteClick: () -> Unit) {
             .background(DesignTokens.colorLanguageSelectionBackground, menuShape)
             .padding(vertical = 8.dp)
     ) {
-        MenuItem(UntitledIcons.EditIcon, if (isChinese) stringResource(R.string.memories_menu_edit_zh) else stringResource(R.string.memories_menu_edit))
+        MenuItem(UntitledIcons.EditIcon, stringResource(R.string.memories_menu_edit), onClick = onEditClick)
         DividerLine()
-        MenuItem(UntitledIcons.DeleteIcon, if (isChinese) stringResource(R.string.memories_menu_delete_zh) else stringResource(R.string.memories_menu_delete), onClick = onDeleteClick)
+        MenuItem(UntitledIcons.DeleteIcon, stringResource(R.string.memories_menu_delete), onClick = onDeleteClick)
         DividerLine()
-        MenuItem(UntitledIcons.DuplicateIcon, if (isChinese) stringResource(R.string.memories_menu_duplicate_zh) else stringResource(R.string.memories_menu_duplicate))
+        MenuItem(UntitledIcons.DuplicateIcon, stringResource(R.string.memories_menu_duplicate), onClick = onDuplicateClick)
         DividerLine()
-        MenuItem(UntitledIcons.ShareIcon, if (isChinese) stringResource(R.string.memories_menu_share_zh) else stringResource(R.string.memories_menu_share))
+        MenuItem(
+            UntitledIcons.ShareIcon,
+            stringResource(R.string.memories_menu_share),
+            enabled = shareEnabled,
+            onClick = onShareClick
+        )
     }
 }
 
 @Composable
-fun MenuItem(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, onClick: () -> Unit = {}) {
+fun MenuItem(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    enabled: Boolean = true,
+    onClick: () -> Unit = {}
+) {
+    val tint = if (enabled) Color.Black else Color.Gray
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(38.dp)
-            .clickable { onClick() }
+            .clickable(enabled = enabled) { onClick() }
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        UntitledIcon(imageVector = icon, contentDescription = null, size = 20.dp, tint = Color.Black)
+        UntitledIcon(imageVector = icon, contentDescription = null, size = 20.dp, tint = tint)
         Spacer(modifier = Modifier.width(12.dp))
-        Text(text = label, style = TextStyle(fontFamily = inter, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.Black))
+        Text(text = label, style = TextStyle(fontFamily = inter, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = tint))
     }
 }
 
@@ -496,7 +543,7 @@ fun DividerLine() {
 }
 
 @Composable
-fun DeleteConfirmationDialog(isChinese: Boolean, onCancel: () -> Unit, onDelete: () -> Unit) {
+fun DeleteConfirmationDialog(onCancel: () -> Unit, onDelete: () -> Unit) {
     Dialog(onDismissRequest = onCancel) {
         val shape = RoundedCornerShape(15.dp)
         Column(
@@ -509,7 +556,7 @@ fun DeleteConfirmationDialog(isChinese: Boolean, onCancel: () -> Unit, onDelete:
             UntitledIcon(imageVector = UntitledIcons.DeleteIcon, contentDescription = null, size = 30.dp, tint = DesignTokens.colorMaroon)
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = if (isChinese) stringResource(R.string.memories_delete_confirm_zh) else stringResource(R.string.memories_delete_confirm),
+                text = stringResource(R.string.memories_delete_confirm),
                 style = TextStyle(fontFamily = inter, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.Black),
                 modifier = Modifier.padding(horizontal = 24.dp),
                 textAlign = TextAlign.Center
@@ -520,14 +567,14 @@ fun DeleteConfirmationDialog(isChinese: Boolean, onCancel: () -> Unit, onDelete:
                     modifier = Modifier.weight(1f).fillMaxHeight().clickable { onCancel() },
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = if (isChinese) stringResource(R.string.cancel_button_zh) else stringResource(R.string.cancel_button), style = TextStyle(fontFamily = inter, fontSize = 14.sp, color = Color.Black))
+                    Text(text = stringResource(R.string.cancel_button), style = TextStyle(fontFamily = inter, fontSize = 14.sp, color = Color.Black))
                 }
                 Box(modifier = Modifier.width(1.dp).fillMaxHeight().background(Color(0xFFE0E0E0)))
                 Box(
                     modifier = Modifier.weight(1f).fillMaxHeight().clickable { onDelete() },
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = if (isChinese) stringResource(R.string.delete_button_zh) else stringResource(R.string.delete_button), style = TextStyle(fontFamily = inter, fontSize = 14.sp, color = DesignTokens.colorMaroon))
+                    Text(text = stringResource(R.string.delete_button), style = TextStyle(fontFamily = inter, fontSize = 14.sp, color = DesignTokens.colorMaroon))
                 }
             }
         }
@@ -535,7 +582,12 @@ fun DeleteConfirmationDialog(isChinese: Boolean, onCancel: () -> Unit, onDelete:
 }
 
 @Composable
-fun InProgressMemoryCard(memory: MemoryData, isChinese: Boolean, onMoreClick: (MemoryData) -> Unit) {
+fun InProgressMemoryCard(
+    card: MemoryCard,
+    filesDir: File,
+    onBodyClick: () -> Unit,
+    onMoreClick: () -> Unit
+) {
     val cardShape = RoundedCornerShape(15.dp)
     Box(
         modifier = Modifier
@@ -544,16 +596,10 @@ fun InProgressMemoryCard(memory: MemoryData, isChinese: Boolean, onMoreClick: (M
             .shadow(elevation = 15.dp, shape = cardShape, spotColor = Color(0x40000000))
             .background(DesignTokens.colorLanguageSelectionBackground, cardShape)
             .clip(cardShape)
+            .clickable { onBodyClick() }
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
-            Image(
-                painter = painterResource(memory.imageRes),
-                contentDescription = null,
-                modifier = Modifier
-                    .width(132.dp)
-                    .fillMaxHeight(),
-                contentScale = ContentScale.Crop
-            )
+            MemoryCover(card = card, filesDir = filesDir)
             Column(
                 modifier = Modifier
                     .padding(start = 16.dp, top = 12.dp, end = 12.dp)
@@ -561,7 +607,7 @@ fun InProgressMemoryCard(memory: MemoryData, isChinese: Boolean, onMoreClick: (M
                 verticalArrangement = Arrangement.Top
             ) {
                 Text(
-                    text = if (isChinese) memory.titleZh else memory.titleEn,
+                    text = card.title,
                     style = TextStyle(
                         fontFamily = inter,
                         fontSize = 16.sp,
@@ -571,7 +617,7 @@ fun InProgressMemoryCard(memory: MemoryData, isChinese: Boolean, onMoreClick: (M
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = if (isChinese) stringResource(R.string.memories_continue_editing_zh) else stringResource(R.string.memories_continue_editing),
+                    text = stringResource(R.string.memories_continue_editing),
                     style = TextStyle(
                         fontFamily = inter,
                         fontSize = 8.sp,
@@ -587,17 +633,17 @@ fun InProgressMemoryCard(memory: MemoryData, isChinese: Boolean, onMoreClick: (M
                             .height(11.dp)
                             .background(Color(0xFFD9D9D9), CircleShape)
                     ) {
-                        val progressWidth = (160 * (memory.currentProgress.toFloat() / memory.totalProgress)).dp
+                        val fraction = card.draftProgress.current.toFloat() / card.draftProgress.total
                         Box(
                             modifier = Modifier
-                                .width(progressWidth)
+                                .width((160 * fraction).dp)
                                 .fillMaxHeight()
                                 .background(Color(0xFFA32B2B), CircleShape)
                         )
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "${memory.currentProgress}/${memory.totalProgress}",
+                        text = "${card.draftProgress.current}/${card.draftProgress.total}",
                         style = TextStyle(
                             fontFamily = inter,
                             fontSize = 8.sp,
@@ -609,22 +655,21 @@ fun InProgressMemoryCard(memory: MemoryData, isChinese: Boolean, onMoreClick: (M
             }
         }
 
-        Box(
+        MoreButton(
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(12.dp)
-                .size(24.dp)
-                .clip(CircleShape)
-                .clickable { onMoreClick(memory) },
-            contentAlignment = Alignment.Center
-        ) {
-            UntitledIcon(imageVector = UntitledIcons.MoreIcon, contentDescription = "More", size = 18.dp, tint = Color.Black)
-        }
+                .padding(12.dp),
+            onClick = onMoreClick
+        )
     }
 }
 
 @Composable
-fun CompletedMemoryCard(memory: MemoryData, isChinese: Boolean, onMoreClick: (MemoryData) -> Unit) {
+fun CompletedMemoryCard(
+    card: MemoryCard,
+    filesDir: File,
+    onMoreClick: () -> Unit
+) {
     val cardShape = RoundedCornerShape(15.dp)
     Box(
         modifier = Modifier
@@ -635,14 +680,7 @@ fun CompletedMemoryCard(memory: MemoryData, isChinese: Boolean, onMoreClick: (Me
             .clip(cardShape)
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
-            Image(
-                painter = painterResource(memory.imageRes),
-                contentDescription = null,
-                modifier = Modifier
-                    .width(132.dp)
-                    .fillMaxHeight(),
-                contentScale = ContentScale.Crop
-            )
+            MemoryCover(card = card, filesDir = filesDir)
             Column(
                 modifier = Modifier
                     .padding(start = 16.dp, top = 12.dp, end = 12.dp)
@@ -650,7 +688,7 @@ fun CompletedMemoryCard(memory: MemoryData, isChinese: Boolean, onMoreClick: (Me
                 verticalArrangement = Arrangement.Top
             ) {
                 Text(
-                    text = if (isChinese) memory.titleZh else memory.titleEn,
+                    text = card.title,
                     style = TextStyle(
                         fontFamily = inter,
                         fontSize = 16.sp,
@@ -660,7 +698,7 @@ fun CompletedMemoryCard(memory: MemoryData, isChinese: Boolean, onMoreClick: (Me
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = if (isChinese) stringResource(R.string.memories_updated_on_zh, memory.date) else stringResource(R.string.memories_updated_on, memory.date),
+                    text = stringResource(R.string.memories_updated_on, card.dateLabel),
                     style = TextStyle(
                         fontFamily = inter,
                         fontSize = 8.sp,
@@ -668,73 +706,48 @@ fun CompletedMemoryCard(memory: MemoryData, isChinese: Boolean, onMoreClick: (Me
                         color = Color.Black
                     )
                 )
-                Spacer(modifier = Modifier.weight(1f))
-                Row(
-                    modifier = Modifier.padding(bottom = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    UntitledIcon(
-                        imageVector = UntitledIcons.SavedFilled,
-                        contentDescription = null,
-                        tint = Color.Black,
-                        size = 20.dp
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = memory.likes.toString(),
-                        style = TextStyle(fontFamily = inter, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    UntitledIcon(
-                        imageVector = UntitledIcons.CommentIcon,
-                        contentDescription = null,
-                        tint = Color.Black,
-                        size = 20.dp
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = memory.comments.toString(),
-                        style = TextStyle(fontFamily = inter, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                    )
-                }
             }
         }
 
-        Box(
+        MoreButton(
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(top = 12.dp, end = 12.dp)
-                .size(24.dp)
-                .clip(CircleShape)
-                .clickable { onMoreClick(memory) },
-            contentAlignment = Alignment.Center
-        ) {
-            UntitledIcon(imageVector = UntitledIcons.MoreIcon, contentDescription = "More", size = 18.dp, tint = Color.Black)
-        }
-
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 12.dp, bottom = 12.dp)
-                .size(24.dp)
-                .clip(CircleShape)
-                .clickable { /* Detail */ },
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(R.drawable.arrow_right),
-                contentDescription = null,
-                modifier = Modifier.size(16.dp),
-                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.Black)
-            )
-        }
+                .padding(top = 12.dp, end = 12.dp),
+            onClick = onMoreClick
+        )
     }
 }
 
-@Preview(showBackground = true, device = "spec:width=412dp,height=915dp")
 @Composable
-fun MemoriesScreenPreview() {
-    AppTheme {
-        MemoriesScreen()
+private fun MemoryCover(card: MemoryCard, filesDir: File) {
+    val cover = card.coverRelativePath
+    if (cover != null) {
+        FilePhoto(
+            relativePath = cover,
+            filesDir = filesDir,
+            modifier = Modifier
+                .width(132.dp)
+                .fillMaxHeight()
+        )
+    } else {
+        Box(
+            modifier = Modifier
+                .width(132.dp)
+                .fillMaxHeight()
+                .background(Color.LightGray)
+        )
+    }
+}
+
+@Composable
+private fun MoreButton(modifier: Modifier, onClick: () -> Unit) {
+    Box(
+        modifier = modifier
+            .size(24.dp)
+            .clip(CircleShape)
+            .clickable { onClick() },
+        contentAlignment = Alignment.Center
+    ) {
+        UntitledIcon(imageVector = UntitledIcons.MoreIcon, contentDescription = "More", size = 18.dp, tint = Color.Black)
     }
 }

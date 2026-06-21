@@ -1,240 +1,183 @@
 ## Context
 
-Final change in the umbrella. Unlike change #7 (which built the Room layer, the photo lifecycle, and the wizard), this change is mostly UI wiring plus two small repository methods. It consumes:
-- `memory-creation-flow` change #7: the entire `data/memory/` package (`MemoryEntity`, `MemoryDao`, `MemoryDatabase`, `MemoryRepository` interface + `RoomMemoryRepository`, the `Memory` domain type), `MemoirApplication.memoryRepo`, the `FilePhoto` Composable (file-path → `ImageBitmap` decode), and the memoryId-keyed wizard destinations (`MemoryPhotoSelectionDestination`, `MemoryEditDestination`).
-- `language-toggle` change #2: `LocaleController` / AppCompat application locale, `values-zh/strings.xml`.
-- `home-discovery` change #3: the MVI state/intent/effect + Factory pattern and the JUnit5 + MockK + Turbine test stack.
+PR #80 changed `MemoriesScreen` from a single memory list into a two-tab page:
 
-**Current state**:
-- `MemoriesScreen.kt:51` — `val allMemories = remember { MockData.memories }`, split by `MemoryStatus` into in-progress / completed lists.
-- `MemoriesScreen.kt:43` — signature takes `selectedLanguage: String = "en"`; `isChinese = selectedLanguage == "zh"` drives every `R.string.X_zh` lookup throughout the file.
-- `MemoriesScreen.kt:205-211` — `MemoryActionMenu` only passes an `onDeleteClick`; Edit / Duplicate / Share `MenuItem`s fall through to the default no-op `onClick = {}` (`MenuItem` at `:250`).
-- `MemoriesScreen.kt:216-225` — `DeleteConfirmationDialog.onDelete` just sets `showDeleteDialog = false; activeMenuMemoryId = null`. No repository call; nothing is deleted.
-- `MemoriesScreen.kt:490-507` — `CompletedMemoryCard` arrow `Box` with `clickable { /* Detail */ }`.
-- `MemoriesScreen.kt:445-473` — likes/comments row driven by `memory.likes` / `memory.comments` (mock-only fields; the Room `Memory` model has neither).
-- `InProgressMemoryCard` (`:355-381`) renders a progress bar from `memory.currentProgress` / `memory.totalProgress` — mock-only fields absent from the Room model.
-- No `FileProvider` declared in `AndroidManifest.xml`; no `res/xml/file_paths.xml`.
+- **Route**: in-progress and completed memory cards, create-memory CTA, card menu, delete dialog.
+- **Bookmark**: search field and a list of saved spots rendered by `SimpleBookmarkCard`.
 
-**Constraints**:
-- Cannot precede change #7 (needs the Room layer + `FilePhoto` + wizard destinations) or change #2 (needs AppCompat locale).
-- Must keep `MockData` compiling (coexistence rule).
-- The Room `Memory` model is the single source of truth — the screen must render from it, not from `MockData`'s richer-but-fake field set.
-- Test stack JUnit5 + MockK + Turbine carries from change #3.
+The implementation is still local/mock-backed:
+
+- Route tab reads `MockData.memories` and splits by `data.MemoryStatus`.
+- Bookmark tab keeps `savedSpotIds = mutableStateListOf(...)` inside the Composable and filters `MockData.spots`.
+- Bookmark search state, selected tab, action-menu state, and delete-dialog state are all local `remember` state.
+- `onSpotClick` is wired from navigation to `MemoryPhotoSelectionDestination(spotId)`, but that destination expects a `memoryId`; bookmark card taps should open spot detail instead.
+- The memory menu has inert Edit / Duplicate / Share items; Delete only dismisses UI.
+- Completed cards still render a dead detail arrow and fake likes/comments sourced only from mock data.
+- The screen still uses `selectedLanguage` plus `_zh` string lookups.
+
+The change #7 memory wizard already provides the Room-backed `MemoryRepository`, the `FilePhoto` Composable, and memoryId-keyed wizard destinations. The content pipeline already provides persisted `Spot` records, but `ContentRepository` currently exposes only `routes()` and `spot(id)`, not all spots as a Flow. User prefs already persist route bookmark IDs; this change adds the equivalent spot bookmark store for the Memories Bookmark tab.
 
 ## Goals / Non-Goals
 
 **Goals:**
-1. `MemoriesScreen` renders live Room data via `MemoriesViewModel` (in-progress + completed sections).
-2. Wire all four 3-dots actions: Edit (resume/reopen wizard), Delete (any status), Duplicate (deep copy), Share (FileProvider).
-3. Draft resume from the in-progress card body ("Continue Editing").
-4. Remove the dangling detail arrow.
-5. Migrate the whole screen off `selectedLanguage` / `_zh`-suffix to VM + AppCompat locale.
-6. Add `MemoryRepository.deleteMemory` and `duplicateMemory` with the same path-safety guards change #7 established.
-7. Add a `FileProvider` so app-private memory photos can be shared.
-8. Keep `MockData` compiling.
+
+1. Preserve the PR #80 `Route / Bookmark` tab structure.
+2. Route tab renders live Room memories via `MemoriesViewModel`.
+3. Bookmark tab renders persisted saved spots via `ContentRepository.spots()` + `UserPreferencesRepository.bookmarkedSpotIds`.
+4. Bookmark tab search filters saved spots by locale-resolved title.
+5. Bookmark card taps navigate to `SpotDetailDestination(spotId)`.
+6. Wire all four memory-card menu actions: Edit, Delete, Duplicate, Share.
+7. Draft resume from the in-progress card body.
+8. Remove the dangling completed-card detail arrow and dead social stats.
+9. Migrate the surface off `selectedLanguage` / `_zh` lookups.
+10. Keep legacy `MockData` intact for coexistence, while stopping `MemoriesScreen` from consuming it.
 
 **Non-Goals:**
-- A memory **detail** screen (none exists; the arrow is removed, not wired).
-- A rendered composite "memory image" to share — the editor canvas is stubbed in change #7, so Share hands over the underlying photo files.
-- Social engagement (likes/comments) — no backend, single device.
-- Editing a memory's **title** inline (the wizard owns title; this screen only lists/acts).
-- Per-memory thumbnails/caching beyond change #7's `FilePhoto` decode.
-- Multi-select / batch actions on the library.
-- Undo for delete (a confirmation dialog already exists; that is the safety net).
+
+- A memory detail screen.
+- A rendered composite memory image for Share; Share exports the underlying photo files.
+- Social engagement counts.
+- A new spot-bookmark toggle UI. This change creates the persisted spot-bookmark source consumed by the tab, but adding bookmark/unbookmark controls to spot screens is a separate UX change.
+- Batch actions or multi-select on either tab.
 
 ## Decisions
 
-### D1. `MemoriesViewModel` combines two status Flows into card DTOs
+### D1. One `MemoriesViewModel` owns both tabs
+
+`MemoriesViewModel` combines:
+
+- `memoryRepo.observeByStatus(IN_PROGRESS)`
+- `memoryRepo.observeByStatus(COMPLETED)`
+- `contentRepo.spots()`
+- `prefsRepo.bookmarkedSpotIds`
+- a local MutableStateFlow for UI state (`selectedTab`, `bookmarkSearchQuery`, `activeMenuMemoryId`, `showDeleteDialog`)
+
+This keeps the two PR #80 tabs in one surface-level state object and lets tests assert tab/search/menu/dialog behavior without instrumented Compose tests.
+
+```kotlin
+data class MemoriesState(
+    val selectedTab: MemoriesTab = MemoriesTab.ROUTE,
+    val inProgress: List<MemoryCard> = emptyList(),
+    val completed: List<MemoryCard> = emptyList(),
+    val bookmarkedSpots: List<BookmarkSpotCard> = emptyList(),
+    val bookmarkSearchQuery: String = "",
+    val isLoading: Boolean = true,
+    val activeMenuMemoryId: String? = null,
+    val showDeleteDialog: Boolean = false
+)
+
+enum class MemoriesTab { ROUTE, BOOKMARK }
+```
+
+The Composable renders the tab selector from `state.selectedTab` and sends `TabSelected(...)` intents. The tab labels use `stringResource(R.string.memories_route_tab)` and `stringResource(R.string.memories_bookmark_tab)`.
+
+### D2. Route-tab memory cards use Room DTOs
+
+`MemoryCard` is derived from the Room domain model:
 
 ```kotlin
 data class MemoryCard(
     val id: String,
-    val title: String,                 // already locale-resolved at creation (change #7 D13)
-    val coverRelativePath: String?,    // first of photoRelativePaths, or null
-    val status: String,                // MemoryStatus.IN_PROGRESS / COMPLETED
-    val dateLabel: String,             // formatted from updatedAt, COMPLETED cards
-    val draftProgress: DraftProgress   // derived completeness for IN_PROGRESS cards
+    val title: String,
+    val coverRelativePath: String?,
+    val status: String,
+    val dateLabel: String,
+    val draftProgress: DraftProgress
 )
 
-data class DraftProgress(val current: Int, val total: Int)   // e.g. 2 / 3
-
-class MemoriesViewModel(
-    private val repo: MemoryRepository,
-    private val clock: () -> Long = System::currentTimeMillis
-) : ViewModel() {
-    val state: StateFlow<MemoriesState> =
-        combine(
-            repo.observeByStatus(MemoryStatus.IN_PROGRESS),
-            repo.observeByStatus(MemoryStatus.COMPLETED)
-        ) { inProg, done ->
-            MemoriesState(
-                inProgress = inProg.map { it.toCard() },
-                completed  = done.map { it.toCard() },
-                isLoading = false
-            )
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), MemoriesState(isLoading = true))
-    // menu / dialog UI state held in a second MutableStateFlow merged into MemoriesState
-}
+data class DraftProgress(val current: Int, val total: Int)
 ```
 
-**Why two `observeByStatus` calls vs one `observeAll` partitioned in the VM:** change #7 already exposes `observeByStatus`; the DB does the ordering (`ORDER BY updatedAt DESC`) per status. Partitioning `observeAll()` in Kotlin would re-sort and re-filter on every emission for no benefit. `combine` re-emits when either side changes.
+`coverRelativePath` is the first photo path or null. The screen renders covers through change #7's `FilePhoto(relativePath, filesDir)`, not `painterResource`. For in-progress rows, `draftProgress` is derived as `1..3 / 3`: draft exists, has at least one photo, has non-blank insights.
 
-**Menu/dialog state** (`activeMenuMemoryId`, `showDeleteDialog`) moves out of the Composable's `remember` into `MemoriesState` so it is driven by intents and unit-testable. Alternative — leave it as local `remember` — keeps the VM thinner but makes the Delete-confirm flow (open menu → tap Delete → confirm → repo call) untestable without an instrumented Compose test. Centralizing in the VM matches the change #7 ReflectionViewModel precedent.
+### D3. Bookmark-tab spot cards use content DTOs
 
-### D2. `draftProgress` is derived, not stored
-
-The Room `Memory` model has no `currentProgress`/`totalProgress` (those are `MockData`-only). Rather than grow the schema, derive a 3-step completeness for in-progress drafts:
+Add:
 
 ```kotlin
-private fun Memory.draftProgress(): DraftProgress {
-    var done = 1                                   // template chosen (always true for a draft)
-    if (photoRelativePaths.isNotEmpty()) done++    // ≥1 photo added
-    if (userInsights.isNotBlank()) done++          // reflection started
-    return DraftProgress(current = done, total = 3)
-}
+fun ContentRepository.spots(): Flow<List<Spot>>
 ```
 
-This keeps the existing progress-bar UI meaningful with real data and zero schema change. Alternative — drop the progress bar entirely — loses a useful affordance; the derived metric is cheap and honest. The exact heuristic is an implementation detail the spec pins only loosely (a `1..3 / 3` range).
-
-### D3. Edit / resume entry points reuse change #7 destinations unchanged
-
-| Source | Action | Destination |
-|---|---|---|
-| In-progress card body ("Continue Editing") | tap | `MemoryPhotoSelectionDestination(memoryId)` |
-| In-progress card → menu → Edit | tap | `MemoryPhotoSelectionDestination(memoryId)` |
-| Completed card → menu → Edit | tap | `MemoryEditDestination(memoryId)` |
-
-Resuming an in-progress draft at the **photo** step is the safest single target: a draft may have 0 photos (abandoned right after template select), and the photo screen is the wizard's natural memoryId-keyed entry. A completed memory already has photos, so Edit opens the **edit** step. Critically, **no change-#7 code is touched**: re-entering a `COMPLETED` memory is safe because the wizard VMs' `onCleared()` calls `cancelDraftIfInProgress`, which no-ops on any non-`IN_PROGRESS` row — backing out of a re-edit cannot delete a finished memory. A re-save through Reflection calls `complete()` again (idempotent).
-
-**Alternative considered** — resume at the screen matching the draft's furthest-reached step (compute from `photoRelativePaths` / reflection fields). Rejected: requires the library to model the wizard's internal step machine; one fixed entry per status is simpler and the wizard's forward nav covers the rest.
-
-### D4. Delete is a new repository method (status-agnostic), distinct from `cancelDraftIfInProgress`
-
-Change #7's `cancelDraftIfInProgress` deletes only `IN_PROGRESS` rows (its job is wizard abandonment cleanup). A user deleting a `COMPLETED` memory from the library needs an unconditional delete:
+`BookmarkSpotCard` is locale- and resource-resolved in the VM:
 
 ```kotlin
-suspend fun deleteMemory(memoryId: String) = withContext(ioDispatcher) {
-    if (!memoryId.isValidUuid()) return@withContext            // same guard as change #7
-    val dir = File(filesDir, "memories/$memoryId")
-    if (dir.exists() && dir.startsWith(File(filesDir, "memories"))) dir.deleteRecursively()
-    dao.delete(memoryId)
-}
+data class BookmarkSpotCard(
+    val id: String,
+    val title: String,
+    val heroDrawableRes: Int
+)
 ```
 
-Reuses change #7's `isValidUuid()` regex + `startsWith` containment guard verbatim — no new path-safety surface. It deletes the directory then the row regardless of status. The existing `DeleteConfirmationDialog` is the user-facing safety; no soft-delete/undo.
+The VM filters all content spots to `spot.id in prefsRepo.bookmarkedSpotIds`, preserves content-pipeline source order, maps to `BookmarkSpotCard`, then applies `bookmarkSearchQuery` against `title` case-insensitively. `MemoriesScreen` no longer imports `MockData.spots` or owns a hard-coded `savedSpotIds`.
 
-### D5. Duplicate deep-copies row + photo files into a fresh memoryId
+### D4. Spot bookmark IDs live in DataStore
+
+Extend prefs:
 
 ```kotlin
-suspend fun duplicateMemory(memoryId: String): Result<String> = withContext(ioDispatcher) {
-    runCatching {
-        require(memoryId.isValidUuid()) { "memoryId must be a UUID" }
-        val src = dao.getOnce(memoryId) ?: error("memory not found: $memoryId")
-        val newId = UUID.randomUUID().toString()
-        val srcPaths: List<String> = json.decodeFromString(src.photoLocalPaths)
-        val newPaths = srcPaths.mapIndexed { i, rel ->
-            val newRel = "memories/$newId/photo_$i.jpg"
-            val dst = File(filesDir, newRel).apply { parentFile?.mkdirs() }
-            File(filesDir, rel).copyTo(dst, overwrite = true)
-            newRel
-        }
-        val now = System.currentTimeMillis()
-        dao.upsert(src.copy(
-            id = newId,
-            createdAt = now,
-            updatedAt = now,
-            photoLocalPaths = json.encodeToString(newPaths)
-        ))
-        newId
-    }
-}
+val bookmarkedSpotIds: Flow<Set<String>>
+suspend fun setBookmarkedSpotIds(set: Set<String>)
 ```
 
-`status` is preserved (`src.copy` keeps it) — duplicating a completed memory yields a completed memory; duplicating a draft yields a draft. Title is copied verbatim (no `" (copy)"` suffix — avoids a new bilingual string and the awkward locale question of which language to suffix in). Returns `Result<String>` so a copy failure (e.g. a missing source file) surfaces as an error toast instead of a crash. The observed Flow makes the new card appear automatically.
+`UserPrefsKeys` adds `BOOKMARKED_SPOTS = stringSetPreferencesKey("saved_spot_ids")`. `DataStoreUserPreferencesRepository` returns `emptySet()` when absent. This mirrors `bookmarkedRouteIds` and keeps future spot-save UI from needing a second persistence mechanism.
 
-### D6. Drop the completed card's likes/comments row (deviation from mock — reviewer confirm)
+### D5. Bookmark card taps open spot detail
 
-`memory.likes` / `memory.comments` exist only on `MockData.MemoryData`; the Room `Memory` model has no such fields and there is no backend to source them (umbrella §1.3: no auth/accounts/cloud). Options:
-- **(a, chosen)** Remove the likes/comments `Row` (`MemoriesScreen.kt:445-473`). The completed card shows cover + title + "Updated on …".
-- (b) Keep the row bound to constant `0 / 0`. Rejected — a permanent fake count on a single-user offline app is misleading.
-- (c) Repurpose the counts (e.g. photo count). Rejected — scope creep, and a photo count next to a "saved/comment" glyph is confusing.
+`MemoriesEffect` includes:
 
-This is the one place the rendered card visibly departs from the Figma mock, so it is called out explicitly for reviewer sign-off in the implementing PR. If the reviewer prefers (b), it's a one-line change.
-
-### D7. Share via `FileProvider` + `ACTION_SEND[_MULTIPLE]`, launched from the Composable
-
-App-private `filesDir/memories/<id>/*.jpg` cannot be passed to another app as a `file://` URI (FileUriExposedException on API 24+). Add a `FileProvider`:
-
-`AndroidManifest.xml`:
-```xml
-<provider
-    android:name="androidx.core.content.FileProvider"
-    android:authorities="${applicationId}.fileprovider"
-    android:exported="false"
-    android:grantUriPermissions="true">
-    <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
-               android:resource="@xml/file_paths" />
-</provider>
-```
-`res/xml/file_paths.xml`:
-```xml
-<paths><files-path name="memories" path="memories/" /></paths>
-```
-
-The VM emits an effect carrying only data; the Composable (which has `Context`) resolves URIs and launches the chooser:
 ```kotlin
-is MemoriesEffect.ShareMemory -> {
-    val uris = e.relativePaths.map { rel ->
-        FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", File(context.filesDir, rel))
-    }
-    val intent = if (uris.size == 1) {
-        Intent(Intent.ACTION_SEND).apply {
-            type = "image/jpeg"; putExtra(Intent.EXTRA_STREAM, uris[0])
-            putExtra(Intent.EXTRA_TEXT, e.title)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-    } else {
-        Intent(Intent.ACTION_SEND_MULTIPLE).apply {
-            type = "image/jpeg"; putParcelableArrayListExtra(Intent.EXTRA_STREAM, ArrayList(uris))
-            putExtra(Intent.EXTRA_TEXT, e.title)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-    }
-    context.startActivity(Intent.createChooser(intent, null))
-}
+data class NavigateToSpot(val spotId: String) : MemoriesEffect
 ```
 
-**Why share photos and not a composite:** the change #7 editor renders photos over a template mask only on-screen; there is no exported bitmap. Sharing the source photos + title is the honest MVP. A future change can render the canvas to a bitmap and share that. If a memory has **zero** photos (a bare draft), Share emits a no-op effect / disabled state — `ACTION_SEND` with no stream is pointless. **Why resolve URIs in the Composable:** `FileProvider.getUriForFile` and `startActivity` need `Context`; keeping them out of the VM preserves JVM-only unit testability (the VM test asserts the `ShareMemory(relativePaths, title)` effect, not the Intent).
+`MyAppNavigation` handles it with `backStack.add(SpotDetailDestination(spotId))`. It must not pass the spot id into `MemoryPhotoSelectionDestination`, because that destination is memoryId-keyed.
 
-### D8. Screen migration mirrors prior changes
+### D6. Memory actions reuse wizard and repository boundaries
 
-`MemoriesScreen(selectedLanguage: String, …)` → `MemoriesScreen(viewModel: MemoriesViewModel, onNavigate…)`. `isChinese` and every `stringResource(R.string.X_zh)` are deleted; chrome text uses `stringResource(R.string.X)` resolved by AppCompat locale (`values-zh/strings.xml` already has all 11 `memories_*` keys + `cancel_button` / `delete_button`). Card composables take `MemoryCard` DTOs instead of `MemoryData`; covers render through change #7's `FilePhoto(relativePath, filesDir)` instead of `painterResource(memory.imageRes)`. The `MockData`/`MemoryData`/`MemoryStatus`-from-`data` imports are dropped (the screen now imports `MemoryStatus` constants from `data/memory`).
+Edit/resume:
 
-## Risks / Trade-offs
+| Source | Destination |
+| --- | --- |
+| In-progress card body | `MemoryPhotoSelectionDestination(memoryId)` |
+| In-progress menu Edit | `MemoryPhotoSelectionDestination(memoryId)` |
+| Completed menu Edit | `MemoryEditDestination(memoryId)` |
 
-- **Likes/comments removal is a visible mock deviation (D6)** → called out for explicit reviewer sign-off in the PR; trivially revertible to a static `0/0` if rejected.
-- **Re-editing a COMPLETED memory and backing out** → safe by construction: `cancelDraftIfInProgress` no-ops on non-`IN_PROGRESS`; verified by a change #7 spec scenario already. A re-save calls `complete()` idempotently.
-- **`duplicateMemory` partial copy** → if a source photo file is missing mid-copy, `copyTo` throws and the whole op returns `Result.failure`; the partially-created `memories/<newId>/` dir may linger but is swept only if the new row were `IN_PROGRESS` and stale. Mitigation: on failure, best-effort `deleteRecursively()` the new dir before returning. (Implementation detail in tasks.)
-- **FileProvider authority typo** → `${applicationId}.fileprovider` in the manifest must match `${context.packageName}.fileprovider` at the call site; a mismatch throws at share time. Covered by a manual emulator share smoke (tasks) — not unit-testable.
-- **Sharing raw photos, not the styled memory** → expectation gap if a user assumes "Share" exports the decorated layout. Acceptable per umbrella scope (editor stubbed); documented.
-- **`combine` re-emission churn** → `WhileSubscribed(5_000)` + Room's diffed Flow keep this cheap at MVP list sizes.
-- **Empty-state** → with real data the library can be empty (no `MockData` seed). The screen must render an empty state (or just the create button) rather than blank sections; handled in the screen rewrite.
+Delete adds `MemoryRepository.deleteMemory(memoryId)` and deletes any status row plus `filesDir/memories/<memoryId>/`, guarded by the same UUID and path-containment checks change #7 established.
+
+Duplicate adds `MemoryRepository.duplicateMemory(memoryId): Result<String>`, deep-copying photo files into `memories/<newId>/photo_<i>.jpg`, preserving status, and best-effort cleaning the new directory on failure.
+
+Share uses a `FileProvider` and emits `ShareMemory(relativePaths, title)` from the VM. The Composable resolves content URIs and launches `ACTION_SEND` or `ACTION_SEND_MULTIPLE`. Zero-photo memories do not emit a share effect; the menu item is disabled.
+
+### D7. Completed-card cleanup
+
+The completed-card detail arrow is removed because no memory-detail destination exists. The likes/comments row is removed because Room `Memory` has no engagement fields and the app has no backend/account model. Rendering permanent fake counts would be misleading.
+
+### D8. Locale migration follows prior screen rewrites
+
+`MemoriesScreen(selectedLanguage: String, ...)` becomes `MemoriesScreen(viewModel: MemoriesViewModel, ...)`. Chrome text uses `stringResource(R.string.X)` with AppCompat locale. The ViewModel pre-resolves dynamic card titles using the injected `localeProvider()` where source data is localized (`Spot`), and passes already-stored memory titles through unchanged.
+
+Add bilingual string resources for the PR #80 tab/search labels:
+
+- `memories_route_tab`
+- `memories_bookmark_tab`
+- `memories_search_bookmarks`
+- `memories_choose_bookmarks`
+- `memories_empty_bookmarks`
 
 ## Migration Plan
 
-1. Add `deleteMemory` + `duplicateMemory` to the `MemoryRepository` interface and `RoomMemoryRepository` impl.
-2. Add `FileProvider` `<provider>` to `AndroidManifest.xml` + `res/xml/file_paths.xml`.
-3. Create `ui/memory/library/`: `MemoryCard`, `MemoriesState`, `MemoriesIntent`, `MemoriesEffect`, `MemoriesViewModel`, `MemoriesViewModelFactory`.
-4. Rewrite `MemoriesScreen.kt` VM-driven; delete arrow + likes/comments; wire menu/dialog to intents; covers via `FilePhoto`.
-5. Wire the `Memories` entry in `MyAppNavigation`; route effects (wizard nav + share chooser).
-6. Tests: `MemoryRepositoryActionsTest` (delete-any-status, duplicate-with-photo-copy), `MemoriesViewModelTest` (combine mapping, menu/dialog intents, Share effect).
-7. Emulator smoke: create a memory in the wizard → see it in the library → edit/duplicate/delete/share → resume a draft.
+1. Add `bookmarkedSpotIds` / `setBookmarkedSpotIds` to prefs and DataStore keys.
+2. Add `ContentRepository.spots(): Flow<List<Spot>>`.
+3. Add `deleteMemory` and `duplicateMemory` to the memory repository.
+4. Add FileProvider manifest + `res/xml/file_paths.xml`.
+5. Create `ui/memory/library/` DTO/state/intent/effect/VM/factory files.
+6. Rewrite `MemoriesScreen` to render Route and Bookmark tabs from VM state.
+7. Wire `MyAppNavigation` to build `MemoriesViewModel` and handle wizard/share/spot effects.
+8. Add focused repository and VM tests.
+9. Verify build, unit tests, source-grep checks, and manual emulator smoke.
 
-**Rollback**: revert the change commit. `MemoriesScreen` returns to reading `MockData.memories`; the two new repository methods and the FileProvider are orphaned but harmless. Room DB on device is untouched by the rollback.
+## Risks / Trade-offs
 
-## Open Questions
-
-- **Keep or drop likes/comments (D6)?** Recommend drop; reviewer confirms in the PR.
-- **Title `" (copy)"` suffix on duplicate?** Recommend no suffix for now (avoids a bilingual-suffix locale question); revisit if duplicates become hard to tell apart.
-- **Empty-state copy** — does the library need its own "No memories yet" string, or is the existing "Create Memory" button enough? Recommend the button alone for MVP; add a string only if the bare screen tests poorly.
-- **Share zero-photo draft** — disable Share in the menu when `coverRelativePath == null`, or show a toast? Recommend disabling the menu item (cleaner than a toast).
+- The Bookmark tab can be empty until another UX writes `bookmarkedSpotIds`. This is preferable to keeping hidden hard-coded demo IDs in a persisted app surface.
+- Removing likes/comments visibly departs from the mock, but it matches the no-backend architecture.
+- Sharing raw photos, not a styled memory composite, may be less polished; it is honest for the current editor scope.
+- `ContentRepository.spots()` exposes all spots for the first time. It follows the existing `routes()` shape and emits the loaded snapshot once, so blast radius is small.

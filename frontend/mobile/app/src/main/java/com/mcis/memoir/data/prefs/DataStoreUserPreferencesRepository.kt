@@ -30,6 +30,11 @@ class DataStoreUserPreferencesRepository(
             preferences[UserPrefsKeys.BOOKMARKED_ROUTES].orEmpty()
         }
 
+    override val bookmarkedSpotIds: Flow<Set<String>> =
+        dataStore.data.map { preferences ->
+            preferences[UserPrefsKeys.BOOKMARKED_SPOTS].orEmpty()
+        }
+
     override val capturedArtifactKeys: Flow<Set<String>> =
         dataStore.data.map { preferences ->
             preferences[UserPrefsKeys.CAPTURED_ARTIFACTS].orEmpty()
@@ -56,6 +61,12 @@ class DataStoreUserPreferencesRepository(
     override suspend fun setBookmarkedRouteIds(set: Set<String>) {
         dataStore.edit { preferences ->
             preferences[UserPrefsKeys.BOOKMARKED_ROUTES] = set
+        }
+    }
+
+    override suspend fun setBookmarkedSpotIds(set: Set<String>) {
+        dataStore.edit { preferences ->
+            preferences[UserPrefsKeys.BOOKMARKED_SPOTS] = set
         }
     }
 
