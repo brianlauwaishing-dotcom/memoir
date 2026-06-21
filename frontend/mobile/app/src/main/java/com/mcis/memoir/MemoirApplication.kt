@@ -48,6 +48,7 @@ class MemoirApplication : Application() {
         )
         appScope.launch { memoryRepo.sweepOrphans() }
 
+        android.util.Log.w("ai-debug", "DEEPSEEK_API_KEY baked length=${BuildConfig.DEEPSEEK_API_KEY.length} prefix=${BuildConfig.DEEPSEEK_API_KEY.take(5)}")
         val openAIConfig = OpenAIConfig(
             token = BuildConfig.DEEPSEEK_API_KEY,
             host = OpenAIHost(baseUrl = "https://api.deepseek.com/v1/"),
