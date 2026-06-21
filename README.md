@@ -6,6 +6,25 @@
 
 ---
 
+## ✅ 目前實作狀態
+
+> 專案採 **mobile-first** 推進:目前唯一已實作的元件是 **原生 Android app**(`frontend/mobile/`)。
+> 下方「技術棧」「Quick Start」「專案結構」中標示 _(規劃中)_ 的元件(backend / ai-services / kiosk / admin / deploy)尚未建立,屬目標架構。
+
+### 已實作功能(Android MVP)
+
+- **記憶建立流程**:多步驟 wizard(範本選擇 → 照片擷取 / 選取 → 編輯 → 反思),資料持久化於 Room。
+- **記憶庫(Memories)**:Route / Bookmark 雙分頁。Route 顯示進行中 / 已完成的記憶(讀 Room 即時資料);Bookmark 顯示已收藏景點並支援搜尋。
+- **記憶卡片操作**:三點選單 Edit / Delete / Duplicate / Share(透過 `FileProvider` 分享照片);草稿可從卡片本體直接續編。
+- **景點詳情(Spot Detail)**:從 Bookmark 點入查看景點內容。
+- **AI 反思產生**:反思頁按「Polish with AI」呼叫 **DeepSeek**(OpenAI 相容 API)產生可分享圖說,支援 Copy / Regenerate / Save,含 loading / error 狀態與重試。
+- **多語系**:en / zh 透過 AppCompat locale 切換。
+- **示範照片匯入**:內建 demo 照片便於展示。
+
+> 各功能完整規格見 [`openspec/changes/`](./openspec/changes/) 下的 change(如 `memory-library-actions`、`ai-reflection-generation`)。
+
+---
+
 ## 📚 文件導覽
 
 > 全部文件集中在 [`references/`](./references/) 與 [`CLAUDE.md`](./CLAUDE.md)。
@@ -45,65 +64,62 @@
 
 | 層 | 技術 |
 |---|---|
-| **Backend** | Kotlin + Spring Boot(JDK 21)+ Gradle Kotlin DSL,PostgreSQL + Redis,Flyway,SpringDoc OpenAPI |
-| **AI Services** | Python 3.11+,uv 環境管理,Gemini API(runtime)+ 訂閱版 LLM(build-time 內容)+ Ollama(fallback) |
-| **Mobile** | 原生 Android(Kotlin + Jetpack Compose)— **KMP 為待定選項** |
-| **Kiosk** | 瀏覽器 SPA(Next.js / Vite) |
-| **Admin CMS** | Vite + React + TypeScript + react-admin / Refine,TanStack Query + Zustand |
-| **CI/CD** | GitHub Actions,Docker(multi-stage)+ Docker Hub,Kubernetes(自建 k3s 為主、AKS 備援)+ Kustomize / Helm |
-| **觀測性** | Prometheus + Grafana + Loki + GlitchTip(Sentry 開源版,全部自架) |
-| **地圖** | OSM + Leaflet/MapLibre + 台灣 PTX/TDX(免費) |
+| **Backend** _(規劃中)_ | Kotlin + Spring Boot(JDK 21)+ Gradle Kotlin DSL,PostgreSQL + Redis,Flyway,SpringDoc OpenAPI |
+| **Mobile**(★ 已實作) | 原生 Android(Kotlin + Jetpack Compose),Navigation3、Room + KSP、DataStore、CameraX;AI 反思經 `com.aallam.openai` client + Ktor CIO 呼叫 **DeepSeek**(OpenAI 相容)。JDK 11 / compileSdk 36 / minSdk 24 |
+| **AI Services** _(規劃中)_ | Python 3.11+,uv 環境管理,Gemini API(runtime)+ 訂閱版 LLM(build-time 內容)+ Ollama(fallback)。目前 app 端反思直接呼叫 DeepSeek,尚未抽出獨立服務 / proxy |
+| **Kiosk** _(規劃中)_ | 瀏覽器 SPA(Next.js / Vite) |
+| **Admin CMS** _(規劃中)_ | Vite + React + TypeScript + react-admin / Refine,TanStack Query + Zustand |
+| **CI/CD** | GitHub Actions(目前有 `mobile-ci.yml`:assemble / unit test / lint)。Docker + Kubernetes(自建 k3s 為主、AKS 備援)+ Kustomize / Helm _(規劃中)_ |
+| **觀測性** _(規劃中)_ | Prometheus + Grafana + Loki + GlitchTip(Sentry 開源版,全部自架) |
+| **地圖** _(規劃中)_ | OSM + Leaflet/MapLibre + 台灣 PTX/TDX(免費) |
 
 ---
 
 ## 🚀 Quick Start
 
-### 起本地開發環境
+### Android app(目前唯一可跑的元件)
 
 ```bash
-# 1. 起依賴(PG + Redis)
-docker compose -f docker/docker-compose.dev.yml up -d
+# 1. 設定 DeepSeek API key(AI 反思功能需要;沒設也能建置,只是 AI 反思會回報錯誤)
+cd frontend/mobile
+cp local.properties.example local.properties
+# 編輯 local.properties,把 DEEPSEEK_API_KEY 換成你的 key(此檔已 gitignore,不會被 commit)
 
-# 2. Backend
-cd backend && ./gradlew bootRun
-# Swagger UI: http://localhost:8080/swagger-ui.html
+# 2. 建置 / 安裝到裝置或模擬器(用 Gradle CLI,不依賴 Android Studio)
+./gradlew :app:installDebug      # 安裝 debug 版
+# 或只打包不安裝:./gradlew :app:assembleDebug
 
-# 3. Admin CMS
-cd admin && pnpm install && pnpm dev
-
-# 4. AI Services
-cd ai-services && uv sync && uv run python -m narrative.main
-
-# 5. Android(用 Gradle CLI,不依賴 Android Studio)
-cd android && ./gradlew installDebug
+# 3. 測試與 lint
+./gradlew :app:testDebugUnitTest
+./gradlew :app:lintDebug
 ```
 
-> 完整命令速查見 [`CLAUDE.md`](./CLAUDE.md) §10。
+> 環境需求:JDK 11、Android SDK(compileSdk 36 / minSdk 24)。CI 流程見 [`.github/workflows/mobile-ci.yml`](./.github/workflows/mobile-ci.yml)。
+
+### 其他元件(規劃中)
+
+backend / ai-services / kiosk / admin 等服務尚未建立。原本規劃的本地起法(Docker compose、`bootRun`、`pnpm dev`、`uv run` 等)見 [`CLAUDE.md`](./CLAUDE.md) §10,實際以各資料夾建立後的說明為準。
 
 ---
 
-## 📁 專案結構(預期)
+## 📁 專案結構
 
 ```
 memoir/
-├── backend/          # Kotlin Spring Boot
-├── ai-services/      # Python LLM / 分類 / 敘事
-├── android/          # 原生 Android (Kotlin + Compose)
-├── kiosk/            # Kiosk Web (Next.js / Vite)
-├── admin/            # Admin CMS (Vite + React + TS)
-├── deploy/           # K8s Kustomize manifests
-│   ├── base/
-│   └── overlays/{dev,staging,prod}
-├── docker/           # 共用 Dockerfile / compose
-├── .github/workflows/ # GitHub Actions CI/CD
-├── references/       # ★ 需求 / 架構 / 排程 / 流程文件
-├── .claude/          # Claude Code 設定 + memory(隨 git 同步)
-│   └── memory/       # 專案級 memory(多裝置共享)
-├── CLAUDE.md         # ★ 開發準則(必讀)
-└── README.md         # 本文件
+├── frontend/
+│   └── mobile/        # ★ 原生 Android app(Kotlin + Compose)— 目前唯一已實作
+├── data/              # 內容資料(tainan-route 等),建置時掛載為 app assets
+├── references/        # ★ 需求 / 架構 / 排程 / 流程文件
+├── openspec/          # OpenSpec change 規格(各功能的提案 / 設計 / 任務)
+├── docs/              # 其他文件
+├── deprecated/        # 已淘汰的內容
+├── .github/workflows/ # GitHub Actions CI(mobile-ci.yml)
+├── .claude/           # Claude Code 設定 + memory(隨 git 同步)
+├── CLAUDE.md          # ★ 開發準則(必讀)
+└── README.md          # 本文件
 ```
 
-> 尚未建立的資料夾,在第一次需要時補上。
+> **規劃中(尚未建立)**:`backend/`、`ai-services/`、`kiosk/`、`admin/`、`deploy/`、`docker/` — 第一次需要時補上。
 
 ---
 
